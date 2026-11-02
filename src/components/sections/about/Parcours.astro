@@ -1,0 +1,194 @@
+---
+// Figma: À propos → 02 Parcours (desktop 50:416, mobile 50:551). Фон bg/alt: eyebrow → H2 → таймлайн.
+// Desktop: 4 пункти в ряд без проміжку (лінія суцільна); у кожного зверху «рейка»: крапка 9 × 9 + лінія 1 px
+// (сірий шар + червоний шар). Mobile: рейка вертикальна зліва, лінія від крапки вниз до наступного пункту.
+// В кінці — пункт «Aujourd’hui» (лише крапка й підпис, без року — щоб не прив’язуватись до дати).
+// Анімація (src/scripts/timeline.ts): коли таймлайн на екрані, червона лінія один раз проходить від 2019
+// до «Aujourd’hui», відрізок за відрізком (--step на пункт, затримка --i × --step); крапка й рік
+// червоніють, коли лінія до них доходить. Лише transform і колір. Без JS / зменшений рух — увесь шлях червоний.
+import type { AboutPageData } from '../../../content.config';
+
+interface Props {
+  data: Pick<AboutPageData['parcours'], 'eyebrow' | 'title'>;
+  items: { year: string; title: string; text: string }[];
+  /** Підпис кінцевої точки: «Aujourd’hui» / «Today» / «Oggi». */
+  today: string;
+}
+const { data, items, today } = Astro.props;
+---
+
+<section class="parcours section section--alt" aria-labelledby="parcours-title">
+  <div class="container parcours__inner">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="parcours-title">{data.title}</h2>
+    </div>
+    <ol class="timeline" role="list" data-timeline>
+      {items.map((it) => (
+        <li class="timeline__item" data-timeline-item>
+          <span class="timeline__rail" aria-hidden="true">
+            <span class="timeline__line" />
+            <span class="timeline__line timeline__line--red" />
+            <span class="timeline__dot" />
+          </span>
+          <div class="timeline__body">
+            <p class="timeline__year">{it.year}</p>
+            <h3 class="title">{it.title}</h3>
+            {it.text && <p class="text-s text-2">{it.text}</p>}
+          </div>
+        </li>
+      ))}
+      <li class="timeline__item timeline__item--today" data-timeline-item>
+        <span class="timeline__rail" aria-hidden="true">
+          <span class="timeline__dot" />
+        </span>
+        <div class="timeline__body">
+          <p class="timeline__year">{today}</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { initTimeline } from '../../../scripts/timeline';
+  initTimeline();
+</script>
+
+<style>
+  .parcours__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  /* ---------- Mobile: рейка вертикальна зліва, текст праворуч ---------- */
+  .timeline__item {
+    --dot: 0.5625rem; /* 9 */
+    --dot-top: calc((var(--fs-h3) * var(--lh-h3) - var(--dot)) / 2); /* крапка на рівні року */
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--dot) minmax(0, 1fr);
+    column-gap: var(--space-4);
+    padding-bottom: var(--space-8);
+  }
+  .timeline__item:last-child {
+    padding-bottom: 0;
+  }
+  .timeline__rail {
+    position: relative;
+  }
+  /* Лінія — від центру крапки вниз до кінця пункту (тобто до крапки наступного). */
+  .timeline__line {
+    position: absolute;
+    top: calc(var(--dot-top) + var(--dot) / 2);
+    bottom: calc(-1 * var(--space-8));
+    left: calc(var(--dot) / 2 - 0.5px);
+    width: 1px;
+    background: var(--color-border);
+  }
+  .timeline__item:last-child .timeline__line {
+    bottom: 0;
+  }
+  .timeline__line--red {
+    background: var(--color-red);
+    transform-origin: top;
+  }
+  .timeline__dot {
+    position: absolute;
+    top: var(--dot-top);
+    left: 0;
+    width: var(--dot);
+    height: var(--dot);
+    border-radius: 50%;
+    background: var(--color-red);
+  }
+  .timeline__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .timeline__year {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+    color: var(--color-red-text);
+  }
+
+  /* ---------- Анімація: сіре → лінія проходить відрізки по черзі ---------- */
+  .timeline.is-live .timeline__item {
+    --step: 1500ms; /* один відрізок (рік → наступний рік) */
+    --at: calc(var(--i, 0) * var(--step)); /* коли лінія доходить до крапки цього пункту */
+  }
+  /* Сірий стан — одразу, без переходу (інакше затримки --at спрацьовували б і на приховуванні). */
+  .timeline.is-live .timeline__line--red {
+    transform: scaleY(0);
+  }
+  .timeline.is-live .timeline__dot {
+    background: var(--color-border);
+  }
+  .timeline.is-live .timeline__year {
+    color: var(--color-text-2);
+  }
+  /* Переходи — лише на появу (is-in). */
+  .timeline.is-in .timeline__line--red {
+    transform: none;
+    transition: transform var(--step) linear var(--at);
+  }
+  .timeline.is-in .timeline__dot {
+    background: var(--color-red);
+    transition: background-color 250ms var(--ease) var(--at);
+  }
+  .timeline.is-in .timeline__year {
+    color: var(--color-red-text);
+    transition: color 250ms var(--ease) var(--at);
+  }
+
+  /* ---------- Desktop: 4 в ряд, рейка зверху, лінія суцільна ---------- */
+  @media (min-width: 1024px) {
+    .parcours__inner {
+      gap: var(--space-14);
+    }
+    .timeline {
+      display: flex;
+    }
+    .timeline__item {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .timeline__item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: 0 var(--space-6) 0 0;
+    }
+    /* «Aujourd’hui» — вузька колонка по ширині підпису; лінія попереднього пункту доходить до її крапки. */
+    .timeline__item--today {
+      flex: 0 0 auto;
+      padding-right: 0;
+    }
+    .timeline__rail {
+      height: var(--dot);
+    }
+    .timeline__line {
+      top: calc(var(--dot) / 2 - 0.5px);
+      bottom: auto;
+      left: 0;
+      right: calc(-1 * var(--space-6)); /* до наступного пункту (через padding-right) */
+      width: auto;
+      height: 1px;
+    }
+    .timeline__line--red {
+      transform-origin: left;
+    }
+    .timeline.is-live .timeline__line--red {
+      transform: scaleX(0);
+    }
+    .timeline.is-in .timeline__line--red {
+      transform: none;
+    }
+    .timeline__dot {
+      top: 0;
+    }
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+// Figma: États → «Loader — Desktop 1440» 202:657, «Loader — Mobile 390» 202:677.
+// Монограма K♥ (corner-k-tall.svg, колір --color-red) → смужка 160 × 2 → «LUIGI CONTESSI».
+// Розмітка в <template>: без JS loader-а немає; public/scripts/loader.js копіює її на сторінку лише тоді,
+// коли перше відкриття сайту в сесії вантажиться довше 400 ms. Накладка aria-hidden; для читалки —
+// окремий role="status" «Chargement…», зникає разом із нею.
+import CornerK from '../../assets/brand/corner-k-tall.svg';
+import { getSettings } from '../../content/helpers';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const { name } = await getSettings();
+---
+
+<template id="lc-loader">
+  <div class="loader" data-loader>
+    <div class="loader__box" aria-hidden="true">
+      <CornerK class="loader__mark" />
+      <span class="loader__bar">
+        <span class="loader__fill" data-loader-fill></span>
+      </span>
+      <span class="loader__name">{name}</span>
+    </div>
+    <p class="visually-hidden" role="status">
+      {t('loader.status', lang)}
+    </p>
+  </div>
+</template>
+
+<!-- Звичайний async-скрипт одразу після шаблону: стартує, поки HTML ще вантажиться (модулі Astro чекають
+     кінця розбору сторінки — на повільному інтернеті loader зʼявлявся б запізно). CSP: script-src 'self'. -->
+<script
+  is:inline
+  async
+  src={`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}scripts/loader.js`}
+></script>
+
+<style>
+  :global(html.is-loading) {
+    overflow: hidden;
+  }
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 100; /* над шапкою, банером cookies і всім іншим */
+    display: grid;
+    place-items: center;
+    background: var(--color-bg);
+    transition: opacity 400ms var(--ease);
+  }
+  .loader__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-10);
+    transition: transform 400ms var(--ease);
+  }
+  .loader.is-leaving {
+    opacity: 0;
+  }
+  .loader.is-leaving .loader__box {
+    transform: scale(0.96);
+  }
+  .loader__mark {
+    width: auto;
+    height: 6rem; /* 96 */
+    color: var(--color-red);
+  }
+  .loader__mark :global(path) {
+    fill: currentColor;
+  }
+  /* Смужка 160 × 2: заповнення — transform: scaleX() зі скрипта (CSSOM, CSP). */
+  .loader__bar {
+    position: relative;
+    width: 10rem; /* 160 */
+    height: 2px;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+  .loader__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms var(--ease);
+  }
+  .loader__name {
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    line-height: 1.333;
+    text-transform: uppercase;
+    color: var(--color-text-2);
+  }
+  @media (min-width: 768px) {
+    .loader__mark {
+      height: 7.5rem; /* 120 */
+    }
+  }
+</style>

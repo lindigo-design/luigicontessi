@@ -3,10 +3,12 @@
 // Показується лише коли в settings.json → consent хоч одна категорія true (див. BaseLayout).
 // Банер прихований, доки src/scripts/consent.ts не перевірить збережений вибір (без JS — немає
 // і необовʼязкових cookies). «Tout refuser» і «Tout accepter» — однакові Outline (CNIL).
+// Під перемикачами — «En savoir plus» → сторінка Cookies.
 import Button from '../ui/Button.astro';
 import CloseIcon from '../../assets/icons/close.svg';
 import type { ConsentCategory } from '../../scripts/consent';
-import { t, type Locale } from '../../i18n/utils';
+import { isBuilt } from '../../i18n/nav';
+import { localizePath, t, type Locale } from '../../i18n/utils';
 
 interface Props {
   lang: Locale;
@@ -96,6 +98,11 @@ const rows: { id: 'necessary' | ConsentCategory; on: boolean }[] = [
       </li>
     ))}
   </ul>
+  {isBuilt('cookies') && (
+    <p class="cdlg__more text-s">
+      <a href={localizePath('cookies', lang)}>{t('cookies.more', lang)}</a>
+    </p>
+  )}
   <div class="cdlg__actions">
     <Button variant="outline" data-consent-action="refuse">
       {t('cookies.refuse', lang)}
@@ -113,6 +120,11 @@ const rows: { id: 'necessary' | ConsentCategory; on: boolean }[] = [
 </script>
 
 <style>
+  .cdlg__more a {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
   /* Поки банер видимий, низ сторінки (футер) не ховається під ним. */
   :global(html.has-consent-banner body) {
     padding-bottom: var(--consent-h);

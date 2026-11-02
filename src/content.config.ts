@@ -175,6 +175,18 @@ const site = defineCollection({
     consent: z
       .object({ analytics: z.boolean(), affiliates: z.boolean() })
       .default({ analytics: false, affiliates: false }),
+    // Сервіси зі згодою для таблиці на сторінці Cookies (рядок — лише коли його категорія увімкнена в consent).
+    // Не додавати сервісів, яких на сайті немає.
+    consentServices: z
+      .array(
+        z.object({
+          name: z.string().min(1), // назва cookie / сервісу
+          category: z.enum(['analytics', 'affiliates']),
+          purpose: z.object({ fr: z.string(), en: z.string(), it: z.string() }),
+          duration: z.object({ fr: z.string(), en: z.string(), it: z.string() }),
+        }),
+      )
+      .default([]),
     // Куди форми надсилають дані (PHP на хостингу або сервіс форм). Порожньо — «arrive bientôt».
     forms: z.object({ endpoint: z.string() }).default({ endpoint: '' }),
     // Пошта для відповідей і посилань «écrivez-moi». Порожньо — «[e-mail]» і попередження під час збірки.
@@ -431,6 +443,57 @@ const favoritesPageSchema = z.object({
 const favoritesPage = defineCollection({
   loader: glob({ pattern: '*/coups-de-coeur.json', base: './src/content/pages' }),
   schema: favoritesPageSchema,
+});
+
+// Юридичні сторінки (Mentions légales, Confidentialité, Cookies, CGV): src/content/legal/<мова>/<slug>.mdoc.
+// Текст — Markdoc (у ньому можна вставляти таблиці з коду, напр. {% storage-table /%}); updated — дата редакції.
+const legal = defineCollection({
+  loader: glob({ pattern: '*/*.mdoc', base: './src/content/legal' }),
+  schema: z.object({
+    title: text, // H1
+    seoTitle: text.max(70),
+    seoDescription: text.max(170),
+    updated: z.coerce.date(), // РРРР-ММ-ДД (YAML читає як дату)
+  }),
+});
+
+// Сторінка «À propos» (src/content/pages/<мова>/a-propos.json). Цифри — id з settings.json → stats (не дублювати).
+const aboutPageSchema = z.object({
+  seoTitle: text.max(70),
+  seoDescription: text.max(170),
+  intro: z.object({
+    eyebrow: text,
+    title: text, // H1
+    lead: text, // Body L
+    body: text, // Body M, secondary
+    imageAlt: text,
+    stats: z.array(text), // id з settings.json → stats
+  }),
+  // Таймлайн: дані зі старого сайту Luigi; назви премій 2024 — уточнити в Luigi. Порожній рік — у перегляді
+  // «[Année]», на живому сайті пункт без року схований, без жодного пункту — уся секція.
+  parcours: z.object({
+    eyebrow: text,
+    title: text,
+    items: z.array(z.object({ year: z.string(), title: text, text: z.string() })),
+  }),
+  // «Le roi de cœur»: текст — лише від Luigi (історія тату, «roi de cœur» і «K», чому на колекції).
+  // Порожньо — у перегляді заглушка, на живому сайті секції немає. Абзаци — через порожній рядок.
+  king: z.object({ eyebrow: text, title: text, text: z.string() }),
+  // «Mes règles»: 3 картки (номер «01» — автоматично).
+  rules: z.object({
+    eyebrow: text,
+    title: text,
+    items: z.array(z.object({ title: text, text: text })),
+  }),
+  // Цитата на фото (citation.jpg). Підпис — settings.json → name.
+  quote: z.object({ text: text, imageAlt: z.string() }),
+  // «Travailler ensemble»: Partenariats + Instagram (settings.json → instagramUrl). jobTitle — для JSON-LD Person.
+  together: z.object({ title: text, body: text, partnerships: text, instagram: text }),
+  jobTitle: text,
+});
+const aboutPage = defineCollection({
+  loader: glob({ pattern: '*/a-propos.json', base: './src/content/pages' }),
+  schema: aboutPageSchema,
 });
 
 // Сторінка «Journal»: тексти Intro і SEO (src/content/pages/<мова>/journal.json).
@@ -752,6 +815,8 @@ export const collections = {
   journalPage,
   favorites,
   favoritesPage,
+  legal,
+  aboutPage,
 };
 export type HomeData = z.infer<typeof homeSchema>;
 export type ProductData = z.infer<typeof productSchema>;
@@ -760,6 +825,7 @@ export type PrivilegesData = z.infer<typeof privilegesSchema>;
 export type ContactData = z.infer<typeof contactSchema>;
 export type YachtsPageData = z.infer<typeof yachtsPageSchema>;
 export type JournalPageData = z.infer<typeof journalPageSchema>;
+export type AboutPageData = z.infer<typeof aboutPageSchema>;
 export type FavoritesPageData = z.infer<typeof favoritesPageSchema>;
 export type PartenariatsData = z.infer<typeof partenariatsSchema>;
 export type CodeCategory = (typeof codeCategories)[number];

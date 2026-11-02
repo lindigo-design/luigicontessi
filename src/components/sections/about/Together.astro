@@ -1,0 +1,67 @@
+---
+// Figma: À propos → 06 Travailler ensemble. Рядок (mobile — стовпчиком): ліворуч H2 + текст, праворуч
+// «Partenariats» (Primary) і «Me suivre sur Instagram» (Link Accent, нова вкладка).
+import Button from '../../ui/Button.astro';
+import type { AboutPageData } from '../../../content.config';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  data: AboutPageData['together'];
+  partnershipsHref: string;
+  instagramUrl: string;
+}
+const { lang, data, partnershipsHref, instagramUrl } = Astro.props;
+---
+
+<section class="together container" aria-labelledby="together-title">
+  <div class="together__text">
+    <h2 id="together-title">{data.title}</h2>
+    <p class="text-2">{data.body}</p>
+  </div>
+  <div class="together__ctas">
+    <Button href={partnershipsHref}>{data.partnerships}</Button>
+    {instagramUrl && (
+      <Button href={instagramUrl} variant="accent" external rel="noopener">
+        {data.instagram}
+        <span class="visually-hidden"> ({t('ui.newWindow', lang)})</span>
+      </Button>
+    )}
+  </div>
+</section>
+
+<style>
+  .together {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-8);
+    padding-block: var(--space-14);
+  }
+  .together__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .together__ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  @media (min-width: 768px) {
+    .together__ctas {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-8);
+    }
+  }
+  @media (min-width: 1024px) {
+    .together {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: var(--space-24);
+    }
+  }
+</style>

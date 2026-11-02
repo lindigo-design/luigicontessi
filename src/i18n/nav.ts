@@ -113,5 +113,7 @@ export const builtPages = new Set<string>([
   'yachts',
   'journal',
   'coups-de-coeur',
+  'cookies',
+  'a-propos',
 ]);
 export const isBuilt = (path: string) => builtPages.has(path.split('#')[0]);

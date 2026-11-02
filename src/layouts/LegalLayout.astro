@@ -1,0 +1,256 @@
+---
+// Шаблон юридичних сторінок (Figma: Légal → «Mentions légales (modèle)», desktop 54:988, mobile 54:1086).
+// Desktop: ліворуч навігація 260 (прилипає під шапкою): «Informations légales» → сторінки з legalNav
+// (CGV — лише з магазином; лише готові, isBuilt), поточна — червона лінія зліва й aria-current;
+// праворуч текст 720: H1 → «Dernière mise à jour : …» → розділи (лінія зверху, «1. …», текст).
+// Mobile: навігація — стрічка чипів над текстом. Текст сторінки — у слоті (Markdoc з src/content/legal).
+import BaseLayout from './BaseLayout.astro';
+import { getSettings } from '../content/helpers';
+import { isBuilt, legalNav } from '../i18n/nav';
+import { localizePath, t, type Locale } from '../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  /** path сторінки, як у legalNav (cookies, mentions-legales…). */
+  current: string;
+  title: string;
+  seoTitle: string;
+  seoDescription: string;
+  /** Дата редакції, РРРР-ММ-ДД. */
+  updated: string;
+}
+const { lang, current, title, seoTitle, seoDescription, updated } = Astro.props;
+const { features } = await getSettings();
+const items = legalNav.filter((i) => (!i.shop || features.shop) && isBuilt(i.path));
+const date = new Intl.DateTimeFormat(lang, {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+}).format(new Date(`${updated}T00:00:00Z`));
+---
+
+<BaseLayout lang={lang} title={seoTitle} description={seoDescription} current={current}>
+  <div class="container legal">
+    {items.length > 0 && (
+      <nav class="legal__nav" aria-labelledby="legal-nav-title">
+        <p id="legal-nav-title" class="eyebrow eyebrow--muted legal__nav-title">
+          {t('legal.nav', lang)}
+        </p>
+        <ul class="legal__links" role="list">
+          {items.map((i) => (
+            <li>
+              <a
+                class:list={['legal__link', { 'is-current': i.path === current }]}
+                href={localizePath(i.path, lang)}
+                aria-current={i.path === current ? 'page' : undefined}
+              >
+                {t(i.key, lang)}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+    <article class="legal__text" aria-labelledby="legal-title">
+      <header class="legal__head">
+        <h1 id="legal-title">{title}</h1>
+        <p class="text-s text-2">{t('legal.updated', lang).replace('{date}', date)}</p>
+      </header>
+      <div class="legal__body">
+        <slot />
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .legal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-14);
+  }
+  /* Mobile: навігація — стрічка чипів (прокрутка вбік без скролбару). */
+  .legal__nav-title {
+    display: none;
+  }
+  .legal__links {
+    display: flex;
+    gap: var(--space-2);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .legal__links::-webkit-scrollbar {
+    display: none;
+  }
+  .legal__links li {
+    flex: none;
+  }
+  .legal__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem; /* 44 — зручно пальцем */
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-btn);
+    font-size: var(--fs-body-s);
+    color: var(--color-text-2);
+    white-space: nowrap;
+  }
+  .legal__link.is-current {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-on-light);
+  }
+  .legal__link:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+  .legal__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    min-width: 0;
+    max-width: 45rem; /* 720 */
+  }
+  .legal__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Текст сторінки (Markdoc): розділ = «## 1. …» з лінією зверху; між розділами 40, усередині 10. */
+  .legal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem; /* 10 */
+  }
+  .legal__body :global(h2) {
+    margin-top: calc(var(--space-10) - 0.625rem); /* 40 між розділами (разом із gap 10) */
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+  }
+  .legal__body :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .legal__body :global(h3) {
+    margin-top: var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--fs-title);
+    font-weight: 500;
+    line-height: 1.444;
+  }
+  .legal__body :global(p),
+  .legal__body :global(li) {
+    color: var(--color-text-2);
+  }
+  .legal__body :global(strong) {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .legal__body :global(ul),
+  .legal__body :global(ol) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-left: var(--space-5);
+  }
+  .legal__body :global(ul) {
+    list-style: disc;
+  }
+  .legal__body :global(ol) {
+    list-style: decimal;
+  }
+  .legal__body :global(a:not(.btn)) {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .legal__body :global(code) {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  /* Таблиці: Body S, лінії border; на mobile — прокрутка вбік у .legal-table. */
+  .legal__body :global(.legal-table) {
+    overflow-x: auto;
+    margin-block: var(--space-2);
+  }
+  .legal__body :global(table) {
+    width: 100%;
+    min-width: 36rem;
+    border-collapse: collapse;
+    font-size: var(--fs-body-s);
+    line-height: 1.43;
+  }
+  .legal__body :global(th),
+  .legal__body :global(td) {
+    padding: var(--space-3) var(--space-4) var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+  }
+  .legal__body :global(th) {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  .legal__body :global(td) {
+    color: var(--color-text-2);
+  }
+
+  @media (min-width: 1024px) {
+    .legal {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-24);
+      padding-top: var(--space-24);
+      padding-bottom: 7.5rem; /* 120 */
+    }
+    .legal__nav {
+      position: sticky;
+      top: calc(var(--header-total-h) + var(--space-8));
+      flex: 0 0 16.25rem; /* 260 */
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .legal__nav-title {
+      display: block;
+    }
+    .legal__links {
+      flex-direction: column;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .legal__link {
+      display: block;
+      min-height: 0;
+      padding: 0.625rem 0 0.625rem 0.875rem; /* 10 / 0 / 10 / 14 */
+      border: 0;
+      border-left: 2px solid var(--color-border);
+      border-radius: 0;
+      white-space: normal;
+    }
+    .legal__link.is-current {
+      border-left-color: var(--color-red);
+      background: none;
+      color: var(--color-text);
+    }
+    @media (hover: hover) {
+      .legal__link:not(.is-current):hover {
+        color: var(--color-text);
+      }
+    }
+    .legal__text {
+      flex: 1;
+    }
+  }
+</style>

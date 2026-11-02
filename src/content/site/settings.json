@@ -33,6 +33,7 @@
     "analytics": false,
     "affiliates": false
   },
+  "consentServices": [],
   "forms": {
     "endpoint": ""
   },

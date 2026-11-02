@@ -1,0 +1,114 @@
+---
+// Figma: À propos → 03 Le roi de cœur. Уся строка — панель bg/alt (без рамки й радіуса).
+// Desktop: ліворуч монограма K♥ (висота 256, червона) з полями 64, праворуч eyebrow → H2 → текст
+// (ширина 820, по центру висоти), проміжок 40; група — від лівого краю панелі. Mobile: поля панелі 32, монограма 140 зліва, далі текст (проміжок 24). Текст — лише від Luigi (на сторінці: немає — у перегляді заглушка, на живому секції немає).
+// Коли картка зʼявляється на екрані, монограма промальовується як у loader-і (window.lcMonogram з
+// public/scripts/loader.js). Без JS і зі зменшеним рухом — готовий логотип.
+import CornerK from '../../../assets/brand/corner-k-tall.svg';
+
+interface Props {
+  data: { eyebrow: string; title: string; text: string };
+}
+const { data } = Astro.props;
+---
+
+<section class="king section" aria-labelledby="king-title">
+  <div class="container">
+    <div class="king__row">
+      <div class="king__card" aria-hidden="true">
+        <CornerK class="king__mark" data-monogram />
+      </div>
+      <div class="king__text">
+        <p class="eyebrow">{data.eyebrow}</p>
+        <h2 id="king-title">{data.title}</h2>
+        {data.text.split(/\n{2,}/).map((p) => (
+          <p class="king__body">{p}</p>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  declare global {
+    interface Window {
+      lcMonogram?: (svg: SVGSVGElement) => void;
+    }
+  }
+  // Промальовка — коли картка на екрані; функція з loader.js (async-скрипт — може зʼявитися трохи пізніше).
+  const whenReady = (run: () => void) => {
+    if (window.lcMonogram) return run();
+    document
+      .querySelector('script[src$="scripts/loader.js"]')
+      ?.addEventListener('load', run, { once: true });
+  };
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<SVGSVGElement>('[data-monogram]').forEach((svg) => {
+      svg.classList.add('is-pending'); // сховати до промальовки (без JS — готовий логотип)
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          whenReady(() => {
+            window.lcMonogram?.(svg);
+            svg.classList.remove('is-pending');
+          });
+        },
+        { threshold: 0.5 },
+      );
+      io.observe(svg);
+    });
+  }
+</script>
+
+<style>
+  .king__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    background: var(--color-bg-alt);
+  }
+  /* Без фону й рамки — лише монограма (висота секції = висота тексту / монограми). */
+  .king__card {
+    display: flex;
+  }
+  .king__card :global(.king__mark) {
+    width: auto;
+    height: 8.75rem; /* 140 */
+    color: var(--color-red);
+  }
+  .king__card :global(.king__mark path) {
+    fill: currentColor;
+  }
+  .king__card :global(.king__mark.is-pending path) {
+    fill-opacity: 0;
+  }
+  .king__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .king__body {
+    font-size: var(--fs-body-l);
+    color: var(--color-text-2);
+  }
+  @media (min-width: 1024px) {
+    .king__row {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-10); /* 40 */
+      padding: 0;
+    }
+    .king__card {
+      flex: 0 0 auto;
+      padding: var(--space-16); /* 64 */
+    }
+    .king__card :global(.king__mark) {
+      height: 16rem; /* 256 */
+    }
+    .king__text {
+      flex: 0 1 51.25rem; /* 820 */
+    }
+  }
+</style>

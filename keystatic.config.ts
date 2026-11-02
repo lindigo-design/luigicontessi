@@ -1,6 +1,7 @@
 // Адмінка текстів (лише локально: npm run dev → http://127.0.0.1:4321/keystatic).
 // Поля мають збігатися зі схемою в src/content.config.ts.
 import { collection, config, fields, singleton } from '@keystatic/core';
+import { block, inline, wrapper } from '@keystatic/core/content-components';
 
 const txt = (label: string, opts: { multiline?: boolean; max?: number } = {}) =>
   fields.text({
@@ -941,6 +942,136 @@ const yachtsPageSingleton = (lang: 'fr' | 'en' | 'it') =>
     schema: yachtsPageSchema,
   });
 
+// Теги Markdoc юридичних сторінок (ті самі — у markdoc.config.mjs): вміст з коду й settings.json.
+const legalComponents = {
+  'storage-table': block({ label: 'Таблиця cookies (з коду)', schema: {} }),
+  'with-consent': wrapper({ label: 'Лише коли є сервіси зі згодою', schema: {} }),
+  'without-consent': wrapper({ label: 'Лише коли сервісів зі згодою немає', schema: {} }),
+  'cookie-settings': block({ label: 'Кнопка «Paramètres cookies»', schema: {} }),
+  'contact-email': inline({ label: 'Пошта контакту (settings.json)', schema: {} }),
+  'legal-link': inline({
+    label: 'Посилання на юридичну сторінку',
+    schema: {
+      path: fields.select({
+        label: 'Сторінка',
+        options: [
+          { label: 'Mentions légales', value: 'mentions-legales' },
+          { label: 'Confidentialité', value: 'confidentialite' },
+          { label: 'Cookies', value: 'cookies' },
+          { label: 'CGV', value: 'cgv' },
+        ],
+        defaultValue: 'confidentialite',
+      }),
+    },
+  }),
+};
+
+// Юридичні сторінки однієї мови: src/content/legal/<мова>/<slug>.mdoc. Файл = адреса (cookies → /<мова>/cookies/).
+const legalCollection = (lang: 'fr' | 'en' | 'it') =>
+  collection({
+    label: `Юридичні · ${lang.toUpperCase()}`,
+    path: `src/content/legal/${lang}/*`,
+    slugField: 'title',
+    format: { contentField: 'content' },
+    schema: {
+      title: fields.slug({
+        name: { label: 'Заголовок H1' },
+        slug: { label: 'Адреса (cookies, mentions-legales, confidentialite, cgv)' },
+      }),
+      seoTitle: txt('SEO: заголовок для Google (≤ 70)', { max: 70 }),
+      seoDescription: txt('SEO: опис для Google (≤ 170)', { multiline: true, max: 170 }),
+      updated: fields.date({ label: 'Дата останньої редакції', validation: { isRequired: true } }),
+      content: fields.markdoc({
+        label: 'Текст (розділи «## 1. …»)',
+        extension: 'mdoc',
+        components: legalComponents,
+      }),
+    },
+  });
+
+const aboutPageSingleton = (lang: 'fr' | 'en' | 'it') =>
+  singleton({
+    label: `À propos · ${lang.toUpperCase()}`,
+    path: `src/content/pages/${lang}/a-propos`,
+    format: { data: 'json' },
+    schema: {
+      seoTitle: txt('SEO: заголовок для Google (≤ 70)', { max: 70 }),
+      seoDescription: txt('SEO: опис для Google (≤ 170)', { multiline: true, max: 170 }),
+      intro: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок H1'),
+          lead: txt('Перший абзац (великий)', { multiline: true }),
+          body: txt('Другий абзац', { multiline: true }),
+          imageAlt: txt('Опис портрета для незрячих'),
+          stats: list(
+            fields.text({ label: 'id цифри з «Сайт → Цифри» (followers, collaborations…)' }),
+            'Цифри',
+            (p) => p.value,
+          ),
+        },
+        { label: '01 · Intro' },
+      ),
+      parcours: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок'),
+          items: list(
+            fields.object({
+              year: fields.text({ label: 'Рік (лише справжній; порожньо — пункт схований)' }),
+              title: txt('Назва'),
+              text: fields.text({ label: 'Що сталося (1–2 речення)', multiline: true }),
+            }),
+            'Дати',
+            (p) => `${p.fields.year.value || '[рік]'} · ${p.fields.title.value}`,
+          ),
+        },
+        { label: '02 · Parcours' },
+      ),
+      king: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок'),
+          text: fields.text({
+            label:
+              'Історія символу — лише слова Luigi (абзаци через порожній рядок; порожньо — секція схована)',
+            multiline: true,
+          }),
+        },
+        { label: '03 · Le roi de cœur' },
+      ),
+      rules: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок'),
+          items: list(
+            fields.object({ title: txt('Назва'), text: txt('Текст', { multiline: true }) }),
+            'Правила (номер — автоматично)',
+            (p) => p.fields.title.value,
+          ),
+        },
+        { label: '04 · Mes règles' },
+      ),
+      quote: fields.object(
+        {
+          text: txt('Цитата (слова Luigi)', { multiline: true }),
+          imageAlt: fields.text({ label: 'Опис фото (порожньо — декоративне)' }),
+        },
+        { label: '05 · Citation' },
+      ),
+      together: fields.object(
+        {
+          title: txt('Заголовок'),
+          body: txt('Текст'),
+          partnerships: txt('Кнопка → Partenariats'),
+          instagram: txt('Посилання → Instagram'),
+        },
+        { label: '06 · Travailler ensemble' },
+      ),
+      jobTitle: txt('Для Google (JSON-LD): ким є Luigi'),
+    },
+  });
+
 const favoritesPageSingleton = (lang: 'fr' | 'en' | 'it') =>
   singleton({
     label: `Coups de cœur · ${lang.toUpperCase()}`,
@@ -1009,13 +1140,18 @@ export default config({
       Яхти: ['yachtsFr', 'yachtsEn', 'yachtsIt', 'yachts'],
       Privilèges: ['privilegesFr', 'privilegesEn', 'privilegesIt', 'codes'],
       Contact: ['contactFr', 'contactEn', 'contactIt'],
+      'À propos': ['aboutFr', 'aboutEn', 'aboutIt'],
       Journal: ['journalFr', 'journalEn', 'journalIt', 'articles'],
       'Coups de cœur': ['favoritesFr', 'favoritesEn', 'favoritesIt', 'favorites'],
       Partenariats: ['partenariatsFr', 'partenariatsEn', 'partenariatsIt'],
+      Юридичні: ['legalFr', 'legalEn', 'legalIt'],
       Сайт: ['settings'],
     },
   },
   collections: {
+    legalFr: legalCollection('fr'),
+    legalEn: legalCollection('en'),
+    legalIt: legalCollection('it'),
     codes: collection({
       label: 'Коди партнерів',
       path: 'src/content/codes/*',
@@ -1301,6 +1437,9 @@ export default config({
     yachtsFr: yachtsPageSingleton('fr'),
     yachtsEn: yachtsPageSingleton('en'),
     yachtsIt: yachtsPageSingleton('it'),
+    aboutFr: aboutPageSingleton('fr'),
+    aboutEn: aboutPageSingleton('en'),
+    aboutIt: aboutPageSingleton('it'),
     favoritesFr: favoritesPageSingleton('fr'),
     favoritesEn: favoritesPageSingleton('en'),
     favoritesIt: favoritesPageSingleton('it'),
@@ -1351,6 +1490,39 @@ export default config({
             }),
           },
           { label: 'Cookies: що потребує згоди (хоч одне — показує банер)' },
+        ),
+        consentServices: fields.array(
+          fields.object({
+            name: fields.text({ label: 'Назва cookie / сервісу' }),
+            category: fields.select({
+              label: 'Категорія',
+              options: [
+                { label: 'Mesure d’audience', value: 'analytics' },
+                { label: 'Liens partenaires', value: 'affiliates' },
+              ],
+              defaultValue: 'analytics',
+            }),
+            purpose: fields.object(
+              {
+                fr: fields.text({ label: 'FR' }),
+                en: fields.text({ label: 'EN' }),
+                it: fields.text({ label: 'IT' }),
+              },
+              { label: 'Навіщо' },
+            ),
+            duration: fields.object(
+              {
+                fr: fields.text({ label: 'FR' }),
+                en: fields.text({ label: 'EN' }),
+                it: fields.text({ label: 'IT' }),
+              },
+              { label: 'Строк' },
+            ),
+          }),
+          {
+            label: 'Cookies: сервіси зі згодою (для таблиці на сторінці Cookies; лише справжні)',
+            itemLabel: (p) => p.fields.name.value || 'Сервіс',
+          },
         ),
         forms: fields.object(
           {

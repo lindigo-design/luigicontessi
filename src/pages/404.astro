@@ -26,6 +26,6 @@ const copy = Object.fromEntries(
 ) as Record<Locale, ErrorCopy>;
 ---
 
-<BaseLayout lang={lang} title={copy.fr.title} description={copy.fr.body} noindex>
+<BaseLayout lang={lang} title={copy.fr.title} description={copy.fr.body} noindex loader={false}>
   <ErrorHero code="404" copy={copy} />
 </BaseLayout>

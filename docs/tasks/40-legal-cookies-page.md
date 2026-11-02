@@ -11,6 +11,7 @@ Figma: сторінка **Légal** — шаблон «Mentions légales (modèle
 ## A · Шаблон `src/layouts/LegalLayout.astro`
 
 Один шаблон для всіх юридичних сторінок (Mentions légales, Confidentialité, Cookies, CGV — інші потім).
+
 - Desktop: рядок, проміжок 96, padding 96 / 80 / 120.
   - ліворуч **навігація** 260 px, `position: sticky; top: calc(var(--header-h) + 32px)`: eyebrow «Informations légales» → посилання (Body S, padding 10 / 0 / 10 / 14,
     лінія зліва 2 px: поточна сторінка — `--color-red`, інші — `--color-border`; поточна ще й `aria-current="page"`). Пункти — з `legalNav` (CGV лише коли `shop`), лише ті, що `isBuilt`.
@@ -32,11 +33,11 @@ Uniquement ce qui est nécessaire pour que le site fonctionne. Aucun cookie publ
 
 Таблиця — **генерується з коду**, а не пишеться вручну (щоб не розходилась із сайтом). Список у `src/content/helpers.ts → storageInventory(settings)`:
 
-| Nom | À quoi ça sert | Durée | Type |
-| --- | --- | --- | --- |
-| `lc-consent` | Retenir votre choix sur les cookies | 6 mois | Nécessaire |
-| `lc-cart` | Garder votre panier *(seulement si la boutique est ouverte)* | jusqu’à la commande ou suppression | Nécessaire |
-| `lc-cart-code` | Garder le code promo saisi dans le panier *(boutique)* | idem | Nécessaire |
+| Nom            | À quoi ça sert                                               | Durée                              | Type       |
+| -------------- | ------------------------------------------------------------ | ---------------------------------- | ---------- |
+| `lc-consent`   | Retenir votre choix sur les cookies                          | 6 mois                             | Nécessaire |
+| `lc-cart`      | Garder votre panier _(seulement si la boutique est ouverte)_ | jusqu’à la commande ou suppression | Nécessaire |
+| `lc-cart-code` | Garder le code promo saisi dans le panier _(boutique)_       | idem                               | Nécessaire |
 
 - Рядки `lc-cart*` — лише коли `features.shop: true`.
 - Коли в `settings.consent` увімкнено `analytics` або `affiliates` — у таблиці зʼявляються рядки цих сервісів (назва, мета, строк, «Avec votre accord»), дані — у `settings.json → consentServices[]` (поки порожньо).

@@ -161,6 +161,12 @@ export async function getFavoritesPage(lang: Locale) {
   return entry.data;
 }
 
+export async function getAboutPage(lang: Locale) {
+  const entry = await getEntry('aboutPage', `${lang}/a-propos`);
+  if (!entry) throw new Error(`Немає текстів: src/content/pages/${lang}/a-propos.json`);
+  return entry.data;
+}
+
 export async function getJournalPage(lang: Locale) {
   const entry = await getEntry('journalPage', `${lang}/journal`);
   if (!entry) throw new Error(`Немає текстів: src/content/pages/${lang}/journal.json`);
@@ -339,11 +345,72 @@ export function getCodeImage(file: string): ImageMetadata {
   return img.default;
 }
 
-/** Категорії cookies, яким потрібна згода (settings.json → consent). Порожньо — без банера. */
+/** Категорії cookies, яким потрібна згода (settings.json → consent). Порожньо — без банера (живий сайт). */
 export function consentCategories(settings: {
   consent: Record<'analytics' | 'affiliates', boolean>;
 }) {
-  return (['analytics', 'affiliates'] as const).filter((c) => settings.consent[c]);
+  const all: ('analytics' | 'affiliates')[] = ['analytics', 'affiliates'];
+  const on = all.filter((c) => settings.consent[c]);
+  // Демо для Luigi: у перегляді (dev / тестова збірка) без підключених сервісів — обидві категорії,
+  // щоб було видно банер і «Paramètres cookies». Живий сайт — лише справжні (тоді й банер, як вимагає CNIL).
+  if (!on.length && isPreview()) return all;
+  return on;
+}
+
+/**
+ * Що сайт зберігає в браузері (cookies і stockage local) — для таблиці на сторінці Cookies.
+ * Додали новий ключ у скриптах (localStorage / cookie) — додай рядок тут.
+ */
+export function storageInventory(
+  settings: {
+    features: { shop: boolean };
+    consent: Record<'analytics' | 'affiliates', boolean>;
+    consentServices: {
+      name: string;
+      category: 'analytics' | 'affiliates';
+      purpose: Record<Locale, string>;
+      duration: Record<Locale, string>;
+    }[];
+  },
+  lang: Locale,
+) {
+  const necessary = t('storage.type.necessary', lang);
+  const rows = [
+    // src/scripts/consent.ts
+    {
+      name: 'lc-consent',
+      purpose: t('storage.consent', lang),
+      duration: t('storage.sixMonths', lang),
+      type: necessary,
+    },
+  ];
+  if (settings.features.shop) {
+    // src/scripts/cart.ts, cart-page.ts
+    rows.push(
+      {
+        name: 'lc-cart',
+        purpose: t('storage.cart', lang),
+        duration: t('storage.untilOrder', lang),
+        type: necessary,
+      },
+      {
+        name: 'lc-cart-code',
+        purpose: t('storage.cartCode', lang),
+        duration: t('storage.untilOrder', lang),
+        type: necessary,
+      },
+    );
+  }
+  for (const s of settings.consentServices) {
+    if (!settings.consent[s.category]) continue;
+    rows.push({
+      name: s.name,
+      purpose: s.purpose[lang],
+      duration: s.duration[lang],
+      type: t('storage.type.consent', lang),
+    });
+  }
+  return rows;
 }
 
 /**

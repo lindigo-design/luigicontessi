@@ -1,0 +1,75 @@
+---
+// Сторінка «À propos»: /<мова>/a-propos/. Intro → Parcours → Le roi de cœur → Mes règles → Citation →
+// Travailler ensemble (по кроках завдання 42). Тексти — src/content/pages/<мова>/a-propos.json.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Intro from '../../components/sections/about/Intro.astro';
+import Parcours from '../../components/sections/about/Parcours.astro';
+import KingOfHearts from '../../components/sections/about/KingOfHearts.astro';
+import Rules from '../../components/sections/about/Rules.astro';
+import Quote from '../../components/sections/about/Quote.astro';
+import Together from '../../components/sections/about/Together.astro';
+import { getImage } from 'astro:assets';
+import portrait from '../../assets/img/about/portrait.jpg';
+import { getAboutPage, getSettings, getStats, isPreview, warnMissing } from '../../content/helpers';
+import { locales, localizePath, t, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getAboutPage(lang);
+const settings = await getSettings();
+const preview = isPreview();
+// «[…]» у тексті — заглушка з Figma (на живому сайті не показуємо).
+const placeholder = /\[[^\]]*\]/;
+
+// Parcours: у перегляді — усі пункти, порожні рік / опис — «[Année]» / «[Ce qui s’est passé]»;
+// на живому — лише пункти зі справжнім роком і без заглушок; жодного — секції немає.
+const timeline = preview
+  ? page.parcours.items.map((i) => ({
+      year: i.year || t('about.yearPh', lang),
+      title: i.title,
+      text: i.text || t('about.textPh', lang),
+    }))
+  : page.parcours.items.filter((i) => i.year.trim() && !placeholder.test(`${i.title} ${i.text}`));
+if (timeline.length < page.parcours.items.length) {
+  warnMissing(
+    'À propos',
+    `parcours: роки / описи (${page.parcours.items.length - timeline.length} без даних)`,
+  );
+}
+
+// Le roi de cœur: текст лише від Luigi. Немає — у перегляді заглушка, на живому сайті секції немає.
+const kingText = page.king.text.trim() || (preview ? t('about.kingPh', lang) : '');
+if (!page.king.text.trim()) warnMissing('À propos', 'le roi de cœur: текст Luigi');
+
+// JSON-LD Person: хто такий Luigi (портрет, соцмережі з settings.json).
+const site = Astro.site ?? new URL('https://luigicontessi.com');
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: settings.name,
+  jobTitle: page.jobTitle,
+  url: new URL(Astro.url.pathname, site).href,
+  image: new URL((await getImage({ src: portrait, width: 1200 })).src, site).href,
+  sameAs: settings.socials.filter((s) => s.url).map((s) => s.url),
+});
+---
+
+<BaseLayout lang={lang} title={page.seoTitle} description={page.seoDescription} current="a-propos">
+  <script type="application/ld+json" set:html={jsonLd} />
+  <Intro data={page.intro} stats={await getStats(page.intro.stats, lang)} />
+  {timeline.length > 0 && (
+    <Parcours data={page.parcours} items={timeline} today={t('about.today', lang)} />
+  )}
+  {kingText && <KingOfHearts data={{ ...page.king, text: kingText }} />}
+  <Rules data={page.rules} />
+  <Quote data={page.quote} author={settings.name} />
+  <Together
+    lang={lang}
+    data={page.together}
+    partnershipsHref={localizePath('partenariats', lang)}
+    instagramUrl={settings.instagramUrl}
+  />
+</BaseLayout>

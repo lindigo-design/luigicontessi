@@ -1,0 +1,111 @@
+---
+// Figma: À propos → 01 Intro (desktop 50:380, mobile 50:523). Ліворуч портрет 4:5 (росте з екраном,
+// ≈ 44 % контейнера), праворуч по центру висоти: eyebrow → H1 → Body L → Body M → цифри (settings.json → stats,
+// ті самі, що на головній; count-up). Mobile: фото зверху, цифри — 3 в ряд.
+import { Image } from 'astro:assets';
+import StatValue from '../../ui/StatValue.astro';
+import portrait from '../../../assets/img/about/portrait.jpg';
+import type { AboutPageData } from '../../../content.config';
+
+interface Props {
+  data: AboutPageData['intro'];
+  /** Цифри з settings.json → stats (getStats). */
+  stats: { value: string; label: string; count?: number; decimals?: number }[];
+}
+const { data, stats } = Astro.props;
+---
+
+<section class="aintro container" aria-labelledby="aintro-title">
+  <div class="aintro__img media">
+    <Image
+      src={portrait}
+      alt={data.imageAlt}
+      widths={[480, 800, 1200, 1600]}
+      sizes="(min-width: 1024px) 44vw, 100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  <div class="aintro__text">
+    <p class="eyebrow">{data.eyebrow}</p>
+    <h1 id="aintro-title">{data.title}</h1>
+    <p class="aintro__lead">{data.lead}</p>
+    <p class="text-2">{data.body}</p>
+    {stats.length > 0 && (
+      <dl class="aintro__stats">
+        {stats.map((s) => (
+          <div class="astat">
+            <dt class="text-s text-2">{s.label}</dt>
+            <StatValue class="astat__value" value={s.value} count={s.count} decimals={s.decimals} />
+          </div>
+        ))}
+      </dl>
+    )}
+  </div>
+</section>
+
+<style>
+  .aintro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-14);
+  }
+  .aintro__img {
+    aspect-ratio: 4 / 5;
+  }
+  .aintro__img :global(img) {
+    object-position: 50% 30%;
+  }
+  .aintro__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .aintro__lead {
+    font-size: var(--fs-body-l);
+  }
+  .aintro__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .astat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-1);
+  }
+  .astat :global(.astat__value) {
+    font-family: var(--font-display);
+    font-size: var(--fs-stat);
+    line-height: 1.125;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  @media (min-width: 1024px) {
+    .aintro {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-24);
+      padding-top: var(--space-20);
+      padding-bottom: 7.5rem; /* 120 */
+    }
+    /* Портрет росте з екраном (≈ 44 % контейнера: 1440 → 560), як About на головній. */
+    .aintro__img {
+      flex: 0 0 44%;
+    }
+    .aintro__text {
+      flex: 1;
+      min-width: 0;
+      max-width: 39rem; /* 624 */
+      gap: var(--space-7);
+    }
+    .aintro__stats {
+      display: flex;
+      gap: var(--space-14);
+      margin-top: 0;
+    }
+  }
+</style>

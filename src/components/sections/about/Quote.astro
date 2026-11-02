@@ -1,0 +1,103 @@
+---
+// Figma: À propos → 05 Citation. Фото citation.jpg на всю ширину (висота 572 при 1440, росте з шириною, не вища
+// за вікно — правило CLAUDE.md), затемнення градієнтом згори (у bg/alt — «Mes règles») і знизу (у bg), без скла;
+// по центру картка 880 (bg, радіус 4): цитата (Quote 36 → 24) → «— Luigi Contessi». Mobile: картка 358, padding 32.
+import { Image } from 'astro:assets';
+import photo from '../../../assets/img/about/citation.jpg';
+import type { AboutPageData } from '../../../content.config';
+
+interface Props {
+  data: AboutPageData['quote'];
+  /** Підпис — settings.json → name. */
+  author: string;
+}
+const { data, author } = Astro.props;
+---
+
+<section class="aquote">
+  <Image
+    class="aquote__img"
+    src={photo}
+    alt={data.imageAlt}
+    widths={[768, 1280, 1920, 2560]}
+    sizes="100vw"
+    loading="lazy"
+  />
+  <div class="container aquote__inner">
+    <figure class="aquote__card">
+      <blockquote class="aquote__text">
+        <p>« {data.text} »</p>
+      </blockquote>
+      <figcaption class="eyebrow eyebrow--muted">— {author}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .aquote {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: 30rem; /* 480 */
+    padding-block: var(--space-16);
+    isolation: isolate;
+    background: var(--color-image);
+  }
+  .aquote :global(.aquote__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 58% 50%; /* mobile: яхта в кадрі */
+    z-index: -2;
+  }
+  /* Затемнення лише градієнтом знизу (у bg «Travailler ensemble»); зверху — чіткий край фото, без градієнта. */
+  .aquote::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      to top,
+      rgb(var(--shade) / 1) 0%,
+      rgb(var(--shade) / 0.6) 12%,
+      rgb(var(--shade) / 0) 35%
+    );
+  }
+  .aquote__inner {
+    display: flex;
+    justify-content: center;
+  }
+  .aquote__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    width: 100%;
+    max-width: 55rem; /* 880 */
+    margin: 0;
+    padding: var(--space-8);
+    border-radius: var(--radius-card);
+    background: var(--color-bg);
+    text-align: center;
+  }
+  .aquote__text {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--fs-quote);
+    line-height: 1.25;
+  }
+  @media (min-width: 1024px) {
+    /* 572 при 1440 → росте з шириною (39,7vw), не вище за вікно. */
+    .aquote {
+      min-height: min(100svh, max(35.75rem, 39.7vw));
+    }
+    .aquote :global(.aquote__img) {
+      object-position: 50% 50%;
+    }
+    .aquote__card {
+      padding: var(--space-16);
+    }
+  }
+</style>

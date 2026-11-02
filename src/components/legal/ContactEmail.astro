@@ -1,0 +1,8 @@
+---
+// Markdoc {% contact-email /%}: пошта з settings.json → emails.contact. Порожньо — «[e-mail]» + попередження збірки.
+import { getEmail, getSettings } from '../../content/helpers';
+
+const email = getEmail(await getSettings(), 'contact');
+---
+
+{email ? <a href={`mailto:${email}`}>{email}</a> : <span>[e-mail]</span>}

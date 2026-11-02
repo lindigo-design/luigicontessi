@@ -6,6 +6,25 @@ import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 import keystatic from '@keystatic/astro';
 import { locales, defaultLocale } from './src/i18n/locales.js';
+import { readFile, writeFile } from 'node:fs/promises';
+import { minify } from 'vite';
+
+// Loader K♥ (public/scripts/loader.js) — звичайний async-скрипт поза бандлом Vite; після збірки
+// стискаємо його (< 3 КБ), а в репозиторії лишається читабельний код із коментарями.
+const minifyLoader = {
+  name: 'lc-minify-loader',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      const file = new URL('scripts/loader.js', dir);
+      const { code, errors } = await minify('loader.js', await readFile(file, 'utf8'), {
+        compress: true,
+        mangle: true,
+      });
+      if (errors.length) throw new Error(`loader.js: ${errors[0].message}`);
+      await writeFile(file, code);
+    },
+  },
+};
 
 const isDev = process.argv.includes('dev');
 // ⚙️ Адреса сайту: на хостингу передається змінною LC_SITE_URL.
@@ -32,6 +51,7 @@ export default defineConfig({
       },
     }),
     markdoc(),
+    minifyLoader,
     ...(isDev ? [react(), keystatic()] : []),
   ],
   image: {

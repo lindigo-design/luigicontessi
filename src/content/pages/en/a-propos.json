@@ -1,0 +1,72 @@
+{
+  "seoTitle": "About — Luigi Contessi",
+  "seoDescription": "Luigi Contessi: entrepreneur and content creator. Cars, watches, yachts, travel — what he tries himself.",
+  "intro": {
+    "eyebrow": "About",
+    "title": "Luigi Contessi",
+    "lead": "Entrepreneur, content creator, specialist in business jets and yachts. I share what I try myself: cars, watches, places.",
+    "body": "I have worked with more than 500 brands, in more than 30 countries: events in Monaco, private jet trips, fashion campaigns. My role is simple: tell a brand’s story truthfully, so people want to discover it.",
+    "imageAlt": "Portrait of Luigi Contessi",
+    "stats": ["followers", "collaborations", "countries"]
+  },
+  "parcours": {
+    "eyebrow": "Journey",
+    "title": "A few dates",
+    "items": [
+      {
+        "year": "2019",
+        "title": "The start",
+        "text": "One idea became a movement. From day one, a single rule: authenticity."
+      },
+      {
+        "year": "2021",
+        "title": "Growth",
+        "text": "Partnerships with demanding brands. Every collaboration pushed the work further."
+      },
+      {
+        "year": "2023",
+        "title": "The collection",
+        "text": "Contessi Boutique opens. A personal vision made tangible: to wear, to live."
+      },
+      {
+        "year": "2024",
+        "title": "Recognition",
+        "text": "Awards and distinctions. But the real win: reaching those who understand elegance."
+      }
+    ]
+  },
+  "king": {
+    "eyebrow": "The king of hearts",
+    "title": "The symbol I wear",
+    "text": ""
+  },
+  "rules": {
+    "eyebrow": "My rules",
+    "title": "What you can expect from me",
+    "items": [
+      {
+        "title": "I test before I talk",
+        "text": "I recommend nothing I haven’t used."
+      },
+      {
+        "title": "I also say what’s wrong",
+        "text": "A review with no flaws is not a review."
+      },
+      {
+        "title": "I flag every partnership",
+        "text": "When a brand pays me, it says so."
+      }
+    ]
+  },
+  "quote": {
+    "text": "Every piece of content should move, inspire, leave a mark.",
+    "imageAlt": ""
+  },
+  "together": {
+    "title": "Are you a brand?",
+    "body": "Let’s see what we can do together.",
+    "partnerships": "Partnerships",
+    "instagram": "Follow me on Instagram"
+  },
+  "jobTitle": "Content creator"
+}

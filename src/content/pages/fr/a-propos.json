@@ -1,0 +1,72 @@
+{
+  "seoTitle": "À propos — Luigi Contessi",
+  "seoDescription": "Luigi Contessi : entrepreneur et créateur de contenu. Voitures, montres, yachts, voyages — ce qu’il essaie lui-même.",
+  "intro": {
+    "eyebrow": "À propos",
+    "title": "Luigi Contessi",
+    "lead": "Entrepreneur, créateur de contenu, spécialiste des jets d’affaires et des yachts. Je partage ce que j’essaie moi-même : des voitures, des montres, des lieux.",
+    "body": "J’ai travaillé avec plus de 500 marques, dans plus de 30 pays : événements à Monaco, voyages en jet privé, campagnes de mode. Mon rôle est simple : raconter une marque de façon vraie, pour qu’on ait envie de la découvrir.",
+    "imageAlt": "Portrait de Luigi Contessi",
+    "stats": ["followers", "collaborations", "countries"]
+  },
+  "parcours": {
+    "eyebrow": "Parcours",
+    "title": "Quelques dates",
+    "items": [
+      {
+        "year": "2019",
+        "title": "Les débuts",
+        "text": "Une seule idée est devenue un mouvement. Dès le départ, une seule règle : l’authenticité."
+      },
+      {
+        "year": "2021",
+        "title": "L’essor",
+        "text": "Des partenariats avec des marques exigeantes. Chaque collaboration a fait progresser le travail."
+      },
+      {
+        "year": "2023",
+        "title": "La collection",
+        "text": "Ouverture de Contessi Boutique. Une vision personnelle devient concrète : à porter, à vivre."
+      },
+      {
+        "year": "2024",
+        "title": "La reconnaissance",
+        "text": "Des prix et des distinctions. Mais la vraie victoire : toucher ceux qui comprennent l’élégance."
+      }
+    ]
+  },
+  "king": {
+    "eyebrow": "Le roi de cœur",
+    "title": "Le symbole que je porte",
+    "text": ""
+  },
+  "rules": {
+    "eyebrow": "Mes règles",
+    "title": "Ce que vous pouvez attendre de moi",
+    "items": [
+      {
+        "title": "Je teste avant de parler",
+        "text": "Je ne recommande rien que je n’ai pas utilisé."
+      },
+      {
+        "title": "Je dis aussi ce qui ne va pas",
+        "text": "Un avis sans défaut n’est pas un avis."
+      },
+      {
+        "title": "Je signale chaque partenariat",
+        "text": "Quand une marque me paie, c’est écrit."
+      }
+    ]
+  },
+  "quote": {
+    "text": "Chaque contenu doit émouvoir, inspirer, laisser une trace.",
+    "imageAlt": ""
+  },
+  "together": {
+    "title": "Vous êtes une marque ?",
+    "body": "Voyons ce qu’on peut faire ensemble.",
+    "partnerships": "Partenariats",
+    "instagram": "Me suivre sur Instagram"
+  },
+  "jobTitle": "Créateur de contenu"
+}

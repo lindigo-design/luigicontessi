@@ -1,0 +1,42 @@
+---
+// Юридичні сторінки: /<мова>/<slug>/ з src/content/legal/<мова>/<slug>.mdoc (шаблон LegalLayout).
+// Поки готова лише Cookies; нову сторінку (mentions-legales…) — додати файл і path у builtPages (nav.ts).
+// У перегляді (isPreview) — примітка «Modèle de mise en page…» (тексти має перевірити юрист).
+import { getCollection, render } from 'astro:content';
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { isPreview } from '../../content/helpers';
+import { t, type Locale } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  return (await getCollection('legal')).map((entry) => {
+    const [lang, legal] = entry.id.split('/');
+    return { params: { lang, legal }, props: { entry } };
+  });
+}
+
+const { entry } = Astro.props;
+const lang = Astro.params.lang as Locale;
+const { Content } = await render(entry);
+const { title, seoTitle, seoDescription, updated } = entry.data;
+---
+
+<LegalLayout
+  lang={lang}
+  current={Astro.params.legal}
+  title={title}
+  seoTitle={seoTitle}
+  seoDescription={seoDescription}
+  updated={updated.toISOString().slice(0, 10)}
+>
+  <Content />
+  {isPreview() && <p class="legal-note text-s text-2">{t('legal.note', lang)}</p>}
+</LegalLayout>
+
+<style>
+  .legal-note {
+    margin-top: var(--space-10);
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+// Markdoc {% with-consent %}…{% /with-consent %} і {% without-consent %}…{% /without-consent %}:
+// текст лише коли в settings.json → consent увімкнено хоч одну категорію (або жодної).
+import { consentCategories, getSettings } from '../../content/helpers';
+
+interface Props {
+  /** true — показати, коли є категорії зі згодою; false — коли їх немає. */
+  when: boolean;
+}
+const { when } = Astro.props;
+const has = consentCategories(await getSettings()).length > 0;
+---
+
+{has === when && <slot />}

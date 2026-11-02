@@ -1,0 +1,68 @@
+---
+// Figma: À propos → 04 Mes règles. Фон bg/alt: eyebrow → H2 → 3 картки в ряд (mobile — стовпчиком), однакової висоти:
+// номер «01» (червоний) → H3 → текст. Hover — як текстові картки (світло за курсором, hover-card); не посилання.
+import type { AboutPageData } from '../../../content.config';
+
+interface Props {
+  data: AboutPageData['rules'];
+}
+const { data } = Astro.props;
+---
+
+<section class="rules section section--alt" aria-labelledby="rules-title">
+  <div class="container rules__inner">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="rules-title">{data.title}</h2>
+    </div>
+    <ol class="rules__list" role="list">
+      {data.items.map((r, i) => (
+        <li class="rule hover-card">
+          <p class="rule__num">{String(i + 1).padStart(2, '0')}</p>
+          <h3>{r.title}</h3>
+          <p class="text-s text-2">{r.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .rules__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .rules__list {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .rule {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .rule__num {
+    font-size: var(--fs-title);
+    font-weight: 500;
+    line-height: 1.444;
+    color: var(--color-red-text);
+  }
+  @media (min-width: 768px) {
+    .rules__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+    .rule {
+      padding: var(--space-8);
+    }
+  }
+  @media (min-width: 1024px) {
+    .rules__inner {
+      gap: var(--space-14);
+    }
+  }
+</style>
