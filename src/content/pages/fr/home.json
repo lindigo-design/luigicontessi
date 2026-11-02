@@ -110,7 +110,8 @@
         "action": "Voir",
         "image": {
           "alt": "Casque Shokz OpenRun"
-        }
+        },
+        "favorite": "shokz-openrun"
       },
       {
         "tag": "Collection",
@@ -159,37 +160,43 @@
         "name": "Automobiles",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "automobiles"
       },
       {
         "name": "Horlogerie",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "horlogerie"
       },
       {
         "name": "Voyages & Hôtels",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "voyages"
       },
       {
         "name": "Yachts",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "yachts"
       },
       {
         "name": "Jets privés",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "jets"
       },
       {
         "name": "Art de vivre",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "art-de-vivre"
       }
     ]
   },

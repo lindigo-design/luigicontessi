@@ -1,6 +1,7 @@
 ---
 // Figma: Home → 05 Univers (desktop 3:135, mobile 6:270), компонент Univers/Row.
 // Перший рядок білий, інші сірі; під час прокрутки білим стає рядок у центрі екрана.
+// Рядок веде на Journal з фільтром рубрики (journal/?categorie=yachts), якщо в home.json задано category.
 import { Image } from 'astro:assets';
 import u1 from '../../../assets/img/home/univers-1.jpg';
 import u2 from '../../../assets/img/home/univers-2.jpg';
@@ -12,6 +13,7 @@ import type { HomeData } from '../../../content.config';
 
 interface Props {
   data: HomeData['universes'];
+  /** Сторінка Journal. */
   href: string;
 }
 const { data, href } = Astro.props;
@@ -37,7 +39,11 @@ const [l1, l2] = data.title.split('\n');
     <ul class="univers__list" role="list" data-highlight>
       {data.items.map((item, i) => (
         <li>
-          <a class:list={['urow', 'zoom-card', { 'is-active': i === 0 }]} href={href} data-row>
+          <a
+            class:list={['urow', 'zoom-card', { 'is-active': i === 0 }]}
+            href={item.category ? `${href}?categorie=${item.category}` : href}
+            data-row
+          >
             <span class="urow__name">{item.name}</span>
             <span
               class:list={[

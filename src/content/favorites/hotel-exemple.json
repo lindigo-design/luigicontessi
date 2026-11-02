@@ -1,0 +1,22 @@
+{
+  "slug": "hotel-exemple",
+  "brand": "[Hôtel]",
+  "name": {
+    "fr": "[Hôtel]",
+    "en": "[Hotel]",
+    "it": "[Hotel]"
+  },
+  "category": "voyages",
+  "image": "../../assets/img/favorites/hotel.jpg",
+  "imageAlt": {
+    "fr": "Photo d’illustration — hôtel",
+    "en": "Illustration photo — hotel",
+    "it": "Foto illustrativa — hotel"
+  },
+  "imagePosition": "86% 50%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-09-03",
+  "demo": true
+}

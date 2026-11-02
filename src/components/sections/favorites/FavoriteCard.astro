@@ -1,0 +1,91 @@
+---
+// Figma: Card / Nouveauté, Size=Small (як «Coup de cœur» у Nouveautés на головній). Фото (кадр imagePosition
+// через CSS-змінну) → тег «Tech · Lien affilié» → назва. Без опису. Уся картка — одне посилання (назва,
+// розтягнута через ::after). Сторінки товару ще немає (favoriteHref → null) — заглушка «Page bientôt disponible».
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { favoriteHref, favoriteTag } from '../../../content/helpers';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  item: CollectionEntry<'favorites'>['data'];
+}
+const { lang, item: f } = Astro.props;
+const href = favoriteHref(f.slug, lang);
+const soon = t('fav.soon', lang);
+---
+
+<li class="fcard zoom-card" data-fav={f.category} data-placeholder-scope>
+  <div class="fcard__img media" data-position={f.imagePosition || undefined}>
+    <Image
+      src={f.image}
+      alt={f.imageAlt[lang]}
+      widths={[320, 480, 640]}
+      sizes="(min-width: 1024px) 21vw, (min-width: 768px) 30vw, 45vw"
+      loading="lazy"
+    />
+  </div>
+  <p class="eyebrow eyebrow--muted">{favoriteTag(f, lang)}</p>
+  <h2 class="fcard__name title">
+    {href ? (
+      <a class="fcard__link" href={href}>
+        {f.name[lang]}
+      </a>
+    ) : (
+      <a class="fcard__link" href="#" title={soon} aria-disabled="true" data-placeholder>
+        {f.name[lang]}
+      </a>
+    )}
+  </h2>
+  {!href && (
+    <p class="text-s text-2" role="status" data-placeholder-note hidden>
+      {soon}
+    </p>
+  )}
+</li>
+
+<style>
+  .fcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .fcard[hidden] {
+    display: none;
+  }
+  .fcard__img {
+    aspect-ratio: 173 / 210;
+    margin-bottom: var(--space-1);
+  }
+  .fcard__img :global(img) {
+    object-position: var(--position, 50% 50%);
+  }
+  .fcard__name {
+    overflow-wrap: anywhere;
+  }
+  .fcard__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+  .fcard__link:focus-visible {
+    outline: none;
+  }
+  .fcard:has(.fcard__link:focus-visible) {
+    outline: 2px solid var(--color-red-text);
+    outline-offset: 4px;
+    border-radius: var(--radius-card);
+  }
+  @media (min-width: 768px) {
+    .fcard {
+      gap: var(--space-3);
+    }
+    .fcard__img {
+      aspect-ratio: 302 / 280;
+    }
+  }
+</style>

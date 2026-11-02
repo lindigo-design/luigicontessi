@@ -1,0 +1,27 @@
+{
+  "slug": "valise-48h-milan",
+  "category": "art-de-vivre",
+  "title": {
+    "fr": "Ma valise pour 48 h à Milan",
+    "en": "My suitcase for 48 hours in Milan",
+    "it": "La mia valigia per 48 ore a Milano"
+  },
+  "excerpt": {
+    "fr": "Huit pièces, zéro hésitation.",
+    "en": "Eight pieces, zero hesitation.",
+    "it": "Otto capi, zero esitazioni."
+  },
+  "readingTime": 3,
+  "date": "2026-09-12",
+  "partnership": false,
+  "featured": false,
+  "cover": "../../assets/img/journal/art-de-vivre.jpg",
+  "coverAlt": {
+    "fr": "Luigi Contessi à l’entrée d’un hôtel",
+    "en": "Luigi Contessi at a hotel entrance",
+    "it": "Luigi Contessi all’ingresso di un hotel"
+  },
+  "coverPosition": "50% 30%",
+  "demo": true,
+  "draft": false
+}

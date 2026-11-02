@@ -1,0 +1,103 @@
+---
+// Figma: Card / Article (32:378) — одна родина з картками «Presse» на головній.
+// Фон card, фото 4:3 (кадр coverPosition через CSS-змінну) → мета «Automobiles · 5 min · Partenariat» →
+// H3 (до 3 рядків) → коротко (до 2 рядків, займає вільне місце) → Link Accent «Lire l'article» внизу.
+// Уся картка — одне посилання: кнопка (.hover-card__link) розтягнута через ::after; hover — світло + зум фото.
+// Сторінки статті ще немає (articleHref → null) — заглушка «Article bientôt disponible».
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import { articleHref } from '../../../content/helpers';
+import { t, type Locale } from '../../../i18n/utils';
+import { articleMeta, type Article } from './articleMeta';
+
+interface Props {
+  lang: Locale;
+  article: Article;
+}
+const { lang, article: a } = Astro.props;
+const href = articleHref(a.slug, lang);
+const soon = t('journal.soon', lang);
+---
+
+<li class="acard hover-card zoom-card" data-article={a.category} data-placeholder-scope>
+  <div class="acard__img media" data-position={a.coverPosition || undefined}>
+    <Image
+      src={a.cover}
+      alt={a.coverAlt[lang]}
+      widths={[400, 800, 1200]}
+      sizes="(min-width: 1440px) 400px, (min-width: 1024px) 28vw, (min-width: 768px) 45vw, 100vw"
+      loading="lazy"
+    />
+  </div>
+  <p class="eyebrow eyebrow--muted">{articleMeta(a, lang)}</p>
+  <h3 class="acard__title">{a.title[lang]}</h3>
+  <p class="acard__excerpt text-s text-2">{a.excerpt[lang]}</p>
+  {href ? (
+    <Button href={href} variant="accent" class="hover-card__link">
+      {t('journal.read', lang)}
+      <span class="visually-hidden"> — {a.title[lang]}</span>
+    </Button>
+  ) : (
+    <Button
+      href="#"
+      variant="accent"
+      class="hover-card__link"
+      title={soon}
+      aria-disabled="true"
+      data-placeholder=""
+    >
+      {t('journal.read', lang)}
+      <span class="visually-hidden"> — {a.title[lang]}</span>
+    </Button>
+  )}
+  {!href && (
+    <p class="text-s text-2" role="status" data-placeholder-note hidden>
+      {soon}
+    </p>
+  )}
+</li>
+
+<style>
+  .acard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .acard[hidden] {
+    display: none;
+  }
+  .acard__img {
+    align-self: stretch;
+    aspect-ratio: 4 / 3;
+  }
+  .acard__img :global(img) {
+    object-position: var(--position, 50% 50%);
+  }
+  .acard__title,
+  .acard__excerpt {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .acard__title {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+  /* Excerpt займає вільне місце — «Lire l'article» у ряду на одній лінії. */
+  .acard__excerpt {
+    flex: 1;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  @media (min-width: 768px) {
+    .acard {
+      gap: var(--space-5);
+      padding: var(--space-7);
+    }
+  }
+</style>

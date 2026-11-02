@@ -1,0 +1,42 @@
+---
+// Сторінка «Coups de cœur»: /<мова>/coups-de-coeur/. Intro + панель фільтрів → сітка карток («Voir plus»).
+// Записи — src/content/favorites; демо видно лише в перегляді (isPreview).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Intro from '../../components/sections/favorites/Intro.astro';
+import Grid from '../../components/sections/favorites/Grid.astro';
+import { favoriteCategories } from '../../content.config';
+import { getFavorites, getFavoritesPage } from '../../content/helpers';
+import { locales, t, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getFavoritesPage(lang);
+const favorites = await getFavorites(); // від нових до старих
+const categories = favoriteCategories.filter((c) => favorites.some((f) => f.category === c));
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.seoTitle}
+  description={page.seoDescription}
+  current="coups-de-coeur"
+>
+  <div data-favorites>
+    <Intro lang={lang} data={page} categories={categories} />
+    <Grid
+      lang={lang}
+      items={favorites}
+      empty={page.empty}
+      more={page.more}
+      label={t('fav.list', lang)}
+    />
+  </div>
+</BaseLayout>
+
+<script>
+  import { initFavorites } from '../../scripts/favorites';
+  initFavorites();
+</script>

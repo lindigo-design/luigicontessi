@@ -10,6 +10,7 @@ import Resume from '../../../components/sections/yacht/Resume.astro';
 import Specs from '../../../components/sections/yacht/Specs.astro';
 import Interiors from '../../../components/sections/yacht/Interiors.astro';
 import DeckPlan from '../../../components/sections/yacht/DeckPlan.astro';
+import Lightbox from '../../../components/ui/Lightbox.astro';
 import YachtWord from '../../../components/sections/yacht/YachtWord.astro';
 import OtherYachts from '../../../components/sections/yacht/OtherYachts.astro';
 import { getImage } from 'astro:assets';
@@ -194,6 +195,7 @@ const jsonLd = yacht.demo
     )}
     <Resume
       lang={lang}
+      name={yacht.name}
       title={yacht.summaryTitle[lang]}
       port={yacht.port[lang]}
       price={price}
@@ -232,6 +234,7 @@ const jsonLd = yacht.demo
     />
     {others.length > 0 && <OtherYachts lang={lang} yachts={others} demoLabel={demoLabel} />}
   </div>
+  <Lightbox lang={lang} />
 </BaseLayout>
 
 <style>

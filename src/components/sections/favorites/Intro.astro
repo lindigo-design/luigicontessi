@@ -1,0 +1,98 @@
+---
+// Figma: Coups de cœur → 01 Intro + панель (desktop 54:379, mobile 54:560).
+// Eyebrow → H1 → текст (макс. 760) → плашка прозорості (лінія зліва --color-red; закон про інфлюенсерів —
+// видно завжди). Панель: ліворуч фільтри (лише категорії, де є записи; ?categorie=… —
+// src/scripts/favorites.ts), праворуч «Seulement les codes» → Privilèges. Mobile — стовпчиком.
+import FilterChips from '../../ui/FilterChips.astro';
+import PageLink from '../../ui/PageLink.astro';
+import type { FavoritesPageData } from '../../../content.config';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  data: FavoritesPageData;
+  categories: readonly string[];
+}
+const { lang, data, categories } = Astro.props;
+---
+
+<section class="fintro container" aria-labelledby="fintro-title">
+  <div class="fintro__text">
+    <p class="eyebrow">{data.intro.eyebrow}</p>
+    <h1 id="fintro-title">{data.intro.title}</h1>
+    <p class="fintro__body text-2">{data.intro.body}</p>
+    <p class="fintro__disclosure text-s text-2">{data.intro.disclosure}</p>
+  </div>
+  <div class="fpanel">
+    {categories.length > 1 && (
+      <FilterChips
+        class="fpanel__filter"
+        legend={t('fav.filter', lang)}
+        options={[
+          { value: 'all', label: t('fav.all', lang) },
+          ...categories.map((c) => ({
+            value: c,
+            label: t(`fav.cat.${c}` as Parameters<typeof t>[0], lang),
+          })),
+        ]}
+      />
+    )}
+    <PageLink lang={lang} label={data.codesLink} path="privileges" />
+  </div>
+</section>
+
+<style>
+  .fintro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+  .fintro__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .fintro__body {
+    max-width: 47.5rem; /* 760 */
+    font-size: var(--fs-body-l);
+  }
+  /* Прозорість: лінія 2 px --color-red зліва (закон Франції про інфлюенсерів, 2023). */
+  .fintro__disclosure {
+    max-width: 47.5rem;
+    padding-left: var(--space-3);
+    border-left: 2px solid var(--color-red);
+  }
+  .fpanel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  /* Фільтри: на mobile — на всю ширину панелі (стрічка прокручується), на desktop — займають вільне місце. */
+  .fpanel :global(.fpanel__filter) {
+    align-self: stretch;
+  }
+  @media (min-width: 1024px) {
+    .fintro {
+      gap: var(--space-12);
+      padding-top: var(--space-24);
+    }
+    .fintro__text {
+      gap: var(--space-5);
+    }
+    .fintro__disclosure {
+      margin-top: var(--space-1);
+    }
+    .fpanel {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-8);
+    }
+    .fpanel :global(.fpanel__filter) {
+      flex: 1;
+    }
+  }
+</style>

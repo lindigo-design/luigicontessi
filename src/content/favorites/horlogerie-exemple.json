@@ -1,0 +1,22 @@
+{
+  "slug": "horlogerie-exemple",
+  "brand": "[Marque]",
+  "name": {
+    "fr": "[Marque]",
+    "en": "[Brand]",
+    "it": "[Marchio]"
+  },
+  "category": "horlogerie",
+  "image": "../../assets/img/favorites/horlogerie.jpg",
+  "imageAlt": {
+    "fr": "Photo d’illustration — montre",
+    "en": "Illustration photo — watch",
+    "it": "Foto illustrativa — orologio"
+  },
+  "imagePosition": "50% 50%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-08-27",
+  "demo": true
+}

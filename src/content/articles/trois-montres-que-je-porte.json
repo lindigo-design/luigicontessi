@@ -1,0 +1,27 @@
+{
+  "slug": "trois-montres-que-je-porte",
+  "category": "horlogerie",
+  "title": {
+    "fr": "Trois montres que je porte vraiment",
+    "en": "Three watches I really wear",
+    "it": "Tre orologi che porto davvero"
+  },
+  "excerpt": {
+    "fr": "Pas les plus chères. Celles que je mets tous les jours.",
+    "en": "Not the most expensive. The ones I put on every day.",
+    "it": "Non i più cari. Quelli che metto ogni giorno."
+  },
+  "readingTime": 4,
+  "date": "2026-10-05",
+  "partnership": false,
+  "featured": false,
+  "cover": "../../assets/img/journal/horlogerie.jpg",
+  "coverAlt": {
+    "fr": "Une montre au poignet",
+    "en": "A watch on the wrist",
+    "it": "Un orologio al polso"
+  },
+  "coverPosition": "50% 50%",
+  "demo": true,
+  "draft": false
+}

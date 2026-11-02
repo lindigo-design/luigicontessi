@@ -1,0 +1,22 @@
+{
+  "slug": "mode-exemple",
+  "brand": "[Marque]",
+  "name": {
+    "fr": "[Marque]",
+    "en": "[Brand]",
+    "it": "[Marchio]"
+  },
+  "category": "mode",
+  "image": "../../assets/img/favorites/mode.jpg",
+  "imageAlt": {
+    "fr": "Photo d’illustration — mode",
+    "en": "Illustration photo — fashion",
+    "it": "Foto illustrativa — moda"
+  },
+  "imagePosition": "50% 19%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-09-10",
+  "demo": true
+}

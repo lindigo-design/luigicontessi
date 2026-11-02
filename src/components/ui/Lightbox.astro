@@ -1,0 +1,193 @@
+---
+// Перегляд фото на весь екран (одна галерея на сторінку). Відкривають кнопки LightboxTrigger
+// ([data-lb], у порядку на сторінці); логіка — src/scripts/lightbox.ts.
+// Зверху: лічильник «3 / 6» і хрестик; по центру — фото повністю (contain); знизу — підпис;
+// по боках — стрілки 88 × 88 (як у «À bord»), на mobile — лише свайп.
+import ArrowCircle from './ArrowCircle.astro';
+import CloseIcon from '../../assets/icons/close.svg';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+---
+
+<dialog class="lightbox" aria-label={t('lightbox.label', lang)} data-lightbox>
+  <div class="lightbox__bar">
+    <p class="eyebrow eyebrow--muted" data-lb-counter></p>
+    <button
+      class="lightbox__close"
+      type="button"
+      aria-label={t('lightbox.close', lang)}
+      data-lb-close
+    >
+      <CloseIcon />
+    </button>
+  </div>
+  <div class="lightbox__stage" data-lb-stage>
+    <img class="lightbox__img" alt="" decoding="async" data-lb-img />
+    <button
+      class="lightbox__arrow lightbox__arrow--prev"
+      type="button"
+      aria-label={t('ui.prev', lang)}
+      data-lb-prev
+    >
+      <ArrowCircle size="l" dir="prev" />
+    </button>
+    <button
+      class="lightbox__arrow lightbox__arrow--next"
+      type="button"
+      aria-label={t('ui.next', lang)}
+      data-lb-next
+    >
+      <ArrowCircle size="l" />
+    </button>
+  </div>
+  <p class="lightbox__caption">
+    <span data-lb-title></span>
+    <span class="text-s text-2" data-lb-sub></span>
+  </p>
+</dialog>
+
+<script>
+  import { initLightbox } from '../../scripts/lightbox';
+  initLightbox();
+</script>
+
+<style>
+  :global(html.lb-open) {
+    overflow: hidden;
+  }
+  .lightbox {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--color-overlay);
+    color: var(--color-text);
+  }
+  .lightbox::backdrop {
+    background: var(--color-overlay);
+  }
+  .lightbox[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  .lightbox__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--gutter);
+  }
+  .lightbox__close {
+    display: grid;
+    place-items: center;
+    width: 2.75rem; /* 44 */
+    height: 2.75rem;
+    margin-right: calc(var(--space-3) * -1);
+    color: var(--color-text);
+    border-radius: 50%;
+  }
+  .lightbox__close:focus-visible,
+  .lightbox__arrow:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+  .lightbox__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding-inline: var(--gutter);
+  }
+  .lightbox__img {
+    max-width: 100%;
+    max-height: calc(100svh - 10rem); /* 160: місце для лічильника і підпису */
+    object-fit: contain;
+    touch-action: pinch-zoom;
+    transition:
+      opacity 200ms var(--ease),
+      transform 200ms var(--ease);
+  }
+  .lightbox__img.is-fading {
+    opacity: 0;
+  }
+  .lightbox__caption {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 4rem;
+    padding: var(--space-3) var(--gutter) var(--space-5);
+    text-align: center;
+  }
+  .lightbox__caption span:empty {
+    display: none;
+  }
+  .lightbox__arrow {
+    display: none;
+  }
+  .lightbox[data-single] .lightbox__arrow,
+  .lightbox[data-single] [data-lb-counter] {
+    visibility: hidden;
+  }
+  @media (min-width: 1024px) {
+    .lightbox__stage {
+      padding-inline: calc(var(--gutter) + 6.5rem); /* місце для стрілок */
+    }
+    .lightbox__arrow {
+      position: absolute;
+      top: 50%;
+      display: block;
+      color: var(--color-text);
+      border-radius: 50%;
+      translate: 0 -50%;
+    }
+    .lightbox__arrow--prev {
+      left: var(--gutter);
+    }
+    .lightbox__arrow--next {
+      right: var(--gutter);
+    }
+    @media (hover: hover) {
+      .lightbox__arrow:hover :global(.arrow),
+      .lightbox__close:hover {
+        background: var(--color-text);
+        color: var(--color-bg);
+      }
+    }
+  }
+  /* Збільшення ×2 (desktop): точка — transform-origin зі скрипта. */
+  @media (hover: hover) and (pointer: fine) {
+    .lightbox__img {
+      cursor: zoom-in;
+    }
+    .lightbox__img.is-zoomed {
+      cursor: zoom-out;
+      transform: scale(2);
+      transition: opacity 200ms var(--ease);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .lightbox[open] {
+      animation: lb-in 200ms var(--ease);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox__img {
+      transition: none;
+    }
+  }
+  @keyframes lb-in {
+    from {
+      opacity: 0;
+      scale: 0.98;
+    }
+  }
+</style>

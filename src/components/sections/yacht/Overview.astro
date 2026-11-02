@@ -4,8 +4,10 @@
 // з плашкою «Vendu par {продавець}» і праворуч вступ + фото біля головного, притиснуті донизу.
 // Mobile: заголовок і вступ першими, фото — свайп-стрічка (головне — перше), крапки
 // (src/scripts/gallery.ts, як на Privilèges). Розмітка одна, на desktop стрічка стає сіткою.
+// Клік по фото — на весь екран (Lightbox, спільна галерея сторінки).
 import type { ImageMetadata } from 'astro';
 import YachtPhoto from './YachtPhoto.astro';
+import LightboxTrigger from '../../ui/LightboxTrigger.astro';
 import { t, type Locale } from '../../../i18n/utils';
 
 interface Props {
@@ -69,6 +71,7 @@ const total = slides.length;
                   <span class="eyebrow">{partner}</span>
                 </p>
               )}
+              <LightboxTrigger lang={lang} image={s.image} title={i === 0 ? name : s.label} />
             </YachtPhoto>
           </li>
         ))}
@@ -185,10 +188,26 @@ const total = slides.length;
       padding-top: var(--space-10);
       padding-bottom: var(--space-24);
     }
+    /* Заголовок і нижня сітка — на одних колонках (--cols), тож заголовок стоїть рівно над вступом
+       «Un yacht à moteur…», а «Le yacht» — над головним фото. */
+    .yover {
+      --cols: minmax(0, 600fr) repeat(2, minmax(0, 316fr));
+    }
+    .yover--g3 {
+      --cols: minmax(0, 600fr) repeat(3, minmax(0, 211fr));
+    }
+    .yover--g0,
+    .yover--g1 {
+      --cols: minmax(0, 600fr) minmax(0, 656fr);
+    }
     .yover__head {
       display: grid;
-      grid-template-columns: minmax(0, 560fr) minmax(0, 680fr);
-      gap: var(--space-10);
+      grid-template-columns: var(--cols);
+      column-gap: var(--space-6);
+      align-items: start;
+    }
+    .yover__headline {
+      grid-column: 2 / -1;
     }
     .yover__label {
       display: block;
@@ -199,16 +218,9 @@ const total = slides.length;
     }
     .yover__grid {
       display: grid;
-      grid-template-columns: minmax(0, 600fr) repeat(2, minmax(0, 316fr));
+      grid-template-columns: var(--cols);
       grid-template-rows: auto 1fr;
       gap: var(--space-6);
-    }
-    .yover--g3 .yover__grid {
-      grid-template-columns: minmax(0, 600fr) repeat(3, minmax(0, 211fr));
-    }
-    .yover--g0 .yover__grid,
-    .yover--g1 .yover__grid {
-      grid-template-columns: minmax(0, 600fr) minmax(0, 656fr);
     }
     .yover__track {
       display: contents;

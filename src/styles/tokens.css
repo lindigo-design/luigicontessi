@@ -21,6 +21,8 @@
   /* Затемнення фото (як у hero / yachts у Figma) */
   --shade: 14 14 14; /* rgb кольору bg/base */
   --shade-alt: 22 22 22; /* rgb кольору bg/alt (#161616) */
+  --color-overlay: rgb(14 14 14 / 0.96); /* фон лайтбокса (перегляд фото на весь екран) */
+  --color-overlay-soft: rgb(14 14 14 / 0.6); /* коло «+» на фото, яке можна збільшити */
 
   /* Шрифти */
   --font-display: 'Cal Sans', 'Helvetica Neue', Arial, sans-serif;

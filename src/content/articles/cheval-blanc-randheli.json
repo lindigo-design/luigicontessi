@@ -1,0 +1,27 @@
+{
+  "slug": "cheval-blanc-randheli",
+  "category": "voyages",
+  "title": {
+    "fr": "Le Cheval Blanc Randheli, sans filtre",
+    "en": "Cheval Blanc Randheli, unfiltered",
+    "it": "Il Cheval Blanc Randheli, senza filtri"
+  },
+  "excerpt": {
+    "fr": "Le service, les villas, et ce qui m’a déçu.",
+    "en": "The service, the villas, and what disappointed me.",
+    "it": "Il servizio, le ville, e cosa mi ha deluso."
+  },
+  "readingTime": 7,
+  "date": "2026-09-28",
+  "partnership": true,
+  "featured": false,
+  "cover": "../../assets/img/journal/voyages.jpg",
+  "coverAlt": {
+    "fr": "Chambre d’hôtel avec vue la nuit",
+    "en": "Hotel room with a night view",
+    "it": "Camera d’albergo con vista notturna"
+  },
+  "coverPosition": "50% 50%",
+  "demo": true,
+  "draft": false
+}

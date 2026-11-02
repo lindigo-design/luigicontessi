@@ -155,6 +155,89 @@ export function isPreview() {
   return import.meta.env.DEV || import.meta.env.PUBLIC_NOINDEX === 'true';
 }
 
+export async function getFavoritesPage(lang: Locale) {
+  const entry = await getEntry('favoritesPage', `${lang}/coups-de-coeur`);
+  if (!entry) throw new Error(`Немає текстів: src/content/pages/${lang}/coups-de-coeur.json`);
+  return entry.data;
+}
+
+export async function getJournalPage(lang: Locale) {
+  const entry = await getEntry('journalPage', `${lang}/journal`);
+  if (!entry) throw new Error(`Немає текстів: src/content/pages/${lang}/journal.json`);
+  return entry.data;
+}
+
+/**
+ * Статті Journal від нових до старих. Демо й чернетки — лише в перегляді (isPreview);
+ * на живому сайті їх немає. «À la une» (featured) — не більше однієї.
+ */
+export async function getArticles() {
+  const entries = await getCollection('articles');
+  for (const e of entries) {
+    if (e.data.slug !== e.id) {
+      throw new Error(`Стаття ${e.id}.json: slug «${e.data.slug}» має збігатися з назвою файлу`);
+    }
+  }
+  const featured = entries.filter((e) => e.data.featured).map((e) => e.id);
+  if (featured.length > 1) {
+    throw new Error(`«À la une» може бути лише одна стаття, а зараз: ${featured.join(', ')}`);
+  }
+  const preview = isPreview();
+  return entries
+    .map((e) => e.data)
+    .filter((a) => preview || (!a.demo && !a.draft))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/**
+ * Куди веде картка статті. Сторінки статті ще немає → null (заглушка «Article bientôt disponible»).
+ * Коли зʼявиться — повернути localizePath(`journal/${slug}`, lang) тут, в одному місці.
+ */
+export function articleHref(slug: string, lang: Locale): string | null {
+  void slug;
+  void lang;
+  return null;
+}
+
+/**
+ * Coups de cœur від нових до старих. Демо — лише в перегляді (isPreview); на живому сайті їх немає.
+ */
+export async function getFavorites() {
+  const entries = await getCollection('favorites');
+  for (const e of entries) {
+    if (e.data.slug !== e.id) {
+      throw new Error(
+        `Coup de cœur ${e.id}.json: slug «${e.data.slug}» має збігатися з назвою файлу`,
+      );
+    }
+  }
+  const preview = isPreview();
+  return entries
+    .map((e) => e.data)
+    .filter((f) => preview || !f.demo)
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/**
+ * Куди веде картка Coup de cœur. Сторінки товару ще немає → null (заглушка «Page bientôt disponible»).
+ * Коли зʼявиться — повернути localizePath(`coups-de-coeur/${slug}`, lang) тут, в одному місці.
+ */
+export function favoriteHref(slug: string, lang: Locale): string | null {
+  void slug;
+  void lang;
+  return null;
+}
+
+/** «Tech · Lien affilié» — тег картки Coup de cœur. «Lien affilié» обовʼязковий (закон Франції, 2023). */
+export function favoriteTag(f: { category: string; affiliate: boolean }, lang: Locale) {
+  return [
+    t(`fav.cat.${f.category}` as Parameters<typeof t>[0], lang),
+    f.affiliate && t('fav.affiliate', lang),
+  ]
+    .filter(Boolean)
+    .join(' · ');
+}
+
 export async function getSettings() {
   const entry = await getEntry('site', 'settings');
   if (!entry) throw new Error('Немає файлу src/content/site/settings.json');

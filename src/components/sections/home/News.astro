@@ -19,11 +19,10 @@ import type { HomeData } from '../../../content.config';
 interface Props {
   lang: Locale;
   data: HomeData['news'];
-  href: string;
-  /** Адреса картки з товаром (тег «Collection») — сторінка товару. */
-  itemHref: (product: string | undefined, fallback: string) => string;
+  /** Куди веде картка: товар (Collection) → його сторінка, Coup de cœur → Coups de cœur з рубрикою. */
+  itemHref: (item: HomeData['news']['items'][number]) => string;
 }
-const { lang, data, href, itemHref } = Astro.props;
+const { lang, data, itemHref } = Astro.props;
 // Порядок = порядок карток у home.json → news.items. 4-та — «Veste Contessi», веде на сторінку товару.
 const images = [n1, n2, n3, veste, n4, n5];
 // Вертикальні фото у великій картці: яку частину кадру показати. low — нижче (видно ноги й сумку).
@@ -79,7 +78,7 @@ const slides = loop
             'media',
             focus.has(images[i]) && `ncard__img--${focus.get(images[i])}`,
           ]}
-          href={itemHref(item.product, href)}
+          href={itemHref(item)}
           tabindex="-1"
           aria-hidden="true"
         >
@@ -100,11 +99,7 @@ const slides = loop
           ) : (
             <p class="ncard__desc text-s" aria-hidden="true" />
           )}
-          <Button
-            href={itemHref(item.product, href)}
-            variant="accent"
-            tabindex={clone ? -1 : undefined}
-          >
+          <Button href={itemHref(item)} variant="accent" tabindex={clone ? -1 : undefined}>
             {item.action}
             <span class="visually-hidden"> — {item.name}</span>
           </Button>

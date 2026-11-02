@@ -78,6 +78,12 @@ const homeSchema = {
             publicPath: '../../../assets/img/press/',
           }),
           imagePosition: optional('Кадр фото, напр. «50% 87%» (порожньо — центр)'),
+          logo: fields.image({
+            label: 'Логотип медіа (необовʼязково; 120 × 40, для Partenariats)',
+            directory: 'src/assets/img/press',
+            publicPath: '../../../assets/img/press/',
+          }),
+          url: optional('Посилання на статтю (порожньо — «Lien bientôt disponible»)'),
           title: txt('Назва'),
           excerpt: txt('Цитата', { multiline: true }),
           action: txt('Напис посилання'),
@@ -108,6 +114,9 @@ const homeSchema = {
           product: optional(
             'Товар (slug з «Товари», лише для тегу Collection; порожньо = як було)',
           ),
+          favorite: optional(
+            'Coup de cœur (slug з «Coups de cœur»): назва береться звідти, картка веде на його рубрику',
+          ),
         }),
         'Картки (5)',
         (p) => p.fields.name.value,
@@ -120,7 +129,23 @@ const homeSchema = {
       eyebrow: txt('Підпис'),
       title: txt('Заголовок', { multiline: true }),
       items: list(
-        fields.object({ name: txt('Назва'), image: img('Мініатюра') }),
+        fields.object({
+          name: txt('Назва'),
+          image: img('Мініатюра'),
+          category: fields.select({
+            label: 'Рубрика Journal (куди веде рядок)',
+            options: [
+              { label: '— весь Journal', value: '' },
+              { label: 'Automobiles', value: 'automobiles' },
+              { label: 'Horlogerie', value: 'horlogerie' },
+              { label: 'Voyages & Hôtels', value: 'voyages' },
+              { label: 'Yachts', value: 'yachts' },
+              { label: 'Jets privés', value: 'jets' },
+              { label: 'Art de vivre', value: 'art-de-vivre' },
+            ],
+            defaultValue: '',
+          }),
+        }),
         'Рубрики',
         (p) => p.fields.name.value,
       ),
@@ -916,6 +941,48 @@ const yachtsPageSingleton = (lang: 'fr' | 'en' | 'it') =>
     schema: yachtsPageSchema,
   });
 
+const favoritesPageSingleton = (lang: 'fr' | 'en' | 'it') =>
+  singleton({
+    label: `Coups de cœur · ${lang.toUpperCase()}`,
+    path: `src/content/pages/${lang}/coups-de-coeur`,
+    format: { data: 'json' },
+    schema: {
+      seoTitle: txt('SEO: заголовок для Google (≤ 70)', { max: 70 }),
+      seoDescription: txt('SEO: опис для Google (≤ 170)', { multiline: true, max: 170 }),
+      intro: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок H1'),
+          body: txt('Текст', { multiline: true }),
+          disclosure: txt('Плашка прозорості (закон — не прибирати)', { multiline: true }),
+        },
+        { label: 'Intro' },
+      ),
+      codesLink: txt('Посилання «лише коди» → Privilèges'),
+      empty: txt('Порожня рубрика'),
+      more: txt('Кнопка «Voir plus»'),
+    },
+  });
+
+const journalPageSingleton = (lang: 'fr' | 'en' | 'it') =>
+  singleton({
+    label: `Journal · ${lang.toUpperCase()}`,
+    path: `src/content/pages/${lang}/journal`,
+    format: { data: 'json' },
+    schema: {
+      seoTitle: txt('SEO: заголовок для Google (≤ 70)', { max: 70 }),
+      seoDescription: txt('SEO: опис для Google (≤ 170)', { multiline: true, max: 170 }),
+      intro: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок H1'),
+          body: txt('Текст', { multiline: true }),
+        },
+        { label: 'Intro' },
+      ),
+    },
+  });
+
 const privilegesPage = (lang: 'fr' | 'en' | 'it') =>
   singleton({
     label: `Privilèges · ${lang.toUpperCase()}`,
@@ -942,6 +1009,8 @@ export default config({
       Яхти: ['yachtsFr', 'yachtsEn', 'yachtsIt', 'yachts'],
       Privilèges: ['privilegesFr', 'privilegesEn', 'privilegesIt', 'codes'],
       Contact: ['contactFr', 'contactEn', 'contactIt'],
+      Journal: ['journalFr', 'journalEn', 'journalIt', 'articles'],
+      'Coups de cœur': ['favoritesFr', 'favoritesEn', 'favoritesIt', 'favorites'],
       Partenariats: ['partenariatsFr', 'partenariatsEn', 'partenariatsIt'],
       Сайт: ['settings'],
     },
@@ -953,6 +1022,105 @@ export default config({
       slugField: 'id',
       format: { data: 'json' },
       schema: codeSchema,
+    }),
+    favorites: collection({
+      label: 'Coups de cœur',
+      path: 'src/content/favorites/*',
+      slugField: 'slug',
+      format: { data: 'json' },
+      schema: {
+        slug: fields.text({ label: 'slug (латиницею, як назва файлу)' }),
+        brand: txt('Марка'),
+        name: fields.object(
+          { fr: txt('FR'), en: txt('EN'), it: txt('IT') },
+          { label: 'Назва в картці' },
+        ),
+        category: fields.select({
+          label: 'Категорія',
+          options: [
+            { label: 'Tech', value: 'tech' },
+            { label: 'Mode', value: 'mode' },
+            { label: 'Beauté', value: 'beaute' },
+            { label: 'Mobilité', value: 'mobilite' },
+            { label: 'Voyages', value: 'voyages' },
+            { label: 'Horlogerie', value: 'horlogerie' },
+            { label: 'Art de vivre', value: 'art-de-vivre' },
+          ],
+          defaultValue: 'tech',
+        }),
+        image: fields.image({
+          label: 'Фото',
+          directory: 'src/assets/img/favorites',
+          publicPath: '../../assets/img/favorites/',
+          validation: { isRequired: true },
+        }),
+        imageAlt: fields.object(
+          { fr: optional('FR'), en: optional('EN'), it: optional('IT') },
+          { label: 'Опис фото для незрячих' },
+        ),
+        imagePosition: optional('Кадр фото, напр. «50% 65%»'),
+        affiliate: fields.checkbox({
+          label: 'Lien affilié (партнерське посилання — обовʼязкова позначка)',
+        }),
+        url: optional('Партнерське посилання (для сторінки товару)'),
+        code: optional('Код знижки: slug з «Коди» (якщо є)'),
+        date: fields.date({ label: 'Дата', validation: { isRequired: true } }),
+        demo: fields.checkbox({
+          label: 'Демо (приклад для презентації — на живому сайті не видно)',
+        }),
+      },
+    }),
+    articles: collection({
+      label: 'Статті (Journal)',
+      path: 'src/content/articles/*',
+      slugField: 'slug',
+      format: { data: 'json' },
+      schema: {
+        slug: fields.text({ label: 'slug (латиницею, як назва файлу)' }),
+        category: fields.select({
+          label: 'Рубрика',
+          options: [
+            { label: 'Automobiles', value: 'automobiles' },
+            { label: 'Horlogerie', value: 'horlogerie' },
+            { label: 'Voyages & Hôtels', value: 'voyages' },
+            { label: 'Yachts', value: 'yachts' },
+            { label: 'Jets privés', value: 'jets' },
+            { label: 'Art de vivre', value: 'art-de-vivre' },
+          ],
+          defaultValue: 'automobiles',
+        }),
+        title: fields.object(
+          { fr: txt('FR'), en: txt('EN'), it: txt('IT') },
+          { label: 'Заголовок' },
+        ),
+        excerpt: fields.object(
+          {
+            fr: optional('FR (≤ 110 знаків)', true),
+            en: optional('EN (≤ 110)', true),
+            it: optional('IT (≤ 110)', true),
+          },
+          { label: 'Коротко (1–2 рядки)' },
+        ),
+        readingTime: fields.integer({ label: 'Читати, хв', validation: { isRequired: true } }),
+        date: fields.date({ label: 'Дата', validation: { isRequired: true } }),
+        partnership: fields.checkbox({ label: 'Partenariat (з маркою — обовʼязкова позначка)' }),
+        featured: fields.checkbox({ label: '«À la une» (лише одна стаття)' }),
+        cover: fields.image({
+          label: 'Обкладинка',
+          directory: 'src/assets/img/journal',
+          publicPath: '../../assets/img/journal/',
+          validation: { isRequired: true },
+        }),
+        coverAlt: fields.object(
+          { fr: optional('FR'), en: optional('EN'), it: optional('IT') },
+          { label: 'Опис обкладинки для незрячих' },
+        ),
+        coverPosition: optional('Кадр обкладинки, напр. «50% 30%»'),
+        demo: fields.checkbox({ label: 'Демо (приклад для презентації)' }),
+        draft: fields.checkbox({
+          label: 'Чернетка (текст ще не готовий — на живому сайті не видно)',
+        }),
+      },
     }),
     yachts: collection({
       label: 'Яхти',
@@ -1133,6 +1301,12 @@ export default config({
     yachtsFr: yachtsPageSingleton('fr'),
     yachtsEn: yachtsPageSingleton('en'),
     yachtsIt: yachtsPageSingleton('it'),
+    favoritesFr: favoritesPageSingleton('fr'),
+    favoritesEn: favoritesPageSingleton('en'),
+    favoritesIt: favoritesPageSingleton('it'),
+    journalFr: journalPageSingleton('fr'),
+    journalEn: journalPageSingleton('en'),
+    journalIt: journalPageSingleton('it'),
     contactFr: contactPage('fr'),
     contactEn: contactPage('en'),
     contactIt: contactPage('it'),

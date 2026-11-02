@@ -110,7 +110,8 @@
         "action": "View",
         "image": {
           "alt": "Shokz OpenRun headphones"
-        }
+        },
+        "favorite": "shokz-openrun"
       },
       {
         "tag": "Collection",
@@ -159,37 +160,43 @@
         "name": "Cars",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "automobiles"
       },
       {
         "name": "Watches",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "horlogerie"
       },
       {
         "name": "Travel & Hotels",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "voyages"
       },
       {
         "name": "Yachts",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "yachts"
       },
       {
         "name": "Private jets",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "jets"
       },
       {
         "name": "Art de vivre",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "art-de-vivre"
       }
     ]
   },

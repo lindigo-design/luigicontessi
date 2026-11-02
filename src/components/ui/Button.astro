@@ -20,6 +20,8 @@ interface Props {
   arrow?: boolean;
   /** Посилання на файл, який завантажується (media kit PDF). */
   download?: boolean;
+  /** Лише вигляд (span, aria-hidden): у картці, де посиланням є заголовок (Journal «Lire l'article»). */
+  decorative?: boolean;
   [key: `data-${string}`]: string | undefined;
 }
 const {
@@ -31,14 +33,16 @@ const {
   rel,
   arrow = false,
   download = false,
+  decorative = false,
   class: extra,
   ...rest
 } = Astro.props;
 // href="" — теж посилання (на ту саму адресу, напр. «Réessayer» на 500).
-const Tag = href !== undefined ? 'a' : 'button';
+const Tag = decorative ? 'span' : href !== undefined ? 'a' : 'button';
 const cls = ['btn', `btn--${variant}`, block && 'btn--block', extra];
-const linkAttrs =
-  href !== undefined
+const linkAttrs = decorative
+  ? { 'aria-hidden': 'true' as const }
+  : href !== undefined
     ? {
         href,
         ...(external

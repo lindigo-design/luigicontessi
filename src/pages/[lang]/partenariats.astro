@@ -19,7 +19,7 @@ import {
   isPreview,
   warnMissing,
 } from '../../content/helpers';
-import { locales, localizePath, type Locale } from '../../i18n/utils';
+import { locales, t, type Locale } from '../../i18n/utils';
 
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
@@ -55,20 +55,24 @@ if (unfinished.length) {
   warnMissing('Partenariats', `références: тип / результати кейсів ${unfinished.join(', ')}`);
 }
 
-// Presse: ті самі статті, що на головній (перші 3), без заглушок «[…]».
-const placeholder = /\[[^\]]*\]/;
-const articles = (await getHome(lang)).press.items
-  .slice(0, 3)
-  .filter((a) => !placeholder.test(`${a.title} ${a.meta}`));
-if (!articles.length) warnMissing('Partenariats', 'presse: статті (дані «Presse» на головній)');
-
-// Media kit: «Media kit 2026», «… PDF, 12 pages.» — лише відомі значення.
-const kitTitle = page.mediaKit.title.replace('{year}', mediaKit.year.trim()).trim();
-const kitText = mediaKit.pages
-  ? `${page.mediaKit.text} ${page.mediaKit.pages.replace('{pages}', String(mediaKit.pages))}`
-  : page.mediaKit.text;
 // Перегляд (dev / тестова збірка без індексації): заглушки з Figma там, де ще немає даних.
 const preview = isPreview();
+
+// Presse: ті самі статті, що на головній (перші 3). Живий сайт — без заглушок «[…]»; перегляд — як є (Figma).
+const placeholder = /\[[^\]]*\]/;
+const articles = (await getHome(lang)).press.items
+  .filter((a) => preview || !placeholder.test(`${a.title} ${a.meta}`))
+  .slice(0, 3);
+if (!articles.length) warnMissing('Partenariats', 'presse: статті (дані «Presse» на головній)');
+
+// Media kit: «Media kit 2026», «… PDF, 12 pages.» — лише відомі значення;
+// у перегляді невідоме — заглушки з Figma («Media kit [année]», «PDF, [X] pages.»).
+const year = mediaKit.year.trim() || (preview ? t('kit.year', lang) : '');
+const pages = mediaKit.pages ? String(mediaKit.pages) : preview ? t('kit.pages', lang) : '';
+const kitTitle = page.mediaKit.title.replace('{year}', year).trim();
+const kitText = pages
+  ? `${page.mediaKit.text} ${page.mediaKit.pages.replace('{pages}', pages)}`
+  : page.mediaKit.text;
 ---
 
 <BaseLayout
@@ -102,9 +106,10 @@ const preview = isPreview();
     <References data={page.references} logos={logos} cases={cases} lang={lang} preview={preview} />
   )}
   <PressKit
+    lang={lang}
+    showLogos={preview}
     press={page.press}
     articles={articles}
-    articlesHref={localizePath('presse', lang)}
     kit={page.mediaKit}
     kitTitle={kitTitle}
     kitText={kitText}

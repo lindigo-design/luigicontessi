@@ -110,7 +110,8 @@
         "action": "Vedi",
         "image": {
           "alt": "Cuffie Shokz OpenRun"
-        }
+        },
+        "favorite": "shokz-openrun"
       },
       {
         "tag": "Collezione",
@@ -159,37 +160,43 @@
         "name": "Automobili",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "automobiles"
       },
       {
         "name": "Orologeria",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "horlogerie"
       },
       {
         "name": "Viaggi & Hotel",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "voyages"
       },
       {
         "name": "Yacht",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "yachts"
       },
       {
         "name": "Jet privati",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "jets"
       },
       {
         "name": "Art de vivre",
         "image": {
           "alt": ""
-        }
+        },
+        "category": "art-de-vivre"
       }
     ]
   },

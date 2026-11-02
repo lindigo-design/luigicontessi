@@ -1,0 +1,27 @@
+{
+  "slug": "microlino",
+  "category": "automobiles",
+  "title": {
+    "fr": "Microlino : la petite qui fait sourire",
+    "en": "Microlino: the little car that makes you smile",
+    "it": "Microlino: la piccola che fa sorridere"
+  },
+  "excerpt": {
+    "fr": "Une voiture électrique de ville, essayée à Paris.",
+    "en": "An electric city car, tested in Paris.",
+    "it": "Un’auto elettrica da città, provata a Parigi."
+  },
+  "readingTime": 6,
+  "date": "2026-09-03",
+  "partnership": true,
+  "featured": false,
+  "cover": "../../assets/img/journal/microlino.jpg",
+  "coverAlt": {
+    "fr": "Luigi Contessi au volant d’une voiture rouge",
+    "en": "Luigi Contessi at the wheel of a red car",
+    "it": "Luigi Contessi alla guida di un’auto rossa"
+  },
+  "coverPosition": "50% 50%",
+  "demo": true,
+  "draft": false
+}

@@ -1,16 +1,22 @@
 ---
-// Figma: Partenariats → 06 Presse (desktop 47:590). Ліворуч «Dans la presse» — ті самі статті, що
-// «Presse» на головній (перші 3, без заглушок «[…]»); праворуч картка Media kit (id="media-kit",
-// туди веде «Media kit» у футері). Статей немає — лише картка. Mobile: спершу статті, потім картка.
+// Figma: Partenariats → 06 Presse (desktop 47:590, рядок 47:596, mobile 48:569). Ліворуч «Dans la presse» —
+// ті самі статті, що «Presse» на головній (перші 3; на живому сайті без заглушок «[…]»); праворуч картка
+// Media kit (id="media-kit", туди веде «Media kit» у футері). Mobile: спершу статті (без логотипів), потім картка.
+// Рядок: логотип медіа 120 × 40 (немає — у перегляді плашка «LOGO MÉDIA») → назва + «Média · date» → «Lire»
+// (посилання статті; немає — заглушка «Lien bientôt disponible»).
+// Статей немає — картка Media kit на всю ширину, горизонтально (presskit--solo).
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import Button from '../../ui/Button.astro';
 import type { HomeData, PartenariatsData } from '../../../content.config';
+import { t, type Locale } from '../../../i18n/utils';
 
 interface Props {
+  lang: Locale;
+  /** Перегляд: плашка «LOGO MÉDIA», коли логотипа немає. */
+  showLogos?: boolean;
   press: PartenariatsData['press'];
   articles: HomeData['press']['items'];
-  articlesHref: string;
   kit: PartenariatsData['mediaKit'];
   kitTitle: string;
   kitText: string;
@@ -19,31 +25,77 @@ interface Props {
   requestLabel: string;
   preview?: ImageMetadata;
 }
-const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLabel, preview } =
-  Astro.props;
+const {
+  lang,
+  showLogos = false,
+  press,
+  articles,
+  kit,
+  kitTitle,
+  kitText,
+  kitUrl,
+  requestLabel,
+  preview,
+} = Astro.props;
+const soon = t('codes.soon', lang);
+type Article = HomeData['press']['items'][number] & { logo?: ImageMetadata; url?: string };
+const list = articles as Article[];
 ---
 
 <section
-  class:list={['presskit section', { 'presskit--solo': !articles.length }]}
-  aria-labelledby={articles.length ? 'presskit-title' : 'media-kit-title'}
+  class:list={['presskit section', { 'presskit--solo': !list.length }]}
+  aria-labelledby={list.length ? 'presskit-title' : 'media-kit-title'}
 >
   <div class="container presskit__row">
-    {articles.length > 0 && (
+    {list.length > 0 && (
       <div class="presskit__press">
         <div class="section-head__text">
           <p class="eyebrow">{press.eyebrow}</p>
           <h2 id="presskit-title">{press.title}</h2>
         </div>
         <ul class="presskit__list" role="list">
-          {articles.map((a) => (
+          {list.map((a) => (
             <li class="particle">
+              {a.logo ? (
+                <div class="particle__logo">
+                  <Image src={a.logo} alt="" widths={[120, 240]} sizes="120px" loading="lazy" />
+                </div>
+              ) : (
+                showLogos && (
+                  <div class="particle__logo particle__logo--empty" aria-hidden="true">
+                    <span class="eyebrow eyebrow--muted">{t('press.logo', lang)}</span>
+                  </div>
+                )
+              )}
               <div class="particle__text">
                 <p class="title">{a.title}</p>
                 <p class="text-s text-2">{a.meta}</p>
               </div>
-              <Button href={articlesHref} variant="accent">
-                {a.action}
-              </Button>
+              {a.url ? (
+                <Button href={a.url} variant="accent" external rel="noopener">
+                  {t('press.read', lang)}
+                  <span class="visually-hidden">
+                    {' '}
+                    — {a.title} ({t('ui.newWindow', lang)})
+                  </span>
+                </Button>
+              ) : (
+                <span class="particle__soon">
+                  <Button
+                    href="#"
+                    variant="accent"
+                    title={soon}
+                    aria-disabled="true"
+                    data-placeholder=""
+                  >
+                    {t('press.read', lang)}
+                    <span class="visually-hidden"> — {a.title}</span>
+                  </Button>
+                  <span class="text-s text-2" role="status" data-placeholder-note hidden>
+                    {soon}
+                  </span>
+                </span>
+              )}
             </li>
           ))}
         </ul>
@@ -62,19 +114,21 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
           />
         </div>
       )}
-      <h2 id="media-kit-title" class="kit__title">
-        {kitTitle}
-      </h2>
-      <p class="text-s text-2">{kitText}</p>
-      {kitUrl ? (
-        <Button href={kitUrl} block download>
-          {kit.download.label}
-        </Button>
-      ) : (
-        <Button href="#proposer" block>
-          {requestLabel}
-        </Button>
-      )}
+      <div class="kit__body">
+        <h2 id="media-kit-title" class="kit__title">
+          {kitTitle}
+        </h2>
+        <p class="text-s text-2">{kitText}</p>
+        {kitUrl ? (
+          <Button href={kitUrl} block download>
+            {kit.download.label}
+          </Button>
+        ) : (
+          <Button href="#proposer" block>
+            {requestLabel}
+          </Button>
+        )}
+      </div>
     </div>
   </div>
 </section>
@@ -90,19 +144,45 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
     flex-direction: column;
     gap: var(--space-8);
   }
+  /* Рядок: лінія зверху, mobile — без логотипа, текст + «Lire» в рядок. */
   .particle {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-6);
-    padding-block: var(--space-5);
-    border-bottom: 1px solid var(--color-border);
+    gap: var(--space-4);
+    padding-block: 0.875rem; /* 14 */
+    border-top: 1px solid var(--color-border);
+  }
+  .particle__logo {
+    display: none;
+    flex: none;
+    width: 7.5rem; /* 120 */
+    height: 2.5rem; /* 40 */
+  }
+  .particle__logo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .particle__logo--empty {
+    place-items: center;
+    border-radius: var(--radius-card);
+    background: var(--color-image);
   }
   .particle__text {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
     min-width: 0;
+  }
+  .particle__soon {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex: none;
+  }
+  .particle__soon [hidden] {
+    display: none;
   }
   .kit {
     display: flex;
@@ -111,6 +191,11 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
     padding: var(--space-6);
     border-radius: var(--radius-card);
     background: var(--color-card);
+  }
+  .kit__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
   }
   .kit__preview {
     aspect-ratio: 3 / 2; /* 360 × 240 */
@@ -123,6 +208,18 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
     font-size: var(--fs-h3);
     line-height: var(--lh-h3);
   }
+  @media (min-width: 768px) {
+    .particle {
+      gap: var(--space-6);
+      padding-block: var(--space-5);
+    }
+    .particle__logo {
+      display: block;
+    }
+    .particle__logo--empty {
+      display: grid;
+    }
+  }
   @media (min-width: 1024px) {
     .presskit__row {
       display: grid;
@@ -130,11 +227,27 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
       align-items: start;
       gap: var(--space-20);
     }
-    .presskit--solo .presskit__row {
-      grid-template-columns: 27.5rem;
-    }
     .kit {
       padding: var(--space-10);
+    }
+    /* Статей немає: картка на всю ширину, прев'ю ліворуч 360 × 240, текст праворуч. */
+    .presskit--solo .presskit__row {
+      display: block;
+    }
+    .presskit--solo .kit {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-10);
+    }
+    .presskit--solo .kit__preview {
+      flex: 0 0 22.5rem; /* 360 */
+    }
+    .presskit--solo .kit__body {
+      flex: 1;
+      align-items: flex-start;
+    }
+    .presskit--solo .kit__body :global(.btn) {
+      width: auto;
     }
   }
 </style>

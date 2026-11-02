@@ -3,8 +3,10 @@
 // «Trois ponts, pièce par pièce» (число — з кількості палуб). План (SVG як <img>, CSP) на всю ширину
 // контейнера в картці --color-card; на mobile дрібний план гортається вбік. Під планом чипи палуб —
 // перемикають план без перезавантаження (плавно, 200 ms). Одна палуба — без чипів. Демо без плану — заглушка.
+// Клік по плану — на весь екран (Lightbox; у галереї всі плани, підпис — назва палуби).
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
+import LightboxTrigger from '../../ui/LightboxTrigger.astro';
 import { t, type Locale } from '../../../i18n/utils';
 
 interface Props {
@@ -37,7 +39,10 @@ const title = t('yachts.decksTitle', lang).replace('{count}', count);
             hidden={i !== 0}
           >
             {d.plan ? (
-              <Image src={d.plan} alt={`${name} — ${d.label}`} class="ydeck__img" />
+              <>
+                <Image src={d.plan} alt={`${name} — ${d.label}`} class="ydeck__img" />
+                <LightboxTrigger lang={lang} image={d.plan} title={d.label} sub={name} />
+              </>
             ) : (
               <span class="eyebrow eyebrow--muted">{d.label}</span>
             )}
@@ -107,6 +112,7 @@ const title = t('yachts.decksTitle', lang).replace('{count}', count);
     background: var(--color-card);
   }
   .ydeck__plan {
+    position: relative; /* кнопка «Agrandir» поверх плану */
     display: grid;
     place-items: center;
     min-width: 40rem; /* план не стискається дрібніше — гортаємо */

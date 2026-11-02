@@ -1,0 +1,76 @@
+---
+// Figma: ChipGroup / Filter — радіокнопки-чипи (Journal, Coups de cœur). Перший — «Tout» (value="all").
+// Mobile — горизонтальна прокрутка без скролбару від краю до краю екрана; desktop — рядок з переносом.
+// Логіку (що ховати, ?categorie=… в адресі) дає скрипт сторінки за атрибутом data-filter.
+interface Props {
+  legend: string;
+  options: { value: string; label: string }[];
+  /** name групи радіокнопок. */
+  name?: string;
+  class?: string;
+}
+const { legend, options, name = 'categorie', class: extra } = Astro.props;
+---
+
+<fieldset class:list={['filter', extra]}>
+  <legend class="visually-hidden">{legend}</legend>
+  <div class="filter__list">
+    {options.map((o, i) => (
+      <label class="filter__item">
+        <input
+          class="visually-hidden"
+          type="radio"
+          name={name}
+          value={o.value}
+          checked={i === 0}
+          data-filter
+        />
+        <span class="chip">{o.label}</span>
+      </label>
+    ))}
+  </div>
+</fieldset>
+
+<style>
+  .filter {
+    min-width: 0;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0;
+    border: 0;
+  }
+  /* position: relative — приховані радіокнопки всередині стрічки, а не за краєм екрана. */
+  .filter__list {
+    position: relative;
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-inline: var(--gutter);
+  }
+  .filter__list::-webkit-scrollbar {
+    display: none;
+  }
+  .filter__item {
+    flex: none;
+    cursor: pointer;
+  }
+  .filter__item input:checked + :global(.chip) {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-on-light);
+  }
+  .filter__item input:focus-visible + :global(.chip) {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+  @media (min-width: 1024px) {
+    .filter {
+      margin: 0;
+    }
+    .filter__list {
+      flex-wrap: wrap;
+      padding: 0;
+      overflow: visible;
+    }
+  }
+</style>

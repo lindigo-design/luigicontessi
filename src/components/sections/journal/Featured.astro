@@ -1,0 +1,119 @@
+---
+// Figma: Journal → 02 À la une. Desktop: фото 760 × 520 + текст 456 по центру висоти, проміжок 64.
+// Mobile: фото 358 × 268 зверху, далі текст. Уся картка — одне посилання: заголовок, розтягнутий через ::after;
+// «Lire l'article» — лише вигляд Link Accent (не окреме посилання). Немає сторінки статті — заглушка.
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import { articleHref } from '../../../content/helpers';
+import { t, type Locale } from '../../../i18n/utils';
+import { articleMeta, type Article } from './articleMeta';
+
+interface Props {
+  lang: Locale;
+  article: Article;
+}
+const { lang, article: a } = Astro.props;
+const href = articleHref(a.slug, lang);
+const soon = t('journal.soon', lang);
+---
+
+<section class="jfeat" aria-labelledby="jfeat-title" data-featured={a.category}>
+  <div class="container">
+    <div class="jfeat__card zoom-card" data-placeholder-scope>
+      <div class="jfeat__img media" data-position={a.coverPosition || undefined}>
+        <Image
+          src={a.cover}
+          alt={a.coverAlt[lang]}
+          widths={[720, 1080, 1520]}
+          sizes="(min-width: 1440px) 760px, (min-width: 1024px) 53vw, 100vw"
+          loading="eager"
+        />
+      </div>
+      <div class="jfeat__text">
+        <p class="eyebrow">{t('journal.featured', lang)}</p>
+        <p class="eyebrow eyebrow--muted">{articleMeta(a, lang)}</p>
+        <h2 id="jfeat-title">
+          {href ? (
+            <a class="jfeat__link" href={href}>
+              {a.title[lang]}
+            </a>
+          ) : (
+            <a class="jfeat__link" href="#" title={soon} aria-disabled="true" data-placeholder>
+              {a.title[lang]}
+            </a>
+          )}
+        </h2>
+        <p class="text-2">{a.excerpt[lang]}</p>
+        <Button variant="accent" decorative class="jfeat__cta">
+          {t('journal.read', lang)}
+        </Button>
+        {!href && (
+          <p class="text-s text-2" role="status" data-placeholder-note hidden>
+            {soon}
+          </p>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .jfeat {
+    padding-bottom: var(--space-14);
+  }
+  .jfeat[hidden] {
+    display: none;
+  }
+  .jfeat__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .jfeat__img {
+    aspect-ratio: 358 / 268;
+  }
+  .jfeat__img :global(img) {
+    object-position: var(--position, 50% 50%);
+  }
+  .jfeat__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .jfeat__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+  .jfeat__link:focus-visible {
+    outline: none;
+  }
+  .jfeat__card:has(.jfeat__link:focus-visible) {
+    outline: 2px solid var(--color-red-text);
+    outline-offset: 4px;
+    border-radius: var(--radius-card);
+  }
+  .jfeat__text :global(.jfeat__cta) {
+    margin-top: var(--space-2);
+  }
+  @media (min-width: 1024px) {
+    .jfeat {
+      padding-bottom: var(--space-24);
+    }
+    .jfeat__card {
+      display: grid;
+      grid-template-columns: minmax(0, 760fr) minmax(0, 456fr);
+      align-items: center;
+      gap: var(--space-16);
+    }
+    .jfeat__img {
+      aspect-ratio: 760 / 520;
+    }
+    .jfeat__text {
+      gap: var(--space-5);
+    }
+  }
+</style>

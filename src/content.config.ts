@@ -7,6 +7,16 @@ const text = z.string().min(1);
 const link = z.object({ label: text });
 const img = z.object({ alt: z.string() });
 
+// Рубрики Journal (?categorie=…). Також звʼязок рядків «Univers» на головній зі сторінкою Journal.
+export const articleCategories = [
+  'automobiles',
+  'horlogerie',
+  'voyages',
+  'yachts',
+  'jets',
+  'art-de-vivre',
+] as const;
+
 const homeSchema = z.object({
   seoTitle: text.max(70),
   seoDescription: text.max(170),
@@ -48,13 +58,21 @@ const homeSchema = z.object({
         action: text,
         image: img,
         product: z.string().optional(), // slug товару → картка веде на його сторінку
+        favorite: z.string().optional(), // slug з Coups de cœur → назва звідти, веде на coups-de-coeur/?categorie=…
       }),
     ),
   }),
   universes: z.object({
     eyebrow: text,
     title: text,
-    items: z.array(z.object({ name: text, image: img })),
+    items: z.array(
+      z.object({
+        name: text,
+        image: img,
+        // рубрика Journal: рядок веде на journal/?categorie=<рубрика>; порожньо — на весь Journal
+        category: z.enum(articleCategories).or(z.literal('')).optional(),
+      }),
+    ),
   }),
   collection: z.object({
     eyebrow: text,
@@ -120,7 +138,7 @@ const homeSchema = z.object({
 const home = defineCollection({
   loader: glob({ pattern: '*/home.json', base: './src/content/pages' }),
   // «Presse»: необовʼязкове фото картки (шлях відносно JSON: ../../../assets/img/press/…) і кадр
-  // (imagePosition, напр. «50% 87%»). Без фото — картка як раніше.
+  // (imagePosition, напр. «50% 87%»). Без фото — картка як раніше. logo / url — для «Dans la presse» на Partenariats.
   schema: ({ image }) =>
     homeSchema.extend({
       press: homeSchema.shape.press.extend({
@@ -128,6 +146,8 @@ const home = defineCollection({
           homeSchema.shape.press.shape.items.element.extend({
             image: image().optional(),
             imagePosition: z.string().optional(),
+            logo: image().optional(), // логотип медіа 120 × 40 (Partenariats → «Dans la presse»)
+            url: z.string().optional(), // посилання на статтю; порожньо — заглушка «Lien bientôt disponible»
           }),
         ),
       }),
@@ -334,6 +354,94 @@ const yachts = defineCollection({
         .object({ title: trEmpty, description: trEmpty })
         .default({ title: empty3, description: empty3 }),
     }),
+});
+
+// Статті Journal: src/content/articles/<slug>.json, тексти трьома мовами всередині.
+// demo — приклад для презентації, draft — текст ще не готовий: обидва видно лише в перегляді (isPreview).
+// partnership — позначка «Partenariat» (закон Франції про інфлюенсерів, 2023), показуємо завжди.
+const articles = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/articles' }),
+  schema: ({ image }) =>
+    z.object({
+      slug: text,
+      category: z.enum(articleCategories),
+      title: z.object({ fr: text, en: text, it: text }),
+      excerpt: z.object({
+        fr: z.string().max(110),
+        en: z.string().max(110),
+        it: z.string().max(110),
+      }),
+      readingTime: z.number().int().positive(), // хвилини
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // РРРР-ММ-ДД
+      partnership: z.boolean().default(false),
+      featured: z.boolean().default(false), // «À la une» (лише одна)
+      cover: image(),
+      coverAlt: z.object({ fr: z.string(), en: z.string(), it: z.string() }),
+      coverPosition: z.string().optional(), // кадр, напр. «50% 30%»
+      demo: z.boolean().default(false),
+      draft: z.boolean().default(false),
+    }),
+});
+
+// Coups de cœur: src/content/favorites/<slug>.json, тексти трьома мовами всередині.
+// affiliate — позначка «Lien affilié» (закон Франції про інфлюенсерів, 2023), показуємо завжди.
+// demo — приклад для презентації: видно лише в перегляді (isPreview).
+export const favoriteCategories = [
+  'tech',
+  'mode',
+  'beaute',
+  'mobilite',
+  'voyages',
+  'horlogerie',
+  'art-de-vivre',
+] as const;
+const favorites = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/favorites' }),
+  schema: ({ image }) =>
+    z.object({
+      slug: text,
+      brand: text,
+      name: z.object({ fr: text, en: text, it: text }),
+      category: z.enum(favoriteCategories),
+      image: image(),
+      imageAlt: z.object({ fr: z.string(), en: z.string(), it: z.string() }),
+      imagePosition: z.string().optional(), // кадр, напр. «50% 65%»
+      affiliate: z.boolean().default(false),
+      url: z.string().optional(), // зовнішнє партнерське посилання (для сторінки товару)
+      code: z.string().optional(), // slug коду з колекції codes, якщо є знижка
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // РРРР-ММ-ДД
+      demo: z.boolean().default(false),
+    }),
+});
+
+// Сторінка «Coups de cœur»: Intro, плашка прозорості, панель і SEO (src/content/pages/<мова>/coups-de-coeur.json).
+const favoritesPageSchema = z.object({
+  seoTitle: text.max(70),
+  seoDescription: text.max(170),
+  intro: z.object({
+    eyebrow: text,
+    title: text,
+    body: text,
+    disclosure: text, // «Liens partenaires : …» — закон про інфлюенсерів, не прибирати
+  }),
+  codesLink: text, // «Seulement les codes» → Privilèges
+  empty: text, // порожня рубрика
+  more: text, // «Voir plus»
+});
+const favoritesPage = defineCollection({
+  loader: glob({ pattern: '*/coups-de-coeur.json', base: './src/content/pages' }),
+  schema: favoritesPageSchema,
+});
+
+// Сторінка «Journal»: тексти Intro і SEO (src/content/pages/<мова>/journal.json).
+const journalPageSchema = z.object({
+  seoTitle: text.max(70),
+  seoDescription: text.max(170),
+  intro: z.object({ eyebrow: text, title: text, body: text }),
+});
+const journalPage = defineCollection({
+  loader: glob({ pattern: '*/journal.json', base: './src/content/pages' }),
+  schema: journalPageSchema,
 });
 
 const codes = defineCollection({
@@ -640,6 +748,10 @@ export const collections = {
   partenariats,
   yachts,
   yachtsPage,
+  articles,
+  journalPage,
+  favorites,
+  favoritesPage,
 };
 export type HomeData = z.infer<typeof homeSchema>;
 export type ProductData = z.infer<typeof productSchema>;
@@ -647,5 +759,7 @@ export type CodeData = z.infer<typeof codeSchema>;
 export type PrivilegesData = z.infer<typeof privilegesSchema>;
 export type ContactData = z.infer<typeof contactSchema>;
 export type YachtsPageData = z.infer<typeof yachtsPageSchema>;
+export type JournalPageData = z.infer<typeof journalPageSchema>;
+export type FavoritesPageData = z.infer<typeof favoritesPageSchema>;
 export type PartenariatsData = z.infer<typeof partenariatsSchema>;
 export type CodeCategory = (typeof codeCategories)[number];

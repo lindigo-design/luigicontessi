@@ -1,0 +1,64 @@
+---
+// Figma: Journal → 01 Intro (desktop 33:380). Eyebrow → H1 → текст (макс. 760) → фільтри-рубрики.
+// Фільтри — FilterChips (радіокнопки, як фільтри яхт): лише рубрики, в яких є статті; вибір — у адресі ?categorie=…
+// (src/scripts/journal.ts). Mobile — горизонтальна прокрутка без скролбару.
+import FilterChips from '../../ui/FilterChips.astro';
+import type { JournalPageData } from '../../../content.config';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  data: JournalPageData['intro'];
+  categories: readonly string[];
+}
+const { lang, data, categories } = Astro.props;
+---
+
+<section class="jintro container" aria-labelledby="jintro-title">
+  <div class="jintro__text">
+    <p class="eyebrow">{data.eyebrow}</p>
+    <h1 id="jintro-title">{data.title}</h1>
+    <p class="jintro__body text-2">{data.body}</p>
+  </div>
+  {categories.length > 1 && (
+    <FilterChips
+      legend={t('journal.filter', lang)}
+      options={[
+        { value: 'all', label: t('journal.all', lang) },
+        ...categories.map((c) => ({
+          value: c,
+          label: t(`journal.cat.${c}` as Parameters<typeof t>[0], lang),
+        })),
+      ]}
+    />
+  )}
+</section>
+
+<style>
+  .jintro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-6);
+  }
+  .jintro__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .jintro__body {
+    max-width: 47.5rem; /* 760 */
+    font-size: var(--fs-body-l);
+  }
+  @media (min-width: 1024px) {
+    .jintro {
+      gap: var(--space-10);
+      padding-top: var(--space-24);
+      padding-bottom: var(--space-12);
+    }
+    .jintro__text {
+      gap: var(--space-5);
+    }
+  }
+</style>

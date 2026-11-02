@@ -1,0 +1,27 @@
+{
+  "slug": "louer-un-jet",
+  "category": "jets",
+  "title": {
+    "fr": "Louer un jet : combien et comment",
+    "en": "Renting a jet: how much and how",
+    "it": "Noleggiare un jet: quanto e come"
+  },
+  "excerpt": {
+    "fr": "Les vrais coûts d’un Paris–Nice, étape par étape.",
+    "en": "The real costs of a Paris–Nice flight, step by step.",
+    "it": "I costi veri di un Parigi–Nizza, passo dopo passo."
+  },
+  "readingTime": 5,
+  "date": "2026-09-20",
+  "partnership": false,
+  "featured": false,
+  "cover": "../../assets/img/journal/jets.jpg",
+  "coverAlt": {
+    "fr": "Jet privé sur le tarmac",
+    "en": "Private jet on the tarmac",
+    "it": "Jet privato sulla pista"
+  },
+  "coverPosition": "50% 50%",
+  "demo": true,
+  "draft": false
+}

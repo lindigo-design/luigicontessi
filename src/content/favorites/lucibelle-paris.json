@@ -1,0 +1,22 @@
+{
+  "slug": "lucibelle-paris",
+  "brand": "Lucibelle Paris",
+  "name": {
+    "fr": "Lucibelle Paris",
+    "en": "Lucibelle Paris",
+    "it": "Lucibelle Paris"
+  },
+  "category": "beaute",
+  "image": "../../assets/img/favorites/lucibelle.jpg",
+  "imageAlt": {
+    "fr": "Produit Lucibelle Paris",
+    "en": "Lucibelle Paris product",
+    "it": "Prodotto Lucibelle Paris"
+  },
+  "imagePosition": "50% 65%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-09-24",
+  "demo": false
+}

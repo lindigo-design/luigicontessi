@@ -1,0 +1,22 @@
+{
+  "slug": "microlino",
+  "brand": "Microlino",
+  "name": {
+    "fr": "Microlino",
+    "en": "Microlino",
+    "it": "Microlino"
+  },
+  "category": "mobilite",
+  "image": "../../assets/img/favorites/microlino.jpg",
+  "imageAlt": {
+    "fr": "Microlino, petite voiture électrique",
+    "en": "Microlino, a small electric car",
+    "it": "Microlino, piccola auto elettrica"
+  },
+  "imagePosition": "50% 77%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-09-17",
+  "demo": false
+}

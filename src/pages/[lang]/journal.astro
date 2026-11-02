@@ -1,0 +1,48 @@
+---
+// Сторінка «Journal»: /<мова>/journal/. Intro + фільтри → À la une → Articles (Plus d'articles).
+// Статті — src/content/articles; демо й чернетки видно лише в перегляді (isPreview).
+// Немає жодної статті — лише Intro і «Les premiers articles arrivent bientôt.»
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Intro from '../../components/sections/journal/Intro.astro';
+import Featured from '../../components/sections/journal/Featured.astro';
+import Articles from '../../components/sections/journal/Articles.astro';
+import { articleCategories } from '../../content.config';
+import { getArticles, getJournalPage } from '../../content/helpers';
+import { locales, t, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getJournalPage(lang);
+const articles = await getArticles(); // від нових до старих
+const featured = articles.find((a) => a.featured) ?? articles[0];
+const others = articles.filter((a) => a !== featured);
+const categories = articleCategories.filter((c) => articles.some((a) => a.category === c));
+---
+
+<BaseLayout lang={lang} title={page.seoTitle} description={page.seoDescription} current="journal">
+  <div class="journal" data-journal>
+    <Intro lang={lang} data={page.intro} categories={categories} />
+    {featured ? (
+      <>
+        <Featured lang={lang} article={featured} />
+        <Articles lang={lang} articles={others} />
+      </>
+    ) : (
+      <p class="container journal__soon text-2">{t('journal.comingSoon', lang)}</p>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  import { initJournal } from '../../scripts/journal';
+  initJournal();
+</script>
+
+<style>
+  .journal__soon {
+    padding-bottom: var(--section-y);
+  }
+</style>

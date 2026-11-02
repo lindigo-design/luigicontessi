@@ -25,7 +25,6 @@ export interface MenuItem extends NavItem {
 export const menuPrimary = (shop: boolean): MenuItem[] => [
   // Головна — першим пунктом, щоб не шукати шлях назад (path '' = /{мова}/).
   { key: 'nav.homeMenu', path: '', preview: hero, caption: 'menu.caption.home' },
-  { key: 'nav.journal', path: 'journal', preview: univers1, caption: 'menu.caption.journal' },
   { key: 'nav.yachts', path: 'yachts', preview: yachts, caption: 'menu.caption.yachts' },
   {
     key: 'nav.favorites',
@@ -46,6 +45,7 @@ export const menuPrimary = (shop: boolean): MenuItem[] => [
     preview: collection1,
     caption: 'menu.caption.collection',
   } as MenuItem,
+  { key: 'nav.journal', path: 'journal', preview: univers1, caption: 'menu.caption.journal' },
 ];
 
 /** Дрібні пункти меню (в один рядок під великими). */
@@ -105,5 +105,13 @@ export const legalNav: NavItem[] = [
  * Сторінки, які вже зроблені. Посилання на ще не готову сторінку (напр. Journal на 404)
  * перевіряють цей список і ведуть на запасну. Зробили сторінку — додай сюди її path.
  */
-export const builtPages = new Set<string>(['', 'privileges', 'contact', 'partenariats', 'yachts']);
+export const builtPages = new Set<string>([
+  '',
+  'privileges',
+  'contact',
+  'partenariats',
+  'yachts',
+  'journal',
+  'coups-de-coeur',
+]);
 export const isBuilt = (path: string) => builtPages.has(path.split('#')[0]);

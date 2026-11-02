@@ -1,0 +1,76 @@
+---
+// Кнопка «Agrandir» поверх фото (на весь його блок; батько — position: relative, напр. слот YachtPhoto).
+// Відкриває Lightbox. Велика версія до 2000 px — на збірці (getImage), шлях у data-full;
+// вантажиться лише при відкритті. При наведенні — коло з «+» у правому нижньому куті.
+// Немає фото (демо-заглушка) — кнопки немає.
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import PlusIcon from '../../assets/icons/plus.svg';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  image?: ImageMetadata;
+  /** Підпис у лайтбоксі (назва кімнати / палуби) — також alt великого фото. */
+  title: string;
+  /** Другий рядок підпису (палуба), secondary. */
+  sub?: string;
+}
+const { lang, image, title, sub } = Astro.props;
+const full = image
+  ? (await getImage({ src: image, width: Math.min(2000, image.width) })).src
+  : null;
+---
+
+{full && (
+  <button
+    class="lb-trigger"
+    type="button"
+    aria-label={t('lightbox.open', lang).replace('{title}', title)}
+    data-lb
+    data-full={full}
+    data-title={title}
+    data-sub={sub || undefined}
+  >
+    <span class="lb-trigger__icon" aria-hidden="true">
+      <PlusIcon />
+    </span>
+  </button>
+)}
+
+<style>
+  .lb-trigger {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    cursor: zoom-in;
+  }
+  .lb-trigger:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+  }
+  .lb-trigger__icon {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    display: grid;
+    place-items: center;
+    width: 2.5rem; /* 40 */
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-overlay-soft);
+    color: var(--color-text);
+    opacity: 0;
+    transition: opacity 200ms var(--ease);
+  }
+  .lb-trigger:hover .lb-trigger__icon,
+  .lb-trigger:focus-visible .lb-trigger__icon {
+    opacity: 1;
+  }
+  @media (hover: none) {
+    .lb-trigger__icon {
+      opacity: 1;
+    }
+  }
+</style>

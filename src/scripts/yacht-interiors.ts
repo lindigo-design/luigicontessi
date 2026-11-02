@@ -1,5 +1,6 @@
 // Fiche yacht → «À bord»: стрілки (на одну картку), перетягування мишкою (drag-scroll.ts), ←/→ на стрічці.
-// Стрілки неактивні на краях. Без автопрокрутки.
+// Стрілки неактивні на краях (фокус тоді переходить на другу стрілку, а не губиться). Без автопрокрутки.
+// Рамка навколо стрічки — лише коли фокус прийшов з клавіатури (клас is-kbd-focus).
 import { enableDragScroll } from './drag-scroll';
 
 export function initYachtInteriors() {
@@ -29,8 +30,11 @@ export function initYachtInteriors() {
     };
     const sync = () => {
       const max = track.scrollWidth - track.clientWidth - 2;
+      const focused = document.activeElement;
       if (prev) prev.disabled = track.scrollLeft <= 2;
       if (next) next.disabled = track.scrollLeft >= max;
+      if (focused === prev && prev?.disabled) next?.focus();
+      else if (focused === next && next?.disabled) prev?.focus();
     };
 
     prev?.addEventListener('click', () => go(current() - 1));
@@ -44,6 +48,11 @@ export function initYachtInteriors() {
         go(current() - 1);
       }
     });
+    let keyboard = false;
+    document.addEventListener('keydown', () => (keyboard = true), true);
+    document.addEventListener('pointerdown', () => (keyboard = false), true);
+    track.addEventListener('focus', () => track.classList.toggle('is-kbd-focus', keyboard));
+    track.addEventListener('blur', () => track.classList.remove('is-kbd-focus'));
     track.addEventListener('scroll', sync, { passive: true });
     window.addEventListener('resize', sync);
     enableDragScroll(track, { onEnd: () => go(current()) });

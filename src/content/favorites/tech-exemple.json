@@ -1,0 +1,22 @@
+{
+  "slug": "tech-exemple",
+  "brand": "[Marque]",
+  "name": {
+    "fr": "[Marque]",
+    "en": "[Brand]",
+    "it": "[Marchio]"
+  },
+  "category": "tech",
+  "image": "../../assets/img/favorites/tech.jpg",
+  "imageAlt": {
+    "fr": "Photo d’illustration — tech",
+    "en": "Illustration photo — tech",
+    "it": "Foto illustrativa — tech"
+  },
+  "imagePosition": "50% 43%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-08-20",
+  "demo": true
+}

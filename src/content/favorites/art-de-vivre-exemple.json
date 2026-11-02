@@ -1,0 +1,22 @@
+{
+  "slug": "art-de-vivre-exemple",
+  "brand": "[Marque]",
+  "name": {
+    "fr": "[Marque]",
+    "en": "[Brand]",
+    "it": "[Marchio]"
+  },
+  "category": "art-de-vivre",
+  "image": "../../assets/img/favorites/art-de-vivre.jpg",
+  "imageAlt": {
+    "fr": "Photo d’illustration — art de vivre",
+    "en": "Illustration photo — lifestyle",
+    "it": "Foto illustrativa — art de vivre"
+  },
+  "imagePosition": "50% 50%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-08-13",
+  "demo": true
+}

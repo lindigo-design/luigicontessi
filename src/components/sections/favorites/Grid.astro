@@ -1,0 +1,88 @@
+---
+// Figma: Coups de cœur → 02 Сітка (desktop 54:379, mobile 54:560). Фон bg/alt; 4 колонки (48 × 24),
+// 768–1023 — 3, mobile — 2 (32 × 12). «Voir plus» (Outline, по центру; mobile — на всю ширину):
+// спершу 8, далі ще по 8 (src/scripts/favorites.ts). Без JS видно всі, кнопки немає.
+import Button from '../../ui/Button.astro';
+import FavoriteCard from './FavoriteCard.astro';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  items: CollectionEntry<'favorites'>['data'][];
+  /** «Rien dans cette rubrique pour le moment.» */
+  empty: string;
+  more: string;
+  /** Підпис списку для читалки (H1 сторінки вже є). */
+  label: string;
+}
+const { lang, items, empty, more, label } = Astro.props;
+---
+
+<section class="fgrid" aria-label={label}>
+  <div class="container fgrid__inner">
+    {items.length > 0 && (
+      <ul class="fgrid__list" role="list">
+        {items.map((f) => (
+          <FavoriteCard lang={lang} item={f} />
+        ))}
+      </ul>
+    )}
+    <p class="fgrid__empty text-2" data-fav-empty hidden={items.length > 0}>
+      {empty}
+    </p>
+    <div class="fgrid__more" data-fav-more hidden>
+      <Button variant="outline" class="fgrid__btn">
+        {more}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fgrid {
+    padding-block: var(--space-10);
+    background: var(--color-bg-alt);
+  }
+  .fgrid__empty[hidden],
+  .fgrid__more[hidden] {
+    display: none;
+  }
+  .fgrid__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .fgrid__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-3);
+  }
+  .fgrid__more :global(.fgrid__btn) {
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .fgrid__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-12) var(--space-6);
+    }
+    .fgrid__more {
+      display: flex;
+      justify-content: center;
+    }
+    .fgrid__more :global(.fgrid__btn) {
+      width: auto;
+    }
+  }
+  @media (min-width: 1024px) {
+    .fgrid {
+      padding-block: var(--space-20);
+    }
+    .fgrid__inner {
+      gap: var(--space-12);
+    }
+    .fgrid__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

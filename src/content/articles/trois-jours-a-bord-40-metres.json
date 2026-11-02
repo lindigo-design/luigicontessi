@@ -1,0 +1,27 @@
+{
+  "slug": "trois-jours-a-bord-40-metres",
+  "category": "yachts",
+  "title": {
+    "fr": "Trois jours à bord d’un 40 mètres entre Monaco et Portofino",
+    "en": "Three days aboard a 40-metre yacht between Monaco and Portofino",
+    "it": "Tre giorni a bordo di un 40 metri tra Monaco e Portofino"
+  },
+  "excerpt": {
+    "fr": "L’équipage, les cabines, ce que coûte vraiment une semaine. Et les questions à poser avant d’acheter.",
+    "en": "The crew, the cabins, what a week really costs. And the questions to ask before buying.",
+    "it": "L’equipaggio, le cabine, quanto costa davvero una settimana. E le domande da fare prima di comprare."
+  },
+  "readingTime": 9,
+  "date": "2026-10-15",
+  "partnership": false,
+  "featured": true,
+  "cover": "../../assets/img/journal/yachts.jpg",
+  "coverAlt": {
+    "fr": "Yacht au coucher du soleil",
+    "en": "Yacht at sunset",
+    "it": "Yacht al tramonto"
+  },
+  "coverPosition": "50% 50%",
+  "demo": true,
+  "draft": false
+}

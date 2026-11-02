@@ -14,7 +14,16 @@ import Yachts from '../../components/sections/home/Yachts.astro';
 import Instagram from '../../components/sections/home/Instagram.astro';
 import Faq from '../../components/sections/home/Faq.astro';
 import ForBrands from '../../components/sections/home/ForBrands.astro';
-import { getHome, getProducts, getSettings, getStats, productPath } from '../../content/helpers';
+import {
+  favoriteHref,
+  getFavorites,
+  getHome,
+  getProducts,
+  getSettings,
+  getStats,
+  productPath,
+} from '../../content/helpers';
+import { getCollection } from 'astro:content';
 import { locales, localizePath, type Locale } from '../../i18n/utils';
 
 export function getStaticPaths() {
@@ -32,6 +41,30 @@ const productHref = (product: string | undefined, fallback: string) => {
   if (!productSlugs.has(product))
     throw new Error(`Головна: немає товару «${product}» (поле product)`);
   return productPath(product, lang);
+}; // Coup de cœur (поле favorite): назва — з Coups de cœur (одне місце для даних); картка веде на сторінку
+// товару (коли буде, favoriteHref) або на Coups de cœur з його рубрикою. Демо на живому сайті — без рубрики.
+const allFavorites = new Map((await getCollection('favorites')).map((e) => [e.id, e.data]));
+const shownFavorites = new Set((await getFavorites()).map((f) => f.slug));
+const favoriteOf = (slug: string) => {
+  const f = allFavorites.get(slug);
+  if (!f) throw new Error(`Головна: немає Coup de cœur «${slug}» (поле favorite)`);
+  return f;
+};
+const news = {
+  ...page.news,
+  items: page.news.items.map((item) =>
+    item.favorite ? { ...item, name: favoriteOf(item.favorite).name[lang] } : item,
+  ),
+};
+const newsHref = (item: (typeof news.items)[number]) => {
+  if (!item.favorite) return productHref(item.product, to('coups-de-coeur'));
+  const f = favoriteOf(item.favorite);
+  return (
+    favoriteHref(f.slug, lang) ??
+    (shownFavorites.has(f.slug)
+      ? `${to('coups-de-coeur')}?categorie=${f.category}`
+      : to('coups-de-coeur'))
+  );
 };
 ---
 
@@ -52,7 +85,7 @@ const productHref = (product: string | undefined, fallback: string) => {
   <About data={page.about} stats={await getStats(page.about.stats, lang)} href={to('a-propos')} />
   <Quote data={page.quote} />
   <Press data={page.press} href={to('presse')} />
-  <News lang={lang} data={page.news} href={to('coups-de-coeur')} itemHref={productHref} />
+  <News lang={lang} data={news} itemHref={newsHref} />
   <Universes data={page.universes} href={to('journal')} />
   <Collection
     data={page.collection}

@@ -1,0 +1,22 @@
+{
+  "slug": "shokz-openrun",
+  "brand": "Shokz",
+  "name": {
+    "fr": "Shokz OpenRun",
+    "en": "Shokz OpenRun",
+    "it": "Shokz OpenRun"
+  },
+  "category": "tech",
+  "image": "../../assets/img/favorites/shokz.jpg",
+  "imageAlt": {
+    "fr": "Casque Shokz OpenRun",
+    "en": "Shokz OpenRun headphones",
+    "it": "Cuffie Shokz OpenRun"
+  },
+  "imagePosition": "50% 50%",
+  "affiliate": true,
+  "url": "",
+  "code": "",
+  "date": "2026-10-01",
+  "demo": false
+}

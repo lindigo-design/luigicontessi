@@ -1,0 +1,27 @@
+{
+  "slug": "gac-mondial-auto-2026",
+  "category": "automobiles",
+  "title": {
+    "fr": "GAC au Mondial de l’Auto : ce que j’ai vu",
+    "en": "GAC at the Paris Motor Show: what I saw",
+    "it": "GAC al Salone di Parigi: cosa ho visto"
+  },
+  "excerpt": {
+    "fr": "La nouvelle AION UT Cross, et pourquoi une marque chinoise mise sur l’Europe.",
+    "en": "The new AION UT Cross, and why a Chinese brand is betting on Europe.",
+    "it": "La nuova AION UT Cross, e perché un marchio cinese punta sull’Europa."
+  },
+  "readingTime": 5,
+  "date": "2026-10-12",
+  "partnership": true,
+  "featured": false,
+  "cover": "../../assets/img/journal/gac-mondial.jpg",
+  "coverAlt": {
+    "fr": "Luigi Contessi sur le stand GAC au Mondial de l’Auto",
+    "en": "Luigi Contessi at the GAC stand at the Paris Motor Show",
+    "it": "Luigi Contessi allo stand GAC al Salone di Parigi"
+  },
+  "coverPosition": "50% 22%",
+  "demo": false,
+  "draft": true
+}
