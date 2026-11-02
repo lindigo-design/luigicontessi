@@ -7,7 +7,11 @@
     "lead": "Entrepreneur, content creator, specialist in business jets and yachts. I share what I try myself: cars, watches, places.",
     "body": "I have worked with more than 500 brands, in more than 30 countries: events in Monaco, private jet trips, fashion campaigns. My role is simple: tell a brand’s story truthfully, so people want to discover it.",
     "imageAlt": "Portrait of Luigi Contessi",
-    "stats": ["followers", "collaborations", "countries"]
+    "stats": [
+      "followers",
+      "collaborations",
+      "countries"
+    ]
   },
   "parcours": {
     "eyebrow": "Journey",
@@ -38,7 +42,8 @@
   "king": {
     "eyebrow": "The king of hearts",
     "title": "The symbol I wear",
-    "text": ""
+    "text": "",
+    "imageAlt": "Luigi Contessi at the wheel of a red convertible Ferrari"
   },
   "rules": {
     "eyebrow": "My rules",

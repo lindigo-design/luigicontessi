@@ -7,7 +7,11 @@
     "lead": "Imprenditore, content creator, specialista di jet d’affari e yacht. Condivido ciò che provo io stesso: auto, orologi, luoghi.",
     "body": "Ho lavorato con più di 500 marchi, in più di 30 paesi: eventi a Monaco, viaggi in jet privato, campagne di moda. Il mio ruolo è semplice: raccontare un marchio in modo vero, perché venga voglia di scoprirlo.",
     "imageAlt": "Ritratto di Luigi Contessi",
-    "stats": ["followers", "collaborations", "countries"]
+    "stats": [
+      "followers",
+      "collaborations",
+      "countries"
+    ]
   },
   "parcours": {
     "eyebrow": "Percorso",
@@ -38,7 +42,8 @@
   "king": {
     "eyebrow": "Il re di cuori",
     "title": "Il simbolo che porto",
-    "text": ""
+    "text": "",
+    "imageAlt": "Luigi Contessi alla guida di una Ferrari rossa decappottabile"
   },
   "rules": {
     "eyebrow": "Le mie regole",

@@ -1,20 +1,24 @@
 ---
-// Figma: À propos → 03 Le roi de cœur. Уся строка — панель bg/alt (без рамки й радіуса).
-// Desktop: ліворуч монограма K♥ (висота 256, червона) з полями 64, праворуч eyebrow → H2 → текст
-// (ширина 820, по центру висоти), проміжок 40; група — від лівого краю панелі. Mobile: поля панелі 32, монограма 140 зліва, далі текст (проміжок 24). Текст — лише від Luigi (на сторінці: немає — у перегляді заглушка, на живому секції немає).
+// Figma: À propos → 03 Le roi de cœur (desktop 50:433, mobile 50:568). Фон bg, без панелі.
+// Desktop: два стовпці (проміжок 40, по центру висоти): ліворуч монограма K♥ (висота 256) по центру над текстом
+// (на всю ширину стовпця 612: eyebrow → H2 → Body L, проміжок 20; уся група — проміжок 12), праворуч фото 628 × 459 (радіус 4).
+// Mobile: монограма 145 зліва → текст (проміжок 14) → фото на всю ширину, проміжок 24.
+// Текст — лише від Luigi (на сторінці: немає — у перегляді заглушка, на живому секції немає).
 // Коли картка зʼявляється на екрані, монограма промальовується як у loader-і (window.lcMonogram з
 // public/scripts/loader.js). Без JS і зі зменшеним рухом — готовий логотип.
+import { Image } from 'astro:assets';
 import CornerK from '../../../assets/brand/corner-k-tall.svg';
+import photo from '../../../assets/img/about/symbole.jpg';
 
 interface Props {
-  data: { eyebrow: string; title: string; text: string };
+  data: { eyebrow: string; title: string; text: string; imageAlt?: string };
 }
 const { data } = Astro.props;
 ---
 
 <section class="king section" aria-labelledby="king-title">
-  <div class="container">
-    <div class="king__row">
+  <div class="container king__row">
+    <div class="king__main">
       <div class="king__card" aria-hidden="true">
         <CornerK class="king__mark" data-monogram />
       </div>
@@ -25,6 +29,15 @@ const { data } = Astro.props;
           <p class="king__body">{p}</p>
         ))}
       </div>
+    </div>
+    <div class="king__photo media">
+      <Image
+        src={photo}
+        alt={data.imageAlt ?? ''}
+        widths={[400, 720, 1200]}
+        sizes="(min-width: 1024px) 44vw, 100vw"
+        loading="lazy"
+      />
     </div>
   </div>
 </section>
@@ -65,17 +78,19 @@ const { data } = Astro.props;
   .king__row {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
-    padding: var(--space-8);
-    background: var(--color-bg-alt);
+    gap: var(--space-6); /* 24 */
   }
-  /* Без фону й рамки — лише монограма (висота секції = висота тексту / монограми). */
+  .king__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
   .king__card {
     display: flex;
   }
   .king__card :global(.king__mark) {
     width: auto;
-    height: 8.75rem; /* 140 */
+    height: 9.0625rem; /* 145 */
     color: var(--color-red);
   }
   .king__card :global(.king__mark path) {
@@ -87,28 +102,44 @@ const { data } = Astro.props;
   .king__text {
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: 0.875rem; /* 14 */
   }
   .king__body {
     font-size: var(--fs-body-l);
     color: var(--color-text-2);
+  }
+  .king__photo {
+    aspect-ratio: 628 / 459;
+    border-radius: var(--radius-card);
+  }
+  .king__photo :global(img) {
+    object-position: 50% 69%; /* кадр з Figma: обличчя й крило Ferrari */
   }
   @media (min-width: 1024px) {
     .king__row {
       flex-direction: row;
       align-items: center;
       gap: var(--space-10); /* 40 */
-      padding: 0;
     }
+    .king__main {
+      flex: 1 1 0;
+      min-width: 0;
+      gap: var(--space-3); /* 12 */
+    }
+    /* Монограма — по центру над текстом (у Figma — рамка 492 по центру). */
     .king__card {
-      flex: 0 0 auto;
-      padding: var(--space-16); /* 64 */
+      justify-content: center;
+      width: min(100%, 30.75rem); /* 492 */
     }
     .king__card :global(.king__mark) {
       height: 16rem; /* 256 */
     }
     .king__text {
-      flex: 0 1 51.25rem; /* 820 */
+      width: 100%; /* 612 — на всю ширину стовпця */
+      gap: var(--space-5); /* 20 */
+    }
+    .king__photo {
+      flex: 0 1 39.25rem; /* 628 */
     }
   }
 </style>

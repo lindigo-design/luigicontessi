@@ -1,0 +1,38 @@
+---
+// Figma: À propos → 03 Le roi de cœur + 04 Mes règles (desktop 50:433 — одна секція в два стовпці).
+// Desktop (≥1024): фон bg, ліворуч «Le roi de cœur» (монограма над текстом, по центру стовпця),
+// праворуч «Mes règles» (476 = 29.75rem), проміжок 120, по центру висоти. Mobile: дві окремі секції як раніше
+// (King — панель bg/alt, Mes règles — секція bg/alt). Немає тексту King (живий сайт) — лише Mes règles
+// на всю ширину (3 картки в ряд), без пари.
+interface Props {
+  paired: boolean;
+}
+const { paired } = Astro.props;
+---
+
+<div class:list={['pair', { 'pair--on': paired }]}>
+  <slot />
+</div>
+
+<style>
+  @media (min-width: 1024px) {
+    .pair--on {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 29.75rem; /* 476 */
+      column-gap: 7.5rem; /* 120 */
+      align-items: center;
+      max-width: calc(var(--content-max) + 2 * var(--gutter));
+      margin-inline: auto;
+      padding: var(--section-y) var(--gutter);
+    }
+    /* Секції всередині пари — без власних полів і фону, контейнер — на всю ширину стовпця. */
+    .pair--on > :global(section) {
+      padding-block: 0;
+      background: none;
+    }
+    .pair--on > :global(section > .container) {
+      max-width: none;
+      padding-inline: 0;
+    }
+  }
+</style>

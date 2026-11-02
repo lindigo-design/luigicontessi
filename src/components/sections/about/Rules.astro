@@ -1,15 +1,19 @@
 ---
-// Figma: À propos → 04 Mes règles. Фон bg/alt: eyebrow → H2 → 3 картки в ряд (mobile — стовпчиком), однакової висоти:
-// номер «01» (червоний) → H3 → текст. Hover — як текстові картки (світло за курсором, hover-card); не посилання.
+// Figma: À propos → 04 Mes règles. Mobile (50:579): секція bg/alt, eyebrow → H2 → картки стовпчиком (проміжок 12, поля 20).
+// Desktop у парі з «Le roi de cœur» (aside, 50:433): правий стовпець 476 — eyebrow → H2 28 → картки стовпчиком
+// (проміжок 24, поля 32), усе з проміжком 20. Без пари (немає тексту King) — 3 картки в ряд на всю ширину.
+// Картка: номер «01» (Medium 18, secondary) → H3 → текст. Hover — як текстові картки (світло за курсором, hover-card); не посилання.
 import type { AboutPageData } from '../../../content.config';
 
 interface Props {
   data: AboutPageData['rules'];
+  /** Правий стовпець пари з «Le roi de cœur» (desktop): один стовпець карток, менший H2. */
+  aside?: boolean;
 }
-const { data } = Astro.props;
+const { data, aside = false } = Astro.props;
 ---
 
-<section class="rules section section--alt" aria-labelledby="rules-title">
+<section class:list={['rules section section--alt', { 'rules--aside': aside }]} aria-labelledby="rules-title">
   <div class="container rules__inner">
     <div class="section-head__text">
       <p class="eyebrow">{data.eyebrow}</p>
@@ -31,17 +35,17 @@ const { data } = Astro.props;
   .rules__inner {
     display: flex;
     flex-direction: column;
-    gap: var(--space-8);
+    gap: var(--space-5); /* 20 */
   }
   .rules__list {
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-3); /* 12 */
   }
   .rule {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding: var(--space-6);
+    padding: var(--space-5); /* 20 */
     border-radius: var(--radius-card);
     background: var(--color-card);
   }
@@ -49,20 +53,28 @@ const { data } = Astro.props;
     font-size: var(--fs-title);
     font-weight: 500;
     line-height: 1.444;
-    color: var(--color-red-text);
+    color: var(--color-text-2);
   }
   @media (min-width: 768px) {
-    .rules__list {
+    .rules:not(.rules--aside) .rules__list {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--space-6);
     }
     .rule {
-      padding: var(--space-8);
+      padding: var(--space-8); /* 32 */
     }
   }
   @media (min-width: 1024px) {
-    .rules__inner {
+    .rules:not(.rules--aside) .rules__inner {
       gap: var(--space-14);
+    }
+    .rules--aside .rules__list {
+      gap: var(--space-6); /* 24 */
+    }
+    /* У парі заголовок менший — 28/34, як H3. */
+    .rules--aside h2 {
+      font-size: var(--fs-h3);
+      line-height: var(--lh-h3);
     }
   }
 </style>

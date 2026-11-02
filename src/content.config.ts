@@ -478,7 +478,7 @@ const aboutPageSchema = z.object({
   }),
   // «Le roi de cœur»: текст — лише від Luigi (історія тату, «roi de cœur» і «K», чому на колекції).
   // Порожньо — у перегляді заглушка, на живому сайті секції немає. Абзаци — через порожній рядок.
-  king: z.object({ eyebrow: text, title: text, text: z.string() }),
+  king: z.object({ eyebrow: text, title: text, text: z.string(), imageAlt: z.string().optional() }),
   // «Mes règles»: 3 картки (номер «01» — автоматично).
   rules: z.object({
     eyebrow: text,

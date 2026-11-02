@@ -1,11 +1,10 @@
 ---
-// Сторінка «À propos»: /<мова>/a-propos/. Intro → Parcours → Le roi de cœur → Mes règles → Citation →
+// Сторінка «À propos»: /<мова>/a-propos/. Intro → Parcours → Le roi de cœur → Citation →
 // Travailler ensemble (по кроках завдання 42). Тексти — src/content/pages/<мова>/a-propos.json.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Intro from '../../components/sections/about/Intro.astro';
 import Parcours from '../../components/sections/about/Parcours.astro';
 import KingOfHearts from '../../components/sections/about/KingOfHearts.astro';
-import Rules from '../../components/sections/about/Rules.astro';
 import Quote from '../../components/sections/about/Quote.astro';
 import Together from '../../components/sections/about/Together.astro';
 import { getImage } from 'astro:assets';
@@ -64,7 +63,6 @@ const jsonLd = JSON.stringify({
     <Parcours data={page.parcours} items={timeline} today={t('about.today', lang)} />
   )}
   {kingText && <KingOfHearts data={{ ...page.king, text: kingText }} />}
-  <Rules data={page.rules} />
   <Quote data={page.quote} author={settings.name} />
   <Together
     lang={lang}
