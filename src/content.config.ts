@@ -694,7 +694,7 @@ const partenariats = defineCollection({
       referencesItems: z.object({
         logos: z
           .array(z.object({ name: text, image: image() }))
-          .max(12)
+          .max(20)
           .default([]),
         cases: z
           .array(

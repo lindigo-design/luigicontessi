@@ -272,12 +272,18 @@ const slides = loop
     .news {
       gap: var(--space-12);
     }
+    /* Заголовок починається на лівому краї активної (центральної) фотографії: контейнер по центру
+       екрана, тож 50 % його ширини = центр стрічки; мінус половина активної картки. Eyebrow — зліва
+       в тому ж рядку (одна клітинка сітки). */
     .news__head {
-      flex-direction: row;
-      gap: var(--space-10);
+      display: grid;
+      align-items: start;
     }
-    .news__head .eyebrow {
-      flex: 0 0 25rem;
+    .news__head > * {
+      grid-area: 1 / 1;
+    }
+    .news__head h2 {
+      padding-left: calc(50% - var(--ncard-w-active) / 2);
     }
     .news__title-m {
       display: none;

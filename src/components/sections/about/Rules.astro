@@ -13,7 +13,10 @@ interface Props {
 const { data, aside = false } = Astro.props;
 ---
 
-<section class:list={['rules section section--alt', { 'rules--aside': aside }]} aria-labelledby="rules-title">
+<section
+  class:list={['rules section section--alt', { 'rules--aside': aside }]}
+  aria-labelledby="rules-title"
+>
   <div class="container rules__inner">
     <div class="section-head__text">
       <p class="eyebrow">{data.eyebrow}</p>

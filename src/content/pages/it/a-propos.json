@@ -4,14 +4,10 @@
   "intro": {
     "eyebrow": "Chi sono",
     "title": "Luigi Contessi",
-    "lead": "Imprenditore, content creator, specialista di jet d’affari e yacht. Condivido ciò che provo io stesso: auto, orologi, luoghi.",
-    "body": "Ho lavorato con più di 500 marchi, in più di 30 paesi: eventi a Monaco, viaggi in jet privato, campagne di moda. Il mio ruolo è semplice: raccontare un marchio in modo vero, perché venga voglia di scoprirlo.",
+    "lead": "Italiano, vivo a Parigi. Ex pilota, imprenditore, influencer di lusso e viaggi.",
+    "body": "Ho fondato e dirigo una compagnia di jet privati: il viaggio di lusso lo vivo dall’interno. Sono anche nel cast della seconda stagione della serie Creatives, su Amazon Prime Video, e sono Global Brand Ambassador di Shokz e Rokid. Su Instagram oltre 1,8 milioni di persone seguono ciò che provo: auto, orologi, hotel, destinazioni.",
     "imageAlt": "Ritratto di Luigi Contessi",
-    "stats": [
-      "followers",
-      "collaborations",
-      "countries"
-    ]
+    "stats": ["followers", "collaborations", "countries"]
   },
   "parcours": {
     "eyebrow": "Percorso",
@@ -35,7 +31,7 @@
       {
         "year": "2024",
         "title": "Il riconoscimento",
-        "text": "Premi e riconoscimenti. Ma la vera vittoria: arrivare a chi capisce l’eleganza."
+        "text": "Eletto Best Italian Influencer Luxury Lifestyle 2024/25. Ambasciatore del turismo di Cina ed Egitto."
       }
     ]
   },
@@ -73,5 +69,5 @@
     "partnerships": "Partnership",
     "instagram": "Seguimi su Instagram"
   },
-  "jobTitle": "Content creator"
+  "jobTitle": "Influencer di lusso e viaggi"
 }

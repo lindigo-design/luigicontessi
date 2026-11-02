@@ -25,20 +25,20 @@
       "title": "Pays",
       "items": [
         {
-          "label": "France",
-          "percent": null
-        },
-        {
           "label": "Italie",
-          "percent": null
+          "percent": 35
         },
         {
-          "label": "États-Unis",
-          "percent": null
+          "label": "France",
+          "percent": 34
+        },
+        {
+          "label": "Suisse",
+          "percent": 6
         },
         {
           "label": "Autres",
-          "percent": null
+          "percent": 25
         }
       ]
     },
@@ -47,23 +47,23 @@
       "items": [
         {
           "label": "18–24",
-          "percent": null
+          "percent": 35
         },
         {
           "label": "25–34",
-          "percent": null
+          "percent": 29
         },
         {
           "label": "35–44",
-          "percent": null
+          "percent": 22
         },
         {
           "label": "45+",
-          "percent": null
+          "percent": 10
         }
       ]
     },
-    "date": "",
+    "date": "août 2026",
     "source": "Données au {date} · Source : Instagram Insights"
   },
   "collaborations": {
@@ -136,7 +136,80 @@
     "previewAlt": "Aperçu du media kit"
   },
   "referencesItems": {
-    "logos": [],
+    "logos": [
+      {
+        "name": "Lamborghini",
+        "image": "../../../assets/img/logos/lamborghini.png"
+      },
+      {
+        "name": "Maserati",
+        "image": "../../../assets/img/logos/maserati.png"
+      },
+      {
+        "name": "Porsche",
+        "image": "../../../assets/img/logos/porsche.png"
+      },
+      {
+        "name": "McLaren",
+        "image": "../../../assets/img/logos/mclaren.png"
+      },
+      {
+        "name": "GAC Group",
+        "image": "../../../assets/img/logos/gac-group.png"
+      },
+      {
+        "name": "Shokz",
+        "image": "../../../assets/img/logos/shokz.png"
+      },
+      {
+        "name": "Rokid",
+        "image": "../../../assets/img/logos/rokid.png"
+      },
+      {
+        "name": "Prime Video",
+        "image": "../../../assets/img/logos/prime-video.png"
+      },
+      {
+        "name": "Waldorf Astoria",
+        "image": "../../../assets/img/logos/waldorf-astoria.png"
+      },
+      {
+        "name": "Hilton",
+        "image": "../../../assets/img/logos/hilton.png"
+      },
+      {
+        "name": "Sofitel",
+        "image": "../../../assets/img/logos/sofitel.png"
+      },
+      {
+        "name": "Rocco Forte Hotels",
+        "image": "../../../assets/img/logos/rocco-forte-hotels.png"
+      },
+      {
+        "name": "Relais & Châteaux",
+        "image": "../../../assets/img/logos/relais-chateaux.png"
+      },
+      {
+        "name": "Sunreef Yachts",
+        "image": "../../../assets/img/logos/sunreef-yachts.png"
+      },
+      {
+        "name": "Frédéric Jouvenot",
+        "image": "../../../assets/img/logos/frederic-jouvenot.png"
+      },
+      {
+        "name": "Golden Concept",
+        "image": "../../../assets/img/logos/golden-concept.png"
+      },
+      {
+        "name": "Microlino",
+        "image": "../../../assets/img/logos/microlino.png"
+      },
+      {
+        "name": "Nike Golf",
+        "image": "../../../assets/img/logos/nike-golf.png"
+      }
+    ],
     "cases": [
       {
         "brand": "GAC",

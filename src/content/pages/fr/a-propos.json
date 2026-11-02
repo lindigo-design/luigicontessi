@@ -4,14 +4,10 @@
   "intro": {
     "eyebrow": "À propos",
     "title": "Luigi Contessi",
-    "lead": "Entrepreneur, créateur de contenu, spécialiste des jets d’affaires et des yachts. Je partage ce que j’essaie moi-même : des voitures, des montres, des lieux.",
-    "body": "J’ai travaillé avec plus de 500 marques, dans plus de 30 pays : événements à Monaco, voyages en jet privé, campagnes de mode. Mon rôle est simple : raconter une marque de façon vraie, pour qu’on ait envie de la découvrir.",
+    "lead": "Italien, installé à Paris. Ancien pilote, entrepreneur, influenceur luxe et voyage.",
+    "body": "J’ai fondé et je dirige une compagnie de jets privés : le voyage de luxe, je le vis de l’intérieur. Je joue aussi dans la saison 2 de la série Creatives, sur Amazon Prime Video, et je suis ambassadeur mondial de Shokz et Rokid. Sur Instagram, plus de 1,8 million de personnes suivent ce que j’essaie : voitures, montres, hôtels, destinations.",
     "imageAlt": "Portrait de Luigi Contessi",
-    "stats": [
-      "followers",
-      "collaborations",
-      "countries"
-    ]
+    "stats": ["followers", "collaborations", "countries"]
   },
   "parcours": {
     "eyebrow": "Parcours",
@@ -35,7 +31,7 @@
       {
         "year": "2024",
         "title": "La reconnaissance",
-        "text": "Des prix et des distinctions. Mais la vraie victoire : toucher ceux qui comprennent l’élégance."
+        "text": "Élu Best Italian Influencer Luxury Lifestyle 2024/25. Ambassadeur du tourisme de la Chine et de l’Égypte."
       }
     ]
   },
@@ -73,5 +69,5 @@
     "partnerships": "Partenariats",
     "instagram": "Me suivre sur Instagram"
   },
-  "jobTitle": "Créateur de contenu"
+  "jobTitle": "Influenceur luxe et voyage"
 }

@@ -1,6 +1,8 @@
 ---
-// Figma: Partenariats → 05 Références (desktop 47:524). Логотипи марок (сітка 6 × 2, mobile 3 × 2,
-// світлі монохромні, hover — яскравіші) і до 2 кейсів. Порожньо — блок схований;
+// Figma: Partenariats → 05 Références (desktop 47:524). Логотипи марок — безкінечна стрічка (завдання 30):
+// один рядок 80 (mobile 56) на ширину контейнера, краї розчиняються, логотипи пливуть справа наліво
+// (~4 с на логотип, пауза при наведенні / фокусі; зменшений рух — статичний ряд). Логотипи світлі монохромні,
+// вписані у висоту 32 (mobile 24), не ширші за 9rem. Далі до 2 кейсів. Порожньо — блок схований;
 // і логотипів, і кейсів немає — вся секція схована (рішення — на сторінці).
 // Кейс: фото 628 × 464 → «GAC · Ambassadeur» → назва кампанії → результати. Немає назви — заголовок =
 // марка, мета-рядок не показуємо. Кадр фото (position з даних) — CSS-змінна зі скрипта (CSP).
@@ -8,7 +10,7 @@
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import type { PartenariatsData } from '../../../content.config';
-import type { Locale } from '../../../i18n/utils';
+import { t, type Locale } from '../../../i18n/utils';
 
 interface Props {
   data: PartenariatsData['references'];
@@ -63,6 +65,10 @@ const items = cases.map((c) => {
         ];
   return { ...c, title, meta, results };
 });
+// Стрічка: мало логотипів — повторюємо набір, щоб він був ширшим за контейнер (на збірці, без JS).
+const set = logos.length
+  ? Array.from({ length: Math.ceil(10 / logos.length) }, () => logos).flat()
+  : [];
 ---
 
 <section class="refs section" aria-labelledby="refs-title">
@@ -72,14 +78,25 @@ const items = cases.map((c) => {
       <h2 id="refs-title">{data.title}</h2>
     </div>
 
-    {logos.length > 0 && (
-      <ul class="refs__logos" role="list">
-        {logos.map((l) => (
-          <li class="refs__logo">
-            <Image src={l.image} alt={l.name} widths={[200, 400]} sizes="200px" loading="lazy" />
-          </li>
-        ))}
-      </ul>
+    {set.length > 0 && (
+      <div class="marquee" data-marquee data-count={set.length}>
+        <div class="marquee__track">
+          <ul class="marquee__set" role="list" aria-label={t('refs.brands', lang)}>
+            {set.map((l, k) => (
+              <li class="marquee__logo" aria-hidden={k >= logos.length ? 'true' : undefined}>
+                <Image src={l.image} alt={k < logos.length ? l.name : ''} loading="lazy" />
+              </li>
+            ))}
+          </ul>
+          <ul class="marquee__set" role="list" aria-hidden="true">
+            {set.map((l) => (
+              <li class="marquee__logo">
+                <Image src={l.image} alt="" loading="lazy" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     )}
 
     {items.length > 0 && (
@@ -115,6 +132,10 @@ const items = cases.map((c) => {
 </section>
 
 <script>
+  // Тривалість стрічки — ~4 с на логотип (CSS-змінна зі скрипта: inline-стилі заборонені CSP).
+  document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((el) => {
+    el.style.setProperty('--marquee-duration', `${Number(el.dataset.count || 10) * 4}s`);
+  });
   // Кадр фото кейса з даних (напр. «50% 22%») — через CSS-змінну (inline-стилі заборонені CSP).
   document.querySelectorAll<HTMLElement>('.rcase__img[data-position]').forEach((el) => {
     el.style.setProperty('--position', el.dataset.position ?? '');
@@ -127,28 +148,71 @@ const items = cases.map((c) => {
     flex-direction: column;
     gap: var(--space-8);
   }
-  .refs__logos {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-3);
-  }
-  .refs__logo {
-    aspect-ratio: 200 / 80;
-    padding: var(--space-3);
+  /* ---------- Стрічка логотипів ---------- */
+  .marquee {
     overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
   }
-  /* Логотипи світлі й монохромні; при наведенні — яскравіші. Вписуються в клітинку 200 × 80. */
-  .refs__logo :global(img) {
-    width: 100%;
-    height: 100%;
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--marquee-duration, 72s) linear infinite;
+  }
+  .marquee:hover .marquee__track,
+  .marquee:focus-within .marquee__track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  /* Обидва набори однакові, з проміжком і в кінці — стик без стрибка. */
+  .marquee__set {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+    height: 3.5rem; /* 56 */
+    padding-right: var(--space-10);
+  }
+  .marquee__logo {
+    flex: none;
+    display: flex;
+    align-items: center;
+  }
+  .marquee__logo :global(img) {
+    width: auto;
+    height: 1.5rem; /* 24 */
+    max-width: 9rem;
     object-fit: contain;
     filter: grayscale(1) brightness(1.6);
     opacity: 0.6;
     transition: opacity var(--dur) var(--ease);
   }
   @media (hover: hover) {
-    .refs__logo:hover :global(img) {
+    .marquee__logo:hover :global(img) {
       opacity: 1;
+    }
+  }
+  /* Зменшений рух: без руху, один ряд по центру з переносом. */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      mask-image: none;
+    }
+    .marquee__track {
+      width: auto;
+      animation: none;
+    }
+    .marquee__set {
+      flex-wrap: wrap;
+      justify-content: center;
+      height: auto;
+      row-gap: var(--space-6);
+      padding-right: 0;
+    }
+    .marquee__set[aria-hidden='true'],
+    .marquee__logo[aria-hidden='true'] {
+      display: none;
     }
   }
   .refs__cases {
@@ -184,9 +248,13 @@ const items = cases.map((c) => {
     .refs__inner {
       gap: var(--space-14);
     }
-    .refs__logos {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: var(--space-4);
+    .marquee__set {
+      gap: var(--space-16);
+      height: 5rem; /* 80 */
+      padding-right: var(--space-16);
+    }
+    .marquee__logo :global(img) {
+      height: 2rem; /* 32 */
     }
     .refs__cases {
       grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -38,9 +38,9 @@
     "endpoint": ""
   },
   "emails": {
-    "contact": "",
-    "press": "",
-    "partnerships": "",
+    "contact": "luigi.contessi@gmail.com",
+    "press": "luigi.contessi@gmail.com",
+    "partnerships": "luigi.contessi@gmail.com",
     "yachts": ""
   },
   "shopCodes": [
@@ -50,19 +50,19 @@
     }
   ],
   "mediaKit": {
-    "file": "",
-    "year": "",
-    "pages": null
+    "file": "media-kit-luigi-contessi-2026.pdf",
+    "year": "2026",
+    "pages": 6
   },
   "stats": [
     {
       "id": "followers",
-      "count": 1.7,
+      "count": 1.8,
       "decimals": 1,
       "value": {
-        "fr": "1,7 M+",
-        "en": "1.7M+",
-        "it": "1,7 M+"
+        "fr": "1,8 M+",
+        "en": "1.8M+",
+        "it": "1,8 M+"
       },
       "label": {
         "fr": "abonnés Instagram",
