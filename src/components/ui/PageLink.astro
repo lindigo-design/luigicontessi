@@ -1,0 +1,44 @@
+---
+// Link Accent на сторінку сайту. Сторінка ще не готова (nav.ts → isBuilt) — заглушка того самого
+// вигляду: клік нічого не відкриває, під кнопкою на 2 с «Lien bientôt disponible»
+// (src/scripts/placeholder-links.ts), як посилання марок у BrandLink.
+import Button from './Button.astro';
+import { isBuilt } from '../../i18n/nav';
+import { localizePath, t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  label: string;
+  /** path сторінки, як у nav.ts (partenariats, yachts, contact?sujet=code…). */
+  path: string;
+}
+const { lang, label, path } = Astro.props;
+const [page, query] = path.split('?');
+const soon = t('codes.soon', lang);
+---
+
+{isBuilt(page) ? (
+  <Button href={`${localizePath(page, lang)}${query ? `?${query}` : ''}`} variant="accent">
+    {label}
+  </Button>
+) : (
+  <span class="page-soon">
+    <Button href="#" variant="accent" title={soon} aria-disabled="true" data-placeholder="">
+      {label}
+    </Button>
+    <span class="page-soon__note text-s text-2" role="status" data-placeholder-note hidden>
+      {soon}
+    </span>
+  </span>
+)}
+
+<style>
+  .page-soon {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .page-soon__note[hidden] {
+    display: none;
+  }
+</style>

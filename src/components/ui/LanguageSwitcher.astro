@@ -1,42 +1,53 @@
 ---
-// Перемикач мов: веде на ту саму сторінку іншою мовою.
+// Перемикач мов «FR EN IT» в один рядок: веде на ту саму сторінку іншою мовою.
+// Поточна — біла (aria-current), інші — сірі, hover → білі. Без підкреслення: це перемикач,
+// а не текстові посилання. На екрані коди, для читалки — повна назва мови.
+// nav — шапка й верх меню (проміжок 16), footer — футер і низ меню.
 import { locales, switchLocale, t, type Locale } from '../../i18n/utils';
 interface Props {
   lang: Locale;
   variant?: 'nav' | 'footer';
+  class?: string;
 }
-const { lang, variant = 'nav' } = Astro.props;
-const path = Astro.url.pathname;
+const { lang, variant = 'nav', class: extra } = Astro.props;
+// Сторінки помилок (404 / 500) віддаються на будь-якій адресі — мови ведуть на головну.
+const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+const isError = /^\/(404|500)(\.html|\/)?$/.test(Astro.url.pathname.slice(base.length));
+const path = isError ? `${base}/` : Astro.url.pathname;
 ---
 
-<ul class:list={['langs', `langs--${variant}`]} role="list" aria-label={t('lang.label', lang)}>
-  {locales.map((code) => (
-    <li>
-      <a
-        href={switchLocale(path, code)}
-        hreflang={code}
-        lang={code}
-        aria-current={code === lang ? 'true' : undefined}
-        aria-label={t(`lang.${code}`, lang)}
-      >
-        {code.toUpperCase()}
-      </a>
-    </li>
-  ))}
-</ul>
+<nav class:list={['langs', `langs--${variant}`, extra]} aria-label={t('lang.label', lang)}>
+  <ul role="list">
+    {locales.map((code) => (
+      <li>
+        <a
+          href={switchLocale(path, code)}
+          hreflang={code}
+          lang={code}
+          aria-current={code === lang ? 'true' : undefined}
+          aria-label={t(`lang.${code}`, lang)}
+        >
+          {code.toUpperCase()}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
 
 <style>
-  .langs {
+  .langs ul {
     display: flex;
     gap: var(--space-5);
     font-weight: 500;
     font-size: var(--fs-label);
+    line-height: 1.23;
     letter-spacing: 0.08em;
   }
   .langs a {
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
+    text-decoration: none;
     color: var(--color-text-2);
     transition: color var(--dur) var(--ease);
   }
@@ -44,7 +55,7 @@ const path = Astro.url.pathname;
   .langs a[aria-current] {
     color: var(--color-text);
   }
-  .langs--nav {
-    gap: var(--space-3);
+  .langs--nav ul {
+    gap: var(--space-4);
   }
 </style>

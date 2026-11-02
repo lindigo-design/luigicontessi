@@ -1,0 +1,75 @@
+{
+  "seoTitle": "Luigi Contessi promo codes — partner brands",
+  "seoDescription": "Luigi Contessi’s discount codes at his partner brands. Copy the code, open the brand’s site, and the discount applies at checkout.",
+  "intro": {
+    "eyebrow": "Privileges",
+    "title": "My codes at\npartner brands",
+    "body": "Brands I really use. One code, one discount, on the brand’s website.",
+    "disclosure": {
+      "title": "Transparency",
+      "text": "These links and codes are partnerships. I may earn a commission. Your price doesn’t change."
+    },
+    "steps": [
+      {
+        "title": "Copy the code",
+        "titleMobile": "",
+        "text": "One click on “Copy code”."
+      },
+      {
+        "title": "Open the site",
+        "titleMobile": "Open the brand’s site",
+        "text": "The link takes you straight to the brand."
+      },
+      {
+        "title": "Paste at checkout",
+        "titleMobile": "",
+        "text": "The discount applies right away."
+      }
+    ]
+  },
+  "featured": {
+    "eyebrow": "Featured"
+  },
+  "gallery": {
+    "images": [
+      {
+        "image": "../../../assets/img/privileges/gallery-1.jpg",
+        "alt": ""
+      },
+      {
+        "image": "../../../assets/img/privileges/gallery-2.jpg",
+        "alt": ""
+      },
+      {
+        "image": "../../../assets/img/privileges/gallery-3.jpg",
+        "alt": ""
+      }
+    ]
+  },
+  "questions": {
+    "eyebrow": "Questions",
+    "title": "A code doesn’t work?",
+    "body": "Write to me. I’ll check with the brand.",
+    "link": {
+      "label": "Contact"
+    },
+    "items": [
+      {
+        "question": "The code doesn’t work. What should I do?",
+        "answer": "Check the offer’s conditions (date, minimum amount). If the problem persists, write to me via Contact."
+      },
+      {
+        "question": "Who sells and delivers the products?",
+        "answer": "[Answer to be completed]"
+      },
+      {
+        "question": "Why use these codes?",
+        "answer": "[Answer to be completed]"
+      },
+      {
+        "question": "Can the codes be combined?",
+        "answer": "[Answer to be completed]"
+      }
+    ]
+  }
+}

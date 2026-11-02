@@ -1,101 +1,211 @@
 ---
-// Figma: 01 Hero → Header (desktop 1440 / mobile 390). Меню: Nav / Item, Nav / Logo, Nav / Menu button.
+// Figma: Header / Desktop (131:499) — «☰ MENU · логотип · Privilèges · FR EN IT [Panier]» на ширинах ≥ 768.
+// Mobile: логотип зліва, справа Panier (якщо магазин) + бургер без слова.
 // На всю ширину. Лежить поверх першого екрана (прозорий фон); після прокрутки — суцільний фон
 // і ховається при прокрутці вниз (src/scripts/header.ts).
+// Меню на весь екран (Figma «Menu desktop (ouvert)» 132:590) — dialog #site-menu, src/scripts/menu.ts.
+import { Image } from 'astro:assets';
 import Logo from '../ui/Logo.astro';
+import Button from '../ui/Button.astro';
 import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
+import ArrowCircle from '../ui/ArrowCircle.astro';
 import MenuIcon from '../../assets/icons/menu.svg';
 import CloseIcon from '../../assets/icons/close.svg';
-import { mainNav, utilityNav } from '../../i18n/nav';
+import { headerLinks, menuPrimary, menuSecondary } from '../../i18n/nav';
 import { localizePath, t, type Locale } from '../../i18n/utils';
-import { getSettings } from '../../content/helpers';
+import { getHome, getSettings } from '../../content/helpers';
 
 interface Props {
   lang: Locale;
   current?: string;
+  /** overlay — поверх першого фото (прозора); solid — окрема смуга з фоном, контент під нею. */
+  mode?: 'overlay' | 'solid';
 }
-const { lang, current } = Astro.props;
+const { lang, current, mode = 'solid' } = Astro.props;
 const settings = await getSettings();
 const shop = settings.features.shop;
-const items = mainNav.filter((i) => !i.shop || shop);
 const to = (p: string) => localizePath(p, lang);
+const primary = menuPrimary(shop);
+// Фото праворуч за замовчуванням: пункт поточної сторінки, інакше Yachts.
+const currentIndex = primary.findIndex((i) => i.path === current);
+const defaultPreview = currentIndex >= 0 ? currentIndex : 1;
+// Купон унизу меню — той самий код, що в промо-смузі: «Code» · LUIGI10 · умова.
+const promo = (await getHome(lang)).promo;
+const [promoLabel = '', promoRest = ''] = promo.text.split(promo.code);
+const promoOffer = promoRest.replace(/^\s*[—–-]\s*/, '');
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<header class="header" data-header>
+<header class:list={['header', `header--${mode}`]} data-header>
   <div class="container container--bleed header__bar">
+    <button
+      class="header__menu"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      data-menu-open
+    >
+      <MenuIcon />
+      <span class="header__menu-label">{t('nav.menu', lang)}</span>
+    </button>
+
     <Logo href={to('')} label={t('nav.home', lang)} />
 
-    <nav class="header__nav" aria-label={t('nav.main', lang)}>
-      <ul role="list">
-        {items.map((i) => (
-          <li>
-            <a
-              class="nav-item"
-              href={to(i.path)}
-              aria-current={current === i.path ? 'page' : undefined}
-            >
-              {t(i.key, lang)}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-
-    <div class="header__utils">
-      {utilityNav.map((i) => (
+    <div class="header__right">
+      {headerLinks.map((i) => (
         <a
-          class="nav-item"
+          class="nav-item header__link"
           href={to(i.path)}
           aria-current={current === i.path ? 'page' : undefined}
         >
           {t(i.key, lang)}
         </a>
       ))}
-      <LanguageSwitcher lang={lang} />
+      <LanguageSwitcher lang={lang} class="header__langs" />
       {shop && (
-        <a class="nav-item" href={to('panier')}>
-          {t('nav.cart', lang)} (0)
+        <a
+          class="nav-item header__cart"
+          href={to('panier')}
+          aria-current={current === 'panier' ? 'page' : undefined}
+        >
+          {t('nav.cart', lang)} (<span data-cart-count>0</span>)
         </a>
       )}
     </div>
-
-    <button class="header__burger" type="button" data-menu-open aria-haspopup="dialog">
-      <span class="visually-hidden">{t('nav.menu', lang)}</span>
-      <MenuIcon />
-    </button>
   </div>
 
-  <dialog class="menu" data-menu aria-label={t('nav.main', lang)}>
+  <dialog id="site-menu" class="menu" data-menu aria-label={t('nav.main', lang)}>
     <div class="container container--bleed menu__inner">
-      <div class="menu__top">
-        <Logo href={to('')} label={t('nav.home', lang)} />
-        <button class="header__burger menu__close" type="button" data-menu-close>
-          <span class="visually-hidden">{t('nav.close', lang)}</span>
+      <!-- Верх — на тих самих місцях, що в шапці: при відкритті нічого не «стрибає». -->
+      <div class="header__bar menu__top">
+        <button class="header__menu" type="button" data-menu-close>
           <CloseIcon />
+          <span class="header__menu-label">{t('nav.close', lang)}</span>
         </button>
-      </div>
-      <ul class="menu__list" role="list">
-        {[...items, ...utilityNav].map((i) => (
-          <li>
-            <a href={to(i.path)} aria-current={current === i.path ? 'page' : undefined}>
+        <Logo href={to('')} label={t('nav.home', lang)} />
+        <div class="header__right">
+          {headerLinks.map((i) => (
+            <a
+              class="nav-item header__link"
+              href={to(i.path)}
+              aria-current={current === i.path ? 'page' : undefined}
+            >
               {t(i.key, lang)}
             </a>
-          </li>
-        ))}
-      </ul>
-      <LanguageSwitcher lang={lang} variant="footer" />
+          ))}
+          <LanguageSwitcher lang={lang} class="header__langs" />
+          {shop && (
+            <a
+              class="nav-item header__cart"
+              href={to('panier')}
+              aria-current={current === 'panier' ? 'page' : undefined}
+            >
+              {t('nav.cart', lang)} (<span data-cart-count>0</span>)
+            </a>
+          )}
+        </div>
+      </div>
+
+      <!-- Mobile: мови нагорі меню, одразу під логотипом. -->
+      <LanguageSwitcher lang={lang} class="menu__langs-top" />
+
+      <div class="menu__body">
+        <nav class="menu__nav" aria-label={t('nav.main', lang)}>
+          <ol class="menu__primary" role="list" data-menu-primary>
+            {primary.map((i, n) => (
+              <li>
+                <a
+                  class="mitem"
+                  href={to(i.path)}
+                  aria-current={current === i.path ? 'page' : undefined}
+                  data-preview={n}
+                >
+                  <span class="mitem__num">{pad(n + 1)}</span>
+                  <span class="mitem__label">{t(i.key, lang)}</span>
+                  <ArrowCircle />
+                </a>
+              </li>
+            ))}
+          </ol>
+          <ul class="menu__secondary" role="list">
+            {menuSecondary.map((i) => (
+              <li>
+                <a
+                  class="msmall"
+                  href={to(i.path)}
+                  aria-current={current === i.path ? 'page' : undefined}
+                >
+                  {t(i.key, lang)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <figure class="menu__preview" aria-hidden="true">
+          <div class="menu__photo media">
+            {primary.map((i, n) => (
+              <Image
+                class:list={['menu__img', { 'is-active': n === defaultPreview }]}
+                src={i.preview}
+                alt=""
+                widths={[440, 880]}
+                sizes="440px"
+                loading="lazy"
+                data-preview-img={n}
+              />
+            ))}
+          </div>
+          <figcaption class="menu__captions text-s text-2">
+            {primary.map((i, n) => (
+              <span
+                class:list={['menu__caption', { 'is-active': n === defaultPreview }]}
+                data-preview-caption={n}
+              >
+                {t(i.caption, lang)}
+              </span>
+            ))}
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="menu__bottom">
+        <LanguageSwitcher lang={lang} variant="footer" class="menu__langs-bottom" />
+        <a
+          class="menu__insta"
+          href={settings.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram {settings.instagramHandle}
+          <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
+        </a>
+        <p class="menu__code text-s text-2">
+          <span>{promoLabel.trim()}</span>
+          <button
+            class="menu__chip"
+            type="button"
+            data-copy={promo.code}
+            data-copied={t('ui.copied', lang)}
+          >
+            <span class="btn__label">{promo.code}</span>
+          </button>
+          <span>{promoOffer}</span>
+        </p>
+        <!-- Mobile: замість рядка «Instagram» і купона — кнопка «Suivre @contessiluigi». -->
+        <Button href={settings.instagramUrl} variant="accent" external class="menu__follow">
+          {`${t('menu.follow', lang)} ${settings.instagramHandle}`}
+          <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
+        </Button>
+      </div>
     </div>
   </dialog>
 </header>
 
 <script>
-  // Меню-бургер на <dialog>: фокус усередині, Esc закриває.
-  const dialog = document.querySelector<HTMLDialogElement>('[data-menu]');
-  document.querySelector('[data-menu-open]')?.addEventListener('click', () => dialog?.showModal());
-  document.querySelector('[data-menu-close]')?.addEventListener('click', () => dialog?.close());
-  dialog?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => dialog.close()));
-
+  import { initMenu } from '../../scripts/menu';
   import { initHeader } from '../../scripts/header';
+  initMenu();
   initHeader();
 </script>
 
@@ -120,6 +230,17 @@ const to = (p: string) => localizePath(p, lang);
     background: var(--color-bg);
     border-bottom-color: var(--color-border);
   }
+  /* solid: окрема смуга вгорі сторінки — фон одразу, контент починається під нею.
+     Після прокрутки (is-solid) зʼявляється лише лінія знизу; висота не змінюється. */
+  .header--solid,
+  .header--solid.is-solid {
+    margin-bottom: 0;
+    padding-block: var(--header-solid-pad);
+    background: var(--color-bg);
+  }
+  .header--solid .menu__inner {
+    padding-top: var(--header-solid-pad);
+  }
   .header.is-hidden:not(:focus-within) {
     transform: translateY(-100%);
   }
@@ -128,20 +249,55 @@ const to = (p: string) => localizePath(p, lang);
       transition: none;
     }
   }
+
+  /* Mobile: логотип зліва, справа Panier + бургер. ≥ 768: MENU · логотип по центру · посилання. */
   .header__bar {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas: 'logo right menu';
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .header__bar > :global(.logo) {
+    grid-area: logo;
+    justify-self: start;
+  }
+  .header__right {
+    grid-area: right;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-  }
-  .header__nav,
-  .header__utils {
-    display: none;
-  }
-  .header__nav ul {
-    display: flex;
     gap: var(--space-1);
   }
+  /* Mobile: «Privilèges» і мови — лише в меню (місця нема). */
+  .header__right .header__link,
+  .header__right :global(.header__langs) {
+    display: none;
+  }
+  .header__menu {
+    grid-area: menu;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--header-h);
+    min-width: var(--header-h);
+    justify-content: center;
+    margin-right: -0.625rem;
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  /* Mobile: лише іконка; слово лишається для читалки. */
+  .header__menu-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
   .nav-item {
     display: inline-flex;
     align-items: center;
@@ -154,45 +310,61 @@ const to = (p: string) => localizePath(p, lang);
     text-transform: uppercase;
     white-space: nowrap;
     color: var(--color-text);
-    transition: color var(--dur) var(--ease);
+    /* Підкреслення — видно, що це посилання (Figma Nav / Item). Не для MENU, логотипа й мов. */
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: currentColor;
+    transition:
+      color var(--dur) var(--ease),
+      text-underline-offset 200ms var(--ease),
+      text-decoration-color 200ms var(--ease);
   }
+  /* Hover: лінія ледь відходить і сіріє, колір тексту той самий. */
   .nav-item:hover {
-    color: var(--color-text-2);
+    text-underline-offset: 6px;
+    text-decoration-color: var(--color-text-2);
   }
   .nav-item[aria-current='page'] {
     color: var(--color-red-text);
+    text-decoration-color: currentColor;
   }
-  .header__burger {
-    display: inline-grid;
-    place-items: center;
-    width: var(--header-h);
-    height: var(--header-h);
-    margin-right: -0.625rem;
-  }
-  @media (min-width: 1100px) {
-    /* Логотип — ліворуч, меню — по центру екрана, Partenariats і мови — праворуч. */
+
+  @media (min-width: 768px) {
     .header__bar {
-      display: grid;
       grid-template-columns: 1fr auto 1fr;
+      grid-template-areas: 'menu logo right';
+      gap: var(--space-4);
     }
     .header__bar > :global(.logo) {
+      justify-self: center;
+    }
+    .header__menu {
       justify-self: start;
+      justify-content: flex-start;
+      margin: 0 0 0 -0.625rem;
+      padding-inline: 0.625rem;
     }
-    .header__utils {
+    .header__menu-label {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
+    }
+    .header__right {
       justify-self: end;
+      gap: 0.125rem; /* + відступ пункту 10 px ≈ 12 px між Privilèges і мовами (Figma) */
     }
-    .header__nav,
-    .header__utils {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
+    .header__right .header__link {
+      display: inline-flex;
     }
-    .header__burger {
-      display: none;
+    .header__right :global(.header__langs) {
+      display: block;
     }
   }
 
-  /* Мобільне меню */
+  /* ---------- Меню на весь екран ---------- */
   .menu {
     width: 100%;
     max-width: none;
@@ -201,36 +373,304 @@ const to = (p: string) => localizePath(p, lang);
     margin: 0;
     padding: 0;
     border: 0;
-    background: var(--color-bg);
+    background: var(--color-bg-alt);
     color: var(--color-text);
+    overflow-y: auto;
+  }
+  .menu[open] {
+    animation: menu-fade 240ms var(--ease);
   }
   .menu::backdrop {
-    background: rgb(var(--shade) / 0.6);
+    background: var(--color-bg-alt);
+  }
+  /* Мʼяке світло за курсором (як на картках преси) — текст читається завжди. */
+  .menu::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 420px at var(--mx, 50%) var(--my, 40%),
+      var(--card-glow),
+      transparent 70%
+    );
   }
   .menu__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    min-height: 100%;
+    padding-block: var(--header-pad) var(--space-10);
+  }
+  .menu__body {
     display: flex;
     flex-direction: column;
     gap: var(--space-10);
-    padding-block: var(--space-5) var(--space-10);
   }
-  .menu__top {
+  .menu__nav {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: var(--space-10);
   }
-  .menu__list {
+
+  /* Великі пункти: номер + назва, лінія знизу. Наведений — білий з червоним колом, інші сіріють. */
+  .mitem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    transition: color var(--dur) var(--ease);
+  }
+  .mitem__num {
+    flex: none;
+    min-width: 1.25rem;
+    font-weight: 500;
+    font-size: var(--fs-eyebrow);
+    letter-spacing: 0.2em;
+    color: var(--color-text-2);
+  }
+  .mitem[aria-current='page'] .mitem__num {
+    color: var(--color-red-text);
+  }
+  /* Mobile і tablet — Mobile/H1 32, desktop (≥ 1024) — Desktop/H1 52. */
+  .mitem__label {
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 1024px) {
+    .mitem__label {
+      font-size: var(--fs-h1);
+      line-height: var(--lh-h1);
+    }
+  }
+  .mitem :global(.arrow) {
+    opacity: 0;
+    color: var(--color-text);
+    transition:
+      opacity var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+  .menu__primary:has(.mitem:hover, .mitem:focus-visible) .mitem:not(:hover):not(:focus-visible) {
+    color: var(--color-text-2); /* #d4d1cb на #161616 ≈ 12 : 1 — читається */
+  }
+  .mitem:hover :global(.arrow),
+  .mitem:focus-visible :global(.arrow) {
+    opacity: 1;
+    border-color: var(--color-red-text);
+    background: var(--color-red-text);
+    color: var(--color-bg);
+  }
+
+  .menu__secondary {
     display: flex;
     flex-direction: column;
   }
-  .menu__list a {
-    display: block;
-    padding-block: var(--space-4);
-    border-bottom: 1px solid var(--color-border);
-    font-family: var(--font-display);
-    font-size: var(--fs-h3);
-    line-height: 1.2;
+  .msmall {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--header-h);
+    font-size: var(--fs-title);
+    font-weight: 500;
+    line-height: 1.444;
+    color: var(--color-text);
+    transition: color var(--dur) var(--ease);
   }
-  .menu__list a[aria-current='page'] {
+  .msmall:hover {
+    color: var(--color-text-2);
+  }
+  .msmall[aria-current='page'] {
     color: var(--color-red-text);
+  }
+
+  /* Фото праворуч (≥ 768): змінюється при наведенні на пункт — плавна opacity. */
+  .menu__preview {
+    display: none;
+  }
+  .menu__photo {
+    display: grid;
+    aspect-ratio: 440 / 520;
+  }
+  .menu__photo :global(.menu__img) {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transition: opacity 300ms var(--ease);
+  }
+  .menu__photo :global(.menu__img.is-active) {
+    opacity: 1;
+  }
+  .menu__captions {
+    display: grid;
+    margin-top: var(--space-3);
+  }
+  .menu__caption {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transition: opacity 300ms var(--ease);
+  }
+  .menu__caption.is-active {
+    opacity: 1;
+  }
+
+  .menu__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-top: auto;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+  .menu__bottom :global(.menu__langs-bottom) {
+    display: none;
+  }
+  .menu__insta {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--header-h);
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color var(--dur) var(--ease);
+  }
+  .menu__insta:hover {
+    color: var(--color-text-2);
+  }
+  .menu__code {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  /* Купон: рамка пунктиром — звична ознака промокоду; клік копіює. */
+  .menu__chip {
+    padding: 5px 10px;
+    border: 1px dashed var(--color-text);
+    border-radius: var(--radius-btn);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    letter-spacing: 0.12em;
+    color: var(--color-text);
+  }
+
+  /* Пункти зʼявляються по черзі знизу вгору. */
+  .menu[open] .menu__primary li,
+  .menu[open] .menu__secondary {
+    animation: menu-rise 400ms var(--ease) both;
+  }
+  .menu[open] .menu__primary li:nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .menu[open] .menu__primary li:nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .menu[open] .menu__primary li:nth-child(4) {
+    animation-delay: 120ms;
+  }
+  .menu[open] .menu__primary li:nth-child(5) {
+    animation-delay: 160ms;
+  }
+  .menu[open] .menu__secondary {
+    animation-delay: 200ms;
+  }
+  @keyframes menu-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes menu-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu[open] .menu__primary li,
+    .menu[open] .menu__secondary {
+      animation-name: menu-fade;
+    }
+  }
+
+  /* ---------- Мобільне меню (< 768, Figma «Menu mobile (ouvert)» 55:379) ----------
+     Мови нагорі (завдання 18), без фото і без світла за курсором (touch). Великі пункти —
+     Mobile/H1 32 з колом-стрілкою, без номерів і ліній; поточна сторінка — червона.
+     Дрібні — списком; унизу — «Suivre @contessiluigi». */
+  @media (max-width: 767px) {
+    .menu::before {
+      display: none;
+    }
+    .menu__top {
+      margin-inline: calc(var(--gutter) * -1);
+      padding: 0 var(--gutter) var(--space-1);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .menu__primary {
+      margin-top: var(--space-2);
+    }
+    .mitem {
+      padding-block: 0.8125rem; /* рядок 64 */
+      border-bottom: 0;
+    }
+    .mitem__num {
+      display: none;
+    }
+    .mitem :global(.arrow) {
+      opacity: 1;
+    }
+    .mitem[aria-current='page'] {
+      color: var(--color-red-text);
+    }
+    .mitem[aria-current='page'] :global(.arrow) {
+      color: var(--color-red-text);
+    }
+    .menu__insta,
+    .menu__code {
+      display: none;
+    }
+  }
+  .menu__bottom :global(.menu__follow) {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .menu__bottom :global(.menu__follow) {
+      display: inline-flex;
+    }
+  }
+  @media (min-width: 768px) {
+    .menu :global(.menu__langs-top) {
+      display: none;
+    }
+    .menu__body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) min(27.5rem, 38%);
+      align-items: start;
+      gap: var(--space-24);
+      padding-top: var(--space-4);
+    }
+    .menu__secondary {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0 var(--space-8);
+    }
+    .menu__preview {
+      display: block;
+    }
+    .menu__bottom {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+    .menu__bottom :global(.menu__langs-bottom) {
+      display: block;
+    }
+    .menu__code {
+      justify-self: end;
+    }
   }
 </style>

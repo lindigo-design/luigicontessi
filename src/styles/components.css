@@ -101,6 +101,126 @@
   }
 }
 
+/* Картка на плашці --color-card: Card / Presse, Card / Code partenaire.
+   Card / Presse — уся картка одне посилання: головне посилання (.hover-card__link) розтягнуте через ::after.
+   Card / Code partenaire — без .hover-card__link (дві окремі дії: копіювати / перейти), лише вигляд hover.
+   З мишкою: легкий зум, мʼяке світло під курсором (--mx / --my — src/scripts/hover-card.ts),
+   краї проявляються, стрілка червоніє. Клавіатура — той самий стан + червоний контур на всій картці. */
+.hover-card {
+  position: relative;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+.hover-card > :not(.hover-card__link) {
+  position: relative; /* текст над світлою плямою */
+}
+.hover-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 320px at var(--mx, 50%) var(--my, 50%),
+    var(--card-glow),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--zoom-dur) var(--zoom-ease);
+}
+.hover-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.hover-card__link:focus-visible {
+  outline: none;
+}
+.hover-card:has(.hover-card__link:focus-visible) {
+  outline: 2px solid var(--color-red-text);
+  outline-offset: 3px;
+}
+.hover-card:has(.hover-card__link:focus-visible)::before {
+  opacity: 1;
+}
+.hover-card:has(.hover-card__link:focus-visible) .arrow {
+  background: var(--color-red-text);
+  color: var(--color-bg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hover-card {
+    transition:
+      transform var(--zoom-dur) var(--zoom-ease),
+      box-shadow var(--zoom-dur) var(--zoom-ease);
+  }
+  .hover-card:hover,
+  .hover-card:has(.hover-card__link:focus-visible) {
+    box-shadow: inset 0 0 0 1px var(--card-edge-hover);
+  }
+  .hover-card:hover::before {
+    opacity: 1;
+  }
+  .hover-card:hover .arrow {
+    background: var(--color-red-text);
+    color: var(--color-bg);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hover-card:hover,
+  .hover-card:has(.hover-card__link:focus-visible) {
+    transform: scale(var(--card-scale));
+  }
+}
+
+/* Figma: Chip / Filter — Default (рамка, сірий текст) / Active (світлий фон).
+   Кнопка-фільтр з aria-pressed або вибраний розмір (.is-active). */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.375rem; /* 38 */
+  padding-inline: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  line-height: 1.23;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-2);
+  transition:
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+@media (hover: hover) {
+  .chip:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-2);
+  }
+}
+.chip[hidden] {
+  display: none;
+}
+.chip[aria-pressed='true'],
+.chip.is-active {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: var(--color-on-light);
+}
+
+/* Стрічки, які можна тягнути мишкою (src/scripts/drag-scroll.ts). Під час — без прилипання. */
+.can-drag {
+  cursor: grab;
+}
+.is-dragging {
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
+  cursor: grabbing !important;
+  user-select: none;
+}
+
 /* Горизонтальна стрічка з прокруткою (mobile swipe) */
 .rail {
   display: flex;

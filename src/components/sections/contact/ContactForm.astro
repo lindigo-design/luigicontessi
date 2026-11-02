@@ -1,0 +1,102 @@
+---
+// Figma: Contact → Formulaire (desktop 50:694). «Autre question»: Nom + E-mail (desktop в один рядок),
+// Sujet (чипи; ?sujet=code / presse / autre вибирає тему), Message (≥ 30 символів, лічильник),
+// згода, Envoyer (завжди активна: клік показує, що не так).
+// Перевірка й надсилання — спільні (src/components/forms/Form.astro + src/scripts/form.ts).
+import Form from '../../forms/Form.astro';
+import Field from '../../forms/Field.astro';
+import ChipGroup from '../../forms/ChipGroup.astro';
+import Consent from '../../forms/Consent.astro';
+import { localizePath, type Locale } from '../../../i18n/utils';
+import type { ContactData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: ContactData['form'];
+  email: string;
+}
+const { lang, data, email } = Astro.props;
+const subjects = (['question', 'code', 'presse', 'autre'] as const).map((value) => ({
+  value,
+  label: data.subject.options[value],
+}));
+---
+
+<div class="cform">
+  <h2 class="cform__title">{data.title}</h2>
+  <Form
+    lang={lang}
+    name="contact"
+    email={email}
+    submit={data.submit}
+    thanks={{
+      title: data.thanks.title,
+      text: data.thanks.text,
+      link: { label: data.thanks.link.label, href: localizePath('', lang) },
+    }}
+  >
+    <div class="cform__row">
+      <Field
+        lang={lang}
+        label={data.name.label}
+        name="name"
+        placeholder={data.name.placeholder}
+        autocomplete="name"
+        required
+      />
+      <Field
+        lang={lang}
+        label={data.email.label}
+        name="email"
+        type="email"
+        placeholder={data.email.placeholder}
+        autocomplete="email"
+        required
+      />
+    </div>
+    <ChipGroup
+      legend={data.subject.legend}
+      name="sujet"
+      options={subjects}
+      selected="question"
+      required
+    />
+    <Field
+      lang={lang}
+      label={data.message.label}
+      name="message"
+      placeholder={data.message.placeholder}
+      textarea
+      minlength={30}
+      required
+    />
+    <Consent lang={lang} label={data.consent} />
+  </Form>
+</div>
+
+<style>
+  .cform {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .cform__title {
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+  }
+  /* Коли показано «Merci», заголовок форми вже не потрібен. */
+  .cform:has([data-form][hidden]) .cform__title {
+    display: none;
+  }
+  .cform__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  @media (min-width: 768px) {
+    .cform__row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

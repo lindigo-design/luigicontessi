@@ -1,0 +1,16 @@
+{
+  "id": "coffret-80",
+  "brand": "[Marque]",
+  "category": "beaute",
+  "offer": {
+    "fr": "Un coffret offert dès 80 €",
+    "en": "A free gift box from €80",
+    "it": "Un cofanetto in omaggio da 80 €"
+  },
+  "code": "CONTESSI80",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 5
+}

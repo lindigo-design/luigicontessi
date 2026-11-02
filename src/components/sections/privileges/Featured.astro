@@ -1,0 +1,150 @@
+---
+// Figma: Privilèges → 02 À la une (desktop 18:416, mobile 19:573). Код з featured: true.
+// Позначка «Partenariat» обовʼязкова (закон про інфлюенсерів 2023). Немає featured — секції немає.
+import { Image } from 'astro:assets';
+import BrandLink from '../../ui/BrandLink.astro';
+import CodeRow from '../../ui/CodeRow.astro';
+import { getCodeImage } from '../../../content/helpers';
+import { t, type Locale } from '../../../i18n/utils';
+import type { CodeData, PrivilegesData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: PrivilegesData['featured'];
+  code: CodeData;
+}
+const { lang, data, code } = Astro.props;
+const conditions = code.conditions?.[lang];
+const conditionsShort = code.conditionsShort?.[lang] || conditions;
+---
+
+<section class="featured container" aria-labelledby="featured-title">
+  <p class="eyebrow" id="featured-title">
+    {data.eyebrow}
+  </p>
+  <article class="fcard hover-card">
+    {code.image && (
+      <div class="fcard__img media">
+        <Image
+          src={getCodeImage(code.image)}
+          alt=""
+          widths={[400, 720, 1200]}
+          sizes="(min-width: 1024px) 600px, 100vw"
+        />
+      </div>
+    )}
+    <div class="fcard__body">
+      <div class="fcard__top">
+        {code.logo ? (
+          <Image class="fcard__logo" src={getCodeImage(code.logo)} alt={code.brand} height={88} />
+        ) : (
+          <span class="fcard__logo fcard__logo--empty">
+            <span aria-hidden="true">{t('codes.logo', lang)}</span>
+            <span class="visually-hidden">{code.brand}</span>
+          </span>
+        )}
+        <p class="eyebrow eyebrow--muted">{t('codes.partner', lang)}</p>
+      </div>
+      <h2 class="fcard__offer">{code.offer[lang]}</h2>
+      {conditions && <p class="fcard__cond fcard__cond--d text-2">{conditions}</p>}
+      {conditionsShort && <p class="fcard__cond fcard__cond--m text-2">{conditionsShort}</p>}
+      <CodeRow lang={lang} code={code.code} short />
+      <BrandLink lang={lang} label={t('codes.brand', lang)} url={code.url} />
+    </div>
+  </article>
+</section>
+
+<style>
+  .featured {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-block: var(--space-2) var(--space-10);
+  }
+  .fcard {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  /* Кадр з Figma: Luigi з капелюхом — від капелюха до пояса. */
+  .fcard__img {
+    aspect-ratio: 358 / 283;
+    border-radius: 0;
+  }
+  .fcard__img :global(img) {
+    position: absolute;
+    inset: 0;
+    object-position: 50% 82%;
+  }
+  .fcard__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+  .fcard__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+  }
+  .fcard__logo {
+    width: 6.875rem; /* 110 × 36 */
+    height: 2.25rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+  /* Без логотипа — сіра плашка «LOGO», як у Figma; назва марки — для читалки. */
+  .fcard__logo--empty {
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-btn);
+    background: var(--color-image);
+    font-weight: 500;
+    font-size: var(--fs-eyebrow);
+    letter-spacing: 0.2em;
+    color: var(--color-text-2);
+  }
+  .fcard__offer {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+  }
+  .fcard__cond--d {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .featured {
+      gap: var(--space-6);
+      padding-block: var(--space-8) var(--space-16);
+    }
+    /* Фото 600 зліва (на 1024–1279 — пропорційно менше), висота = контенту, але не менше 440. */
+    .fcard {
+      display: grid;
+      grid-template-columns: min(37.5rem, 47%) minmax(0, 1fr);
+    }
+    .fcard__img {
+      aspect-ratio: auto;
+      min-height: 27.5rem;
+    }
+    .fcard__body {
+      justify-content: center;
+      gap: var(--space-6);
+      padding: var(--space-12) var(--space-14);
+    }
+    .fcard__logo {
+      width: 8.75rem; /* 140 × 44 */
+      height: 2.75rem;
+    }
+    .fcard__cond--d {
+      display: block;
+    }
+    .fcard__cond--m {
+      display: none;
+    }
+  }
+</style>

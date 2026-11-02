@@ -1,0 +1,96 @@
+---
+// Сторінка товару: /<мова>/collection/<slug>/. Тут лише порядок секцій.
+// Вибраний колір — у ?couleur=<id> (крок C); без параметра — defaultColor.
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/sections/product/Breadcrumbs.astro';
+import ProductMain from '../../../components/sections/product/ProductMain.astro';
+import LuigiWord from '../../../components/sections/product/LuigiWord.astro';
+import CompleteLook from '../../../components/sections/product/CompleteLook.astro';
+import {
+  getHome,
+  getProductImage,
+  getProducts,
+  getSettings,
+  productPath,
+} from '../../../content/helpers';
+import { locales, type Locale } from '../../../i18n/utils';
+import type { ProductData } from '../../../content.config';
+
+export async function getStaticPaths() {
+  const products = await getProducts();
+  return locales.flatMap((lang) =>
+    products.map((product) => ({
+      params: { lang, slug: product.slug },
+      // «Complétez le look» — товари з related у тому ж порядку.
+      props: {
+        product,
+        related: product.related.map((slug) => products.find((p) => p.slug === slug)!),
+      },
+    })),
+  );
+}
+
+interface Props {
+  product: ProductData;
+  related: ProductData[];
+}
+const lang = Astro.params.lang as Locale;
+const { product, related } = Astro.props;
+const settings = await getSettings();
+const promo = (await getHome(lang)).promo; // код для рядка «Code LUIGI10 : −10 %…» (лише з магазином)
+const shop = settings.features.shop;
+const name = product.name[lang];
+const title = product.seo?.title[lang] || `${name} — ${product.line} | ${settings.name}`;
+const description = product.seo?.description[lang] || product.summary?.[lang] || name;
+
+// JSON-LD: товар з варіантами кольору; offers — лише коли магазин увімкнено і є ціна.
+const site = Astro.site ?? new URL('https://luigicontessi.com');
+const pageUrl = new URL(productPath(product.slug, lang), site).href;
+const absImage = async (file: string) =>
+  new URL((await getImage({ src: getProductImage(product.slug, file), width: 1200 })).src, site)
+    .href;
+const offers =
+  shop && product.price
+    ? {
+        '@type': 'Offer',
+        price: product.price,
+        priceCurrency: 'EUR',
+        availability: 'https://schema.org/InStock',
+      }
+    : undefined;
+const brand = { '@type': 'Brand', name: 'Contessi' };
+const variants = await Promise.all(
+  product.colors.map(async (c) => ({
+    '@type': 'Product',
+    name: c.label?.[lang] ? `${name} — ${c.label[lang]}` : name,
+    color: c.label?.[lang] || undefined,
+    image: await Promise.all(c.images.map(absImage)),
+    url: product.colors.length > 1 ? `${pageUrl}?couleur=${c.id}` : pageUrl,
+    ...(offers && { offers: { ...offers, url: pageUrl } }),
+  })),
+);
+const jsonLd = JSON.stringify(
+  variants.length > 1
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ProductGroup',
+        name,
+        description,
+        brand,
+        url: pageUrl,
+        productGroupID: product.slug,
+        variesBy: 'https://schema.org/color',
+        hasVariant: variants.map((v) => ({ ...v, brand })),
+      }
+    : { '@context': 'https://schema.org', ...variants[0], description, brand },
+);
+---
+
+<BaseLayout lang={lang} title={title} description={description}>
+  <script type="application/ld+json" set:html={jsonLd} />
+  <Breadcrumbs lang={lang} shop={shop} name={name} />
+  <ProductMain lang={lang} product={product} shop={shop} promoCode={promo.code} />
+  <LuigiWord lang={lang} product={product} author={settings.name} />
+  <CompleteLook lang={lang} shop={shop} items={related} />
+</BaseLayout>

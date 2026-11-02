@@ -19,7 +19,7 @@ const { data, listHref, contactHref } = Astro.props;
     class="yachts__bg"
     src={bg}
     alt={data.image.alt}
-    widths={[768, 1280, 1920]}
+    widths={[768, 1280, 1920, 2400]}
     sizes="100vw"
   />
   <div class="container yachts__content">
@@ -104,19 +104,25 @@ const { data, listHref, contactHref } = Astro.props;
     }
   }
   @media (min-width: 1024px) {
-    /* Кадр як у Figma (desktop) */
+    /* Великі екрани: висота росте з шириною в пропорції фото (2400 × 1340 ≈ 55.8vw),
+       щоб кадр не «затискало» в смугу: 1440 → 800, 1920 → 1071, але не вище за вікно. */
+    .yachts {
+      min-height: min(100svh, max(50rem, 55.8vw));
+    }
+    /* Коли висоту обмежує вікно — обрізаємо більше неба, ніж корпусу яхти. */
     .yachts__bg {
-      object-position: 0% 0%;
+      object-position: 50% 60%;
     }
     .yachts::after {
-      background:
-        linear-gradient(
-          90deg,
-          rgb(var(--shade) / 0.9) 0%,
-          rgb(var(--shade) / 0.72) 42%,
-          rgb(var(--shade) / 0) 70%
-        ),
-        linear-gradient(rgb(var(--shade) / 0) 55%, rgb(var(--shade) / 0.85) 100%);
+      /* Лише нижній градієнт (без бокового): фото відкрите, текст унизу на темному. */
+      background: linear-gradient(
+        rgb(var(--shade) / 0.25) 0%,
+        rgb(var(--shade) / 0) 18%,
+        rgb(var(--shade) / 0) 38%,
+        rgb(var(--shade) / 0.55) 55%,
+        rgb(var(--shade) / 0.85) 75%,
+        rgb(var(--shade) / 0.95) 100%
+      );
     }
     .yachts__content {
       gap: var(--space-7);

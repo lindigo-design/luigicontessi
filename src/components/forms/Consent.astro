@@ -1,0 +1,118 @@
+---
+// Згода в кінці форми: чекбокс 20 × 20 + текст Body S, проміжок 12. Обовʼязкова.
+// «Politique de confidentialité» — посилання поруч із підписом (не всередині <label>, щоб клік
+// по ньому не ставив галочку). Сторінки ще немає (isBuilt) — заглушка «Lien bientôt disponible».
+import { isBuilt } from '../../i18n/nav';
+import { localizePath, t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  /** Текст згоди, напр. «J’accepte que mes informations soient utilisées pour répondre à mon message.» */
+  label: string;
+  name?: string;
+  id?: string;
+}
+const { lang, label, name = 'consent', id = `f-${name}` } = Astro.props;
+const privacy = t('footer.newsletterPrivacy', lang);
+const soon = t('codes.soon', lang);
+---
+
+<div class="consent" data-field>
+  <input
+    class="consent__box"
+    type="checkbox"
+    id={id}
+    name={name}
+    value="yes"
+    required
+    data-error-id={`${id}-error`}
+  />
+  <div class="consent__text text-s">
+    <label for={id} class="text-2">
+      {label}
+    </label>{' '}
+    {isBuilt('confidentialite') ? (
+      <a class="consent__link" href={localizePath('confidentialite', lang)}>
+        {privacy}
+      </a>
+    ) : (
+      <span class="consent__soon">
+        <a class="consent__link" href="#" title={soon} aria-disabled="true" data-placeholder>
+          {privacy}
+        </a>
+        <span class="text-2" role="status" data-placeholder-note hidden>
+          {soon}
+        </span>
+      </span>
+    )}
+    <p class="field-error" id={`${id}-error`} hidden></p>
+  </div>
+</div>
+
+<style>
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  /* 20 × 20: рамка --color-border; вибраний — світлий фон і темна галочка. */
+  .consent__box {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0.0625rem 0 0;
+    border: 1.5px solid var(--color-text-2); /* добре видно на темному фоні (не --color-border) */
+    border-radius: var(--radius-btn);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .consent__box:hover {
+      border-color: var(--color-text);
+    }
+  }
+  .consent__box:checked {
+    border-color: var(--color-text);
+    background: var(--color-text);
+  }
+  .consent__box:checked::before {
+    content: '';
+    position: absolute;
+    top: 0.125rem;
+    left: 0.375rem;
+    width: 0.375rem;
+    height: 0.6875rem;
+    border-right: 2px solid var(--color-bg);
+    border-bottom: 2px solid var(--color-bg);
+    transform: rotate(45deg);
+  }
+  .consent__box:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+  }
+  .consent__box[aria-invalid='true'] {
+    border-color: var(--color-red-text);
+  }
+  .consent__text label {
+    cursor: pointer;
+  }
+  .consent__link {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .consent__soon [hidden] {
+    display: none;
+  }
+  .consent__soon [role='status']:not([hidden]) {
+    display: block;
+  }
+  .consent__text .field-error {
+    margin-top: var(--space-2);
+  }
+</style>

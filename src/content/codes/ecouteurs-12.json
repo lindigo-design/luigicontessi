@@ -1,0 +1,16 @@
+{
+  "id": "ecouteurs-12",
+  "brand": "[Marque]",
+  "category": "tech",
+  "offer": {
+    "fr": "−12 % sur les écouteurs",
+    "en": "12% off headphones",
+    "it": "−12% sulle cuffie"
+  },
+  "code": "LUIGI12",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 4
+}

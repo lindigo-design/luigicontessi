@@ -1,0 +1,16 @@
+{
+  "id": "reservation-500",
+  "brand": "[Marque]",
+  "category": "voyages",
+  "offer": {
+    "fr": "−500 € sur la réservation",
+    "en": "€500 off your booking",
+    "it": "−500 € sulla prenotazione"
+  },
+  "code": "LUIGI500",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 6
+}

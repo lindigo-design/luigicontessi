@@ -1,0 +1,57 @@
+---
+// Figma: Contact → 08 Yachts (desktop 161:3054, mobile 162:579). Фото яхти між формою і футером:
+// на всю ширину, декоративне. Градієнт до --color-bg зверху й знизу — фото плавно виходить
+// з тла сторінки і так само плавно переходить у футер (шва не видно). Без паралакса.
+import { Image } from 'astro:assets';
+import yacht from '../../../assets/img/contact/yacht.jpg';
+---
+
+<div class="cphoto" aria-hidden="true">
+  <Image
+    src={yacht}
+    alt=""
+    widths={[768, 1280, 1920, 2560]}
+    sizes="100vw"
+    loading="lazy"
+    class="cphoto__img"
+  />
+</div>
+
+<style>
+  .cphoto {
+    position: relative;
+    height: clamp(
+      27.5rem,
+      55.5vw,
+      100svh
+    ); /* 440 → 800 при 1440 → росте з шириною, не вище за вікно */
+    overflow: hidden;
+  }
+  .cphoto :global(.cphoto__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 86% 50%; /* mobile: яхта в кадрі */
+  }
+  .cphoto::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--shade) / 1) 0%,
+      rgb(var(--shade) / 0.75) 6%,
+      rgb(var(--shade) / 0) 20%,
+      rgb(var(--shade) / 0) 60%,
+      rgb(var(--shade) / 0.55) 80%,
+      rgb(var(--shade) / 0.9) 93%,
+      rgb(var(--shade) / 1) 100%
+    );
+    pointer-events: none;
+  }
+  @media (min-width: 768px) {
+    .cphoto :global(.cphoto__img) {
+      object-position: 50% 50%;
+    }
+  }
+</style>

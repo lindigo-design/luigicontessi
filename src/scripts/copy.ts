@@ -1,4 +1,5 @@
 // Кнопки «Copier»: копіюють код партнера (атрибут data-copy) і на 2 секунди пишуть «Copié».
+// Напис кнопки може складатися з кількох <span> (desktop / mobile) — після 2 с повертаємо їх як були.
 export function initCopy() {
   document.querySelectorAll<HTMLElement>('[data-copy]').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -10,9 +11,9 @@ export function initCopy() {
         return;
       }
       if (!label) return;
-      const before = label.textContent;
-      label.textContent = btn.dataset.copied ?? before;
-      window.setTimeout(() => (label.textContent = before), 2000);
+      const before = [...label.childNodes];
+      label.replaceChildren(btn.dataset.copied ?? '');
+      window.setTimeout(() => label.replaceChildren(...before), 2000);
     });
   });
 }

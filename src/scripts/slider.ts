@@ -9,7 +9,7 @@ export function initSliders() {
     const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
     const bars = [...root.querySelectorAll<HTMLElement>('[data-bar]')];
     const card = root.querySelector<HTMLElement>('[data-slider-card]');
-    const count = root.querySelector<HTMLElement>('[data-count]');
+    const count = root.querySelector<HTMLElement>('[data-counter]');
     const current = root.querySelector<HTMLElement>('[data-current]');
     if (slides.length < 2 || !card) return;
     root.style.setProperty('--autoplay', `${AUTOPLAY_MS}ms`);

@@ -10,8 +10,10 @@ import type { HomeData } from '../../../content.config';
 interface Props {
   data: HomeData['collection'];
   href: string;
+  /** Адреса картки товару (сторінка товару або href за замовчуванням). */
+  itemHref: (product?: string) => string;
 }
-const { data, href } = Astro.props;
+const { data, href, itemHref } = Astro.props;
 const [big, ...small] = data.items;
 ---
 
@@ -30,7 +32,7 @@ const [big, ...small] = data.items;
 
     <ul class="collection__grid" role="list">
       <li class="product product--large">
-        <a class="zoom-card" href={href}>
+        <a class="zoom-card" href={itemHref(big.product)}>
           <span class="product__img media">
             <Image
               src={c1}
@@ -47,7 +49,7 @@ const [big, ...small] = data.items;
       </li>
       {small.map((item, i) => (
         <li class="product">
-          <a class="zoom-card" href={href}>
+          <a class="zoom-card" href={itemHref(item.product)}>
             <span class="product__img media">
               <Image
                 src={[c2, c3][i]}
@@ -123,8 +125,9 @@ const [big, ...small] = data.items;
     .product--large .product__img {
       aspect-ratio: 628 / 642;
     }
+    /* Малі — вертикальні 302 × 418, як у Privilèges (велике + два вертикальні). */
     .product__img {
-      aspect-ratio: 1;
+      aspect-ratio: 302 / 418;
     }
     .product__info {
       flex-direction: row;

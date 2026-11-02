@@ -48,7 +48,7 @@ a {
   background: var(--color-red);
   color: var(--color-text);
 }
-/* Меню лежить поверх першого екрана. Сторінкам без hero — відступ під меню. */
-main:not(:has(> [data-hero]:first-child)) {
-  padding-top: calc(var(--header-pad) + var(--header-h) + 1px);
+/* Перехід за якорем — заголовок не ховається під шапкою. */
+html {
+  scroll-padding-top: var(--header-total-h);
 }

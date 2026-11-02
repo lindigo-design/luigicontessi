@@ -1,0 +1,66 @@
+{
+  "seoTitle": "Contact — Luigi Contessi",
+  "seoDescription": "A question, a project, the press? Write to Luigi Contessi.",
+  "intro": {
+    "eyebrow": "Contact",
+    "title": "Write to me",
+    "body": "I read every message. Pick the right topic, it will be quicker."
+  },
+  "options": [
+    {
+      "kind": "partenariats",
+      "title": "You are a brand",
+      "text": "Collaborations, events, media kit.",
+      "label": "Partnerships"
+    },
+    {
+      "kind": "yachts",
+      "title": "Interested in a yacht",
+      "text": "Visit, sea trial, off-market.",
+      "label": "Yachts page"
+    },
+    {
+      "kind": "press",
+      "title": "Press",
+      "text": "Interviews, photos, information."
+    },
+    {
+      "kind": "instagram",
+      "title": "Instagram",
+      "text": "The quickest way for a small question."
+    }
+  ],
+  "form": {
+    "title": "Other question",
+    "name": {
+      "label": "Name",
+      "placeholder": "Your name"
+    },
+    "email": {
+      "label": "E-mail",
+      "placeholder": "you@example.com"
+    },
+    "subject": {
+      "legend": "Topic",
+      "options": {
+        "question": "Question",
+        "code": "Partner code",
+        "presse": "Press",
+        "autre": "Other"
+      }
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Your message"
+    },
+    "consent": "I agree that my information is used to reply to my message.",
+    "submit": "Send",
+    "thanks": {
+      "title": "Message received.",
+      "text": "I will reply to you personally.",
+      "link": {
+        "label": "Back to home"
+      }
+    }
+  }
+}

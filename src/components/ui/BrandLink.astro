@@ -1,0 +1,44 @@
+---
+// «Voir la marque →» (Link Accent) — завжди видно в картках кодів і в «À la une».
+// Є url — справжнє партнерське посилання: нова вкладка, rel="sponsored noopener".
+// Немає url — заглушка того самого вигляду: клік нічого не відкриває, під кнопкою на 2 с
+// «Lien bientôt disponible» (src/scripts/placeholder-links.ts). Перед запуском url мають бути
+// заповнені — LC_STRICT=true зупиняє збірку (src/content/helpers.ts → getCodes).
+import Button from './Button.astro';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  label: string;
+  url?: string | null;
+}
+const { lang, label, url } = Astro.props;
+const soon = t('codes.soon', lang);
+---
+
+{url ? (
+  <Button href={url} variant="accent" external rel="sponsored noopener">
+    {label}
+    <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
+  </Button>
+) : (
+  <span class="brand-soon">
+    <Button href="#" variant="accent" title={soon} aria-disabled="true" data-placeholder="">
+      {label}
+    </Button>
+    <span class="brand-soon__note text-s text-2" role="status" data-placeholder-note hidden>
+      {soon}
+    </span>
+  </span>
+)}
+
+<style>
+  .brand-soon {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .brand-soon__note[hidden] {
+    display: none;
+  }
+</style>

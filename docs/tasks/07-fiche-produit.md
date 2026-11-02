@@ -54,10 +54,10 @@ Image Placeholder. Шапка і футер — спільні, вже є.
    ```
    **Назва товару — без кольору** («Veste Contessi»): колір обирається нижче, і назва не має суперечити вибору.
 2. Заповни **один** товар з Figma (FR — з макета, EN/IT — переклад тим самим простим стилем):
-   - name «Veste Contessi»; summary «Laine légère, coupe ajustée, logo Contessi brodé sur la poitrine. Une veste qui se porte sur une chemise comme sur un t-shirt.» (на mobile в Figma — лише перше речення; показуй увесь текст, CSS не обрізає);
+   - name «Veste Contessi»; summary «Cuir, coupe ajustée, logo Contessi brodé sur la poitrine. Une veste qui se porte sur une chemise comme sur un t-shirt.» (на mobile в Figma — лише перше речення; показуй увесь текст, CSS не обрізає);
    - кольори в порядку з Figma: **Noir** (за замовчуванням — у ній Luigi на фото), Navy, Crème; градієнт кружка 0 % → 100 % (кольори вище);
    - розміри S M L XL, XXL — `soldOut: true`; вибраний за замовчуванням — **M** (як у Figma);
-   - акордеони: «Description» — «Veste droite, deux poches, doublure légère. Le logo est brodé ton sur ton.», «Composition & entretien», «Taille et coupe» — тексти `[à compléter]`;
+   - акордеони: «Description» — «Veste en cuir zippée, doublure légère. Le logo est brodé ton sur ton.», «Composition & entretien», «Taille et coupe» — тексти `[à compléter]`;
    - «Le mot de Luigi»: цитата «Je voulais une veste que je peux porter en avion, puis au dîner, sans me changer.» + `[Texte de Luigi : pourquoi cette pièce, où il la porte, avec quoi.]`.
 3. Ще 4 короткі товари-заглушки для «Complétez le look»: Chemise Blanche, Chemise Noire, Polo Contessi, Veste Lin
    (лише name, price: null, 1 фото-заглушка).

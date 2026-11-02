@@ -3,13 +3,129 @@
   "instagramHandle": "@contessiluigi",
   "instagramUrl": "https://www.instagram.com/contessiluigi/",
   "socials": [
-    { "label": "IG", "name": "Instagram", "url": "https://www.instagram.com/contessiluigi/" },
-    { "label": "YT", "name": "YouTube", "url": "" },
-    { "label": "TT", "name": "TikTok", "url": "" },
-    { "label": "in", "name": "LinkedIn", "url": "" }
+    {
+      "label": "IG",
+      "name": "Instagram",
+      "url": "https://www.instagram.com/contessiluigi/"
+    },
+    {
+      "label": "YT",
+      "name": "YouTube",
+      "url": ""
+    },
+    {
+      "label": "TT",
+      "name": "TikTok",
+      "url": ""
+    },
+    {
+      "label": "in",
+      "name": "LinkedIn",
+      "url": ""
+    }
   ],
   "features": {
     "shop": false,
     "currencySwitch": false
-  }
+  },
+  "consent": {
+    "analytics": false,
+    "affiliates": false
+  },
+  "forms": {
+    "endpoint": ""
+  },
+  "emails": {
+    "contact": "",
+    "press": "",
+    "partnerships": ""
+  },
+  "shopCodes": [
+    {
+      "code": "LUIGI10",
+      "percent": 10
+    }
+  ],
+  "mediaKit": {
+    "file": "",
+    "year": "",
+    "pages": null
+  },
+  "stats": [
+    {
+      "id": "followers",
+      "count": 1.7,
+      "decimals": 1,
+      "value": {
+        "fr": "1,7 M+",
+        "en": "1.7M+",
+        "it": "1,7 M+"
+      },
+      "label": {
+        "fr": "abonnés Instagram",
+        "en": "Instagram followers",
+        "it": "follower su Instagram"
+      }
+    },
+    {
+      "id": "engagement",
+      "count": 4.8,
+      "decimals": 1,
+      "value": {
+        "fr": "4,8 %",
+        "en": "4.8%",
+        "it": "4,8%"
+      },
+      "label": {
+        "fr": "taux d’engagement",
+        "en": "engagement rate",
+        "it": "tasso di coinvolgimento"
+      }
+    },
+    {
+      "id": "impressions",
+      "count": 50,
+      "decimals": 0,
+      "value": {
+        "fr": "50 M+",
+        "en": "50M+",
+        "it": "50 M+"
+      },
+      "label": {
+        "fr": "impressions par mois",
+        "en": "impressions per month",
+        "it": "impression al mese"
+      }
+    },
+    {
+      "id": "collaborations",
+      "count": 500,
+      "decimals": 0,
+      "value": {
+        "fr": "500+",
+        "en": "500+",
+        "it": "500+"
+      },
+      "label": {
+        "fr": "collaborations",
+        "en": "collaborations",
+        "it": "collaborazioni"
+      }
+    },
+    {
+      "id": "countries",
+      "count": 30,
+      "decimals": 0,
+      "value": {
+        "fr": "30+",
+        "en": "30+",
+        "it": "30+"
+      },
+      "label": {
+        "fr": "pays",
+        "en": "countries",
+        "it": "paesi"
+      }
+    }
+  ]
 }

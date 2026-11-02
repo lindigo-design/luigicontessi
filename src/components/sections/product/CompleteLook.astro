@@ -1,0 +1,131 @@
+---
+// Figma: Fiche produit → 03 Complétez le look (desktop 28:485).
+// Товари з related: desktop — 4 картки в ряд (302 × 318), < 1024 — свайп-стрічка (Compact 171 × 282).
+// Магазин вимкнено — посилання «Voir la collection» на /collection/ (Boutique прихована).
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import { getProductImage, productPath } from '../../../content/helpers';
+import { localizePath, t, type Locale } from '../../../i18n/utils';
+import type { ProductData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  shop: boolean;
+  items: ProductData[];
+  /** Фон --color-bg-alt (кошик, Figma «02 Complétez le look»). */
+  alt?: boolean;
+  /** Скільки карток показати (кошик ховає товари, які вже в ньому, і лишає перші limit). */
+  limit?: number;
+}
+const { lang, shop, items, alt = false, limit } = Astro.props;
+const href = localizePath(shop ? 'boutique' : 'collection', lang);
+const firstImage = (p: ProductData) => {
+  const color = p.colors.find((c) => c.id === p.defaultColor) ?? p.colors[0];
+  return getProductImage(p.slug, color.images[0]);
+};
+const price = (p: ProductData) =>
+  p.price
+    ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(p.price)
+    : t('product.price', lang);
+---
+
+{items.length > 0 && (
+  <section
+    class:list={['look section', { 'section--alt': alt }]}
+    aria-labelledby="look-title"
+    data-look-limit={limit}
+  >
+    <div class="container look__inner">
+      <div class="section-head">
+        <div class="section-head__text">
+          <p class="eyebrow">{t('nav.collection', lang)}</p>
+          <h2 id="look-title">{t('product.lookTitle', lang)}</h2>
+        </div>
+        <Button href={href} variant="accent">
+          {t(shop ? 'product.lookShop' : 'product.lookCollection', lang)}
+        </Button>
+      </div>
+      <ul class="look__cards rail" role="list">
+        {items.map((p, i) => (
+          <li class="lcard" data-look-item={p.slug} hidden={limit !== undefined && i >= limit}>
+            <a class="zoom-card" href={productPath(p.slug, lang)}>
+              <span class="lcard__img media">
+                <Image
+                  src={firstImage(p)}
+                  alt={p.name[lang]}
+                  widths={[240, 342, 604]}
+                  sizes="(min-width: 1024px) 302px, (min-width: 768px) 224px, 171px"
+                  loading="lazy"
+                />
+              </span>
+              <span class="lcard__info">
+                <span class="title">{p.name[lang]}</span>
+                <span class="lcard__price">{price(p)}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .lcard[hidden] {
+    display: none;
+  }
+  .look__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .lcard {
+    width: 10.6875rem; /* 171 */
+  }
+  .lcard a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .lcard__img {
+    aspect-ratio: 171 / 220;
+  }
+  .lcard__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .lcard__price {
+    font-weight: 500;
+    color: var(--color-text-2);
+  }
+  @media (min-width: 768px) {
+    .lcard {
+      width: 14rem; /* 224 */
+    }
+  }
+  @media (min-width: 1024px) {
+    .look__inner {
+      gap: var(--space-12);
+    }
+    .look__cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-6);
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .lcard {
+      width: auto;
+    }
+    .lcard__img {
+      aspect-ratio: 302 / 280;
+    }
+    .lcard__info {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+  }
+</style>

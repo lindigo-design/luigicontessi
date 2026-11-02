@@ -1,0 +1,64 @@
+---
+// Figma: FAQ / Item — питання з номером і «+», відповідь у <details>. Перший відкритий.
+// Спільний для FAQ головної і «Questions» на Privilèges. name — група: відкритий лише один пункт.
+import PlusIcon from '../../assets/icons/plus.svg';
+
+interface Props {
+  items: { question: string; answer: string }[];
+  name: string;
+}
+const { items, name } = Astro.props;
+---
+
+<div class="faq-items">
+  {items.map((item, i) => (
+    <details class="qa" name={name} open={i === 0}>
+      <summary>
+        <span class="qa__num text-2">{String(i + 1).padStart(2, '0')}</span>
+        <span class="qa__q title">{item.question}</span>
+        <PlusIcon />
+      </summary>
+      <p class="qa__a text-s text-2">{item.answer}</p>
+    </details>
+  ))}
+</div>
+
+<style>
+  .qa {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .qa summary {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+    list-style: none;
+    cursor: pointer;
+  }
+  .qa summary::-webkit-details-marker {
+    display: none;
+  }
+  .qa__q {
+    flex: 1;
+  }
+  .qa summary :global(svg) {
+    flex: none;
+    align-self: center;
+    transition: transform var(--dur) var(--ease);
+  }
+  .qa[open] summary :global(svg) {
+    transform: rotate(45deg);
+  }
+  .qa__a {
+    padding: 0 var(--space-8) var(--space-6) calc(1rem + var(--space-4) + 0.25rem);
+    margin-top: calc(var(--space-3) * -1);
+  }
+  @media (min-width: 1024px) {
+    .qa summary {
+      gap: var(--space-8);
+    }
+    .qa__a {
+      padding-left: calc(1rem + var(--space-8) + 0.25rem);
+    }
+  }
+</style>

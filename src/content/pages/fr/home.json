@@ -38,20 +38,7 @@
     "eyebrow": "(01) À propos",
     "title": "Luigi Contessi",
     "body": "Entrepreneur et créateur de contenu. Je partage ce que j’essaie moi-même : des voitures, des montres, des lieux. Quand une marque me plaît, je le dis. Quand non, je n’en parle pas.",
-    "stats": [
-      {
-        "value": "1,7 M+",
-        "label": "abonnés Instagram"
-      },
-      {
-        "value": "500+",
-        "label": "collaborations"
-      },
-      {
-        "value": "30+",
-        "label": "pays"
-      }
-    ],
+    "stats": ["followers", "collaborations", "countries"],
     "link": {
       "label": "Mon histoire"
     },
@@ -125,6 +112,16 @@
         "image": {
           "alt": "Luigi Contessi en costume gris Contessi"
         }
+      },
+      {
+        "tag": "Collection",
+        "name": "Veste Contessi",
+        "description": "Cuir, coupe ajustée, logo Contessi brodé. Sur une chemise comme sur un t-shirt.",
+        "action": "Voir",
+        "image": {
+          "alt": "Luigi Contessi en veste noire Contessi"
+        },
+        "product": "veste-contessi"
       },
       {
         "tag": "Coup de cœur · Lien affilié",
@@ -208,7 +205,8 @@
         "price": "[Prix]",
         "image": {
           "alt": "Chemise blanche Contessi"
-        }
+        },
+        "product": "chemise-blanche"
       },
       {
         "name": "Chaussures Contessi",

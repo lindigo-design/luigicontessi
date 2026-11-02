@@ -1,0 +1,657 @@
+---
+// Figma: Panier → 01 Panier (desktop 41:393). Заголовок «Panier · 2 articles», ліворуч рядки товарів,
+// праворуч «Récapitulatif» (sticky). Рядки малює src/scripts/cart-page.ts із <template> і вбудованого JSON.
+// Ціни поки немає (price: null) — «[Prix] €», «[Total] €». TODO: Shopify — ціни, знижки, оплата.
+import Button from '../../ui/Button.astro';
+import { localizePath, t, type Locale } from '../../../i18n/utils';
+import type { CartData } from '../../../scripts/cart';
+interface Props {
+  lang: Locale;
+  data: CartData;
+}
+const { lang, data } = Astro.props;
+const m = (key: Parameters<typeof t>[0]) => t(key, lang);
+// JSON усередині <script type="application/json">: «<» екрануємо, щоб текст не закрив тег.
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+---
+
+<section
+  class="cart container is-empty"
+  aria-labelledby="cart-title"
+  data-cart-page
+  data-lang={lang}
+  data-msg-items-one={m('cart.itemsOne')}
+  data-msg-items-many={m('cart.itemsMany')}
+  data-msg-price={`${m('product.price')} €`}
+  data-msg-discount={`− ${m('cart.discountPlaceholder')} €`}
+  data-msg-total={`${m('cart.totalPlaceholder')} €`}
+  data-msg-color={m('product.color')}
+  data-msg-size={m('product.size')}
+  data-msg-remove={m('cart.remove')}
+  data-msg-qty={m('cart.qty')}
+  data-msg-decrease={m('cart.decrease')}
+  data-msg-increase={m('cart.increase')}
+  data-msg-bar-total={m('cart.barTotal')}
+>
+  <div class="cart__head">
+    <h1 id="cart-title" tabindex="-1">
+      {m('cart.title')}
+    </h1>
+    <p class="cart__count text-2" data-cart-items></p>
+  </div>
+
+  <div class="cart__row" data-cart-filled hidden>
+    <div class="cart__articles">
+      <ul class="cart__list" role="list" aria-label={m('cart.list')} data-cart-list></ul>
+      <Button href={localizePath('collection', lang)} variant="link" arrow class="cart__continue">
+        {m('cart.continue')}
+      </Button>
+    </div>
+
+    {/* Desktop: aside — картка, Réassurance всередині. Mobile: картка (.recap__card) окремо,
+        Réassurance під нею, Code promo — першим. */}
+    <aside class="recap" aria-labelledby="recap-title">
+      <div class="recap__card">
+        <h2 id="recap-title" class="recap__title">
+          {m('cart.summary')}
+        </h2>
+        <div class="recap__line">
+          <span class="text-2">{m('cart.subtotal')}</span>
+          <span data-cart-subtotal></span>
+        </div>
+
+        <div class="recap__promo">
+          <form class="promo" data-promo-form novalidate>
+            <label class="text-s text-2" for="promo-code">
+              {m('cart.promo')}
+            </label>
+            <div class="promo__row">
+              <input
+                class="field promo__input"
+                id="promo-code"
+                name="code"
+                autocomplete="off"
+                autocapitalize="characters"
+                spellcheck="false"
+                placeholder={m('cart.promoPlaceholder')}
+                aria-describedby="promo-error"
+              />
+              <Button type="submit" variant="outline">
+                {m('cart.apply')}
+              </Button>
+            </div>
+            <p class="field-error" id="promo-error" role="alert" data-promo-error hidden>
+              {m('cart.promoInvalid')}
+            </p>
+          </form>
+          <div class="promo__applied" data-promo-applied hidden>
+            <p class="text-s text-2">{m('cart.promo')}</p>
+            <div class="promo__chip">
+              <span class="promo__code">
+                <span class="promo__check" aria-hidden="true">
+                  ✓
+                </span>
+                <span class="promo__name" data-promo-name></span>
+                <span class="text-s text-2" data-promo-percent></span>
+              </span>
+              <button class="cart__link text-s" type="button" data-promo-remove>
+                {m('cart.remove')}
+                <span class="visually-hidden">— {m('cart.promoRemove')}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="recap__line" data-cart-discount-row hidden>
+          <span class="text-2">{m('cart.discount')}</span>
+          <span class="recap__discount" data-cart-discount></span>
+        </div>
+        <div class="recap__line">
+          <span class="text-2">{m('cart.shipping')}</span>
+          <span>
+            <span class="recap__long">{m('cart.shippingNext')}</span>
+            <span class="recap__short">{m('cart.shippingNextShort')}</span>
+          </span>
+        </div>
+
+        <div class="recap__total">
+          <div>
+            <p class="title">{m('cart.total')}</p>
+            <p class="text-s text-2">{m('product.vat')}</p>
+          </div>
+          <p class="recap__sum" data-cart-total></p>
+        </div>
+
+        {/* TODO: Shopify Checkout — окремий етап. Поки кнопка лише каже «bientôt». */}
+        <Button block aria-disabled="true" data-checkout="" class="recap__pay">
+          {m('cart.checkout')}
+        </Button>
+        <p class="recap__soon text-s" role="status" data-checkout-soon hidden>
+          {m('cart.checkoutSoon')}
+        </p>
+        <p class="recap__methods text-s text-2">{m('cart.methods')}</p>
+      </div>
+      {/* ⚠️ Умови з макета — перед запуском узгодити з Luigi (мають збігатися з CGV). */}
+      <ul class="recap__trust text-s text-2" role="list">
+        <li>— {m('cart.reassurance1')}</li>
+        <li>— {m('cart.reassurance2')}</li>
+        <li>— {m('cart.reassurance3')}</li>
+      </ul>
+    </aside>
+  </div>
+
+  {/* Порожній кошик (Figma 41:547 / 42:538). Без JS — цей самий стан + «Activez JavaScript…». */}
+  <div class="cart__empty" data-cart-empty>
+    <p class="eyebrow">{m('cart.title')}</p>
+    <h2 class="cart__empty-title" tabindex="-1" data-cart-empty-title>
+      {m('cart.empty')}
+    </h2>
+    <p class="cart__empty-text text-2">
+      <span class="cart__empty-long">{m('cart.emptyText')}</span>
+      <span class="cart__empty-short">{m('cart.emptyTextShort')}</span>
+    </p>
+    <noscript>
+      <p class="text-s text-2">{m('cart.noJs')}</p>
+    </noscript>
+    <div class="cart__empty-ctas">
+      <Button href={localizePath('collection', lang)}>{m('cart.emptyCollection')}</Button>
+      <Button href={localizePath('coups-de-coeur', lang)} variant="outline">
+        {m('cart.emptyFavorites')}
+      </Button>
+    </div>
+  </div>
+
+  <template id="cart-row-tpl">
+    <li class="citem">
+      <a class="citem__img media" data-link tabindex="-1" aria-hidden="true">
+        <img alt="" width="128" height="160" loading="lazy" decoding="async" data-img />
+      </a>
+      <div class="citem__info">
+        <div class="citem__top">
+          <p class="citem__name title">
+            <a data-link data-name></a>
+          </p>
+          <p class="citem__price" data-price></p>
+        </div>
+        <p class="citem__meta text-s text-2">
+          <span class="citem__meta-long" data-meta-long></span>
+          <span class="citem__meta-short" data-meta-short></span>
+        </p>
+        <div class="citem__actions">
+          <div class="qty" role="group" data-qty-group>
+            <button class="qty__btn" type="button" data-dec>
+              −
+            </button>
+            <span class="qty__val" aria-live="polite" data-qty></span>
+            <button class="qty__btn" type="button" data-inc>
+              +
+            </button>
+          </div>
+          <button class="cart__link text-s" type="button" data-remove></button>
+        </div>
+      </div>
+    </li>
+  </template>
+  <script type="application/json" id="products-data" set:html={json} />
+  {/* Mobile: нижня панель «Total · 2 articles + Paiement», коли кнопку в картці не видно. */}
+  <div class="cbar" data-cart-bar hidden>
+    <p class="cbar__info">
+      <span class="text-s text-2" data-cart-bar-count></span>
+      <span class="cbar__sum" data-cart-bar-total></span>
+    </p>
+    <Button aria-disabled="true" data-checkout-bar="">
+      {m('cart.pay')}
+    </Button>
+  </div>
+</section>
+
+<script>
+  import { initCartPage } from '../../../scripts/cart-page';
+  initCartPage();
+</script>
+
+<style>
+  .cart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-12);
+  }
+  .cart__head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .cart__head h1 {
+    outline: none;
+  }
+  .cart__row[hidden],
+  .cart__empty[hidden],
+  .recap [hidden] {
+    display: none;
+  }
+  .cart__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .cart__articles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+  /* Mobile: список → підсумок → Réassurance → «Continuer mes achats» (Figma 42:414). */
+  @media (max-width: 1023px) {
+    .cart__articles {
+      display: contents;
+    }
+    .cart__list {
+      order: 1;
+    }
+    .recap {
+      order: 2;
+    }
+    .cart :global(.cart__continue) {
+      order: 3;
+      align-self: flex-start;
+    }
+  }
+  .cart__list {
+    width: 100%;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* ---------- Рядок товару ---------- */
+  .cart__list :global(.citem) {
+    display: flex;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .cart__list :global(.citem__img) {
+    flex: none;
+    width: 6rem; /* 96 × 120 (mobile), desktop 128 × 160 */
+    aspect-ratio: 128 / 160;
+    border-radius: var(--radius-card);
+  }
+  .cart__list :global(.citem__img img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cart__list :global(.citem__info) {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  /* Mobile: назва → «Navy · M» → ціна → кількість (Figma 42:419). */
+  .cart__list :global(.citem__top) {
+    display: contents;
+  }
+  .cart__list :global(.citem__name) {
+    order: 0;
+  }
+  .cart__list :global(.citem__meta) {
+    order: 1;
+    margin-top: calc(var(--space-1) * -1);
+  }
+  .cart__list :global(.citem__price) {
+    order: 2;
+  }
+  .cart__list :global(.citem__actions) {
+    order: 3;
+  }
+  .cart__list :global(.citem__price) {
+    white-space: nowrap;
+  }
+  .cart__list :global(.citem__actions) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: auto;
+    padding-top: var(--space-1);
+  }
+  /* Кількість: — 1 +, кнопки 44 × 44 в одній рамці. */
+  .cart__list :global(.qty) {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-btn);
+  }
+  .cart__list :global(.qty__btn),
+  .cart__list :global(.qty__val) {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem; /* 40 × 40 mobile, 44 × 44 desktop */
+    height: 2.5rem;
+    font-size: var(--fs-title);
+    font-variant-numeric: tabular-nums;
+  }
+  .cart__list :global(.qty__btn) {
+    color: var(--color-text);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .cart__list :global(.qty__btn[aria-disabled='true']) {
+    color: var(--color-text-2);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    .cart__list :global(.qty__btn:not([aria-disabled='true']):hover) {
+      background: var(--color-hover-tint);
+    }
+  }
+  .cart__list :global(.qty__btn:focus-visible) {
+    outline: 2px solid var(--color-text);
+    outline-offset: -2px;
+  }
+  /* «Retirer» — текст Body S, підкреслення при наведенні. */
+  .cart :global(.cart__link) {
+    min-height: 2.75rem;
+    color: var(--color-text-2);
+    text-underline-offset: 3px;
+    transition: color var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .cart :global(.cart__link:hover) {
+      color: var(--color-text);
+      text-decoration: underline;
+    }
+  }
+  .cart :global(.cart__link:focus-visible) {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  /* ---------- Récapitulatif ---------- */
+  /* Mobile: картка — .recap__card, Réassurance під нею; desktop — картка весь aside. */
+  .recap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .recap__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .recap__title {
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+  }
+  /* Mobile (Figma 42:453): без заголовка (лишається для читалки), Code promo — першим. */
+  @media (max-width: 1023px) {
+    .recap__title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+    .recap__card .recap__promo {
+      order: -1;
+      padding-top: 0;
+      border-top: 0;
+    }
+    .recap__long,
+    .cart__list :global(.citem__meta-long) {
+      display: none;
+    }
+  }
+  @media (min-width: 1024px) {
+    .recap__short,
+    .cart__list :global(.citem__meta-short) {
+      display: none;
+    }
+  }
+  .recap__line {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    font-size: var(--fs-body-s);
+  }
+  .recap__line > :last-child {
+    text-align: right;
+  }
+  .recap__discount {
+    color: var(--color-red-text);
+  }
+  .recap__promo {
+    padding-block: var(--space-4);
+    border-block: 1px solid var(--color-border);
+  }
+  .promo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .promo__row {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .promo__input {
+    flex: 1;
+    min-width: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .promo__input::placeholder {
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .promo__applied {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .promo__chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-1) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-btn);
+  }
+  .promo__code {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .promo__check {
+    color: var(--color-red-text);
+    font-size: var(--fs-title);
+  }
+  /* Код — як у CodeCard: жирний, з розрядкою. */
+  .promo__name {
+    font-weight: 600;
+    font-size: var(--fs-label);
+    letter-spacing: 0.12em;
+  }
+  .recap__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+  .recap__sum {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+    white-space: nowrap;
+  }
+  .recap :global(.recap__pay[aria-disabled='true']) {
+    cursor: not-allowed;
+  }
+  .recap__soon {
+    margin-top: calc(var(--space-3) * -1);
+    text-align: center;
+  }
+  .recap__methods {
+    text-align: center;
+  }
+  .recap__trust {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* ---------- Нижня панель (mobile) ---------- */
+  .cbar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+  .cbar[hidden] {
+    display: none;
+  }
+  .cbar__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .cbar__sum {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .cbar :global(.btn) {
+    flex: 1;
+    max-width: 14.375rem; /* 230 */
+  }
+  :global(html.has-cart-bar body) {
+    padding-bottom: var(--cart-bar-h);
+  }
+  @media (min-width: 1024px) {
+    .cbar {
+      display: none;
+    }
+  }
+
+  /* Порожній кошик: по центру; заголовок сторінки «Panier» лишається для читалки. */
+  .cart.is-empty .cart__head {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .cart__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-16); /* + padding секції = 96 */
+    text-align: center;
+  }
+  .cart__empty-title {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    outline: none;
+  }
+  .cart__empty-text {
+    max-width: 40rem;
+  }
+  .cart__empty-long {
+    display: none;
+  }
+  .cart__empty-ctas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .cart__empty {
+      gap: var(--space-6);
+      padding-block: 7.5rem; /* + padding секції ≈ 160 */
+    }
+    .cart__empty-long {
+      display: inline;
+    }
+    .cart__empty-short {
+      display: none;
+    }
+    .cart__empty-ctas {
+      flex-direction: row;
+      justify-content: center;
+      width: auto;
+    }
+  }
+
+  /* ---------- Desktop ≥ 1024 (Figma «01 Panier») ---------- */
+  @media (min-width: 1024px) {
+    .cart {
+      gap: var(--space-12);
+      padding-top: var(--space-20);
+      padding-bottom: 7.5rem; /* 120 */
+    }
+    .cart__row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 27.5rem; /* 440 */
+      align-items: start;
+      gap: var(--space-20);
+    }
+    .cart__list :global(.citem) {
+      gap: var(--space-6);
+      padding-block: var(--space-7);
+    }
+    .cart__list :global(.citem__top) {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-4);
+    }
+    .cart__list :global(.citem__actions) {
+      padding-top: var(--space-3);
+    }
+    .cart__list :global(.qty__btn),
+    .cart__list :global(.qty__val) {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+    .cart__list :global(.citem__img) {
+      width: 8rem; /* 128 × 160 */
+    }
+    .cart__list :global(.citem__meta) {
+      margin-top: calc(var(--space-1) * -1);
+    }
+    .recap {
+      position: sticky;
+      top: calc(var(--header-total-h) + var(--space-8));
+      gap: var(--space-5);
+      padding: var(--space-8);
+      border-radius: var(--radius-card);
+      background: var(--color-card);
+    }
+    .recap__card {
+      gap: var(--space-5);
+      padding: 0;
+      background: none;
+    }
+    .recap__trust {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border);
+    }
+  }
+</style>

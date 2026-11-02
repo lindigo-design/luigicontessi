@@ -1,0 +1,16 @@
+{
+  "id": "boutique-15",
+  "brand": "[Marque]",
+  "category": "mode",
+  "offer": {
+    "fr": "−15 % sur toute la boutique",
+    "en": "15% off the whole shop",
+    "it": "−15% su tutto lo shop"
+  },
+  "code": "LUIGI15",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 1
+}

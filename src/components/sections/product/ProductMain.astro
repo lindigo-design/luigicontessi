@@ -1,0 +1,713 @@
+---
+// Figma: Fiche produit → 01 Produit (desktop 28:379, mobile 29:418).
+// Desktop: галерея (велике фото + 4 мініатюри) | інфо праворуч (sticky).
+// Mobile: галерея на всю ширину зі свайпом, крапками і «1 / 4»; інфо стовпчиком.
+// Магазин вимкнено (shop: false) — замість «Ajouter au panier» «Me prévenir du lancement» + e-mail;
+// рядок коду і Réassurance — лише з магазином. Логіка — src/scripts/product.ts.
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import ArrowCircle from '../../ui/ArrowCircle.astro';
+import CloseIcon from '../../../assets/icons/close.svg';
+import { getProductImage } from '../../../content/helpers';
+import { localizePath, t, type Locale } from '../../../i18n/utils';
+import type { ProductData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  product: ProductData;
+  shop: boolean;
+  promoCode: string;
+}
+const { lang, product, shop, promoCode } = Astro.props;
+const name = product.name[lang];
+const defaultColor = product.defaultColor || product.colors[0].id;
+const showColors = product.colors.length > 1 || !!product.colors[0].label?.[lang];
+const current = product.colors.find((c) => c.id === defaultColor) ?? product.colors[0];
+const price = product.price
+  ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(product.price)
+  : `${t('product.price', lang)} €`;
+const summary = product.summary?.[lang];
+const photo = (n: number, total: number) =>
+  `${t('ui.photo', lang)} ${n} ${t('ui.of', lang)} ${total}`;
+---
+
+<section
+  class="pmain container"
+  aria-labelledby="product-title"
+  data-product={product.slug}
+  data-default-color={defaultColor}
+>
+  <div class="pmain__gallery" role="group" aria-label={t('product.gallery', lang)}>
+    {product.colors.map((c) => (
+      <div class="pgal" data-pgal={c.id} hidden={c.id !== current.id}>
+        <ul class="pgal__track" role="list" data-pgal-track>
+          {c.images.map((file, i) => (
+            <li class="pgal__slide media" data-pgal-slide>
+              <Image
+                src={getProductImage(product.slug, file)}
+                alt={`${name}${c.label?.[lang] ? ` — ${c.label[lang]}` : ''}, ${photo(i + 1, c.images.length)}`}
+                widths={[480, 760, 1140, 1520]}
+                sizes="(min-width: 1024px) 760px, 100vw"
+                loading={i === 0 && c.id === current.id ? 'eager' : 'lazy'}
+              />
+            </li>
+          ))}
+        </ul>
+        {c.images.length > 1 && (
+          <>
+            <div class="pgal__thumbs">
+              {c.images.map((file, i) => (
+                <button
+                  class:list={['pgal__thumb', { 'is-active': i === 0 }]}
+                  type="button"
+                  aria-label={photo(i + 1, c.images.length)}
+                  aria-pressed={i === 0 ? 'true' : 'false'}
+                  data-pgal-thumb={i}
+                >
+                  <Image
+                    src={getProductImage(product.slug, file)}
+                    alt=""
+                    widths={[172, 344]}
+                    sizes="172px"
+                    loading="lazy"
+                  />
+                </button>
+              ))}
+            </div>
+            {/* Tablet / mobile — як у відгуках: «01 / 04», смужки прогресу (активна заповнюється
+                за 5 с — видно, коли буде наступне фото) і стрілки. */}
+            <div class="pgal__pager">
+              <span class="pgal__count" aria-hidden="true" data-pgal-count>
+                01 / {String(c.images.length).padStart(2, '0')}
+              </span>
+              <ol class="pgal__bars" role="list" aria-hidden="true">
+                {c.images.map((_, i) => (
+                  <li class:list={{ 'is-active': i === 0 }} data-pgal-bar>
+                    <span class="pgal__fill" />
+                  </li>
+                ))}
+              </ol>
+              <button class="pgal__arrow" type="button" data-pgal-prev>
+                <span class="visually-hidden">{t('ui.prev', lang)}</span>
+                <ArrowCircle dir="prev" />
+              </button>
+              <button class="pgal__arrow" type="button" data-pgal-next>
+                <span class="visually-hidden">{t('ui.next', lang)}</span>
+                <ArrowCircle />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <div class="pmain__info">
+    <div class="pmain__head">
+      <p class="eyebrow">{product.line}</p>
+      <h1 id="product-title" class="pmain__title">
+        {name}
+      </h1>
+      <p class="pmain__price">
+        <span>{price}</span>
+        <span class="text-s text-2">{t('product.vat', lang)}</span>
+      </p>
+    </div>
+
+    {summary && <p class="text-2">{summary}</p>}
+
+    {showColors && (
+      <fieldset class="pfield">
+        <legend class="pfield__label">
+          <span class="text-2">{t('product.color', lang)}</span>{' '}
+          <span data-color-name>{current.label?.[lang]}</span>
+        </legend>
+        <div class="swatches">
+          {product.colors.map((c) => (
+            <label class="swatch" title={c.label?.[lang]}>
+              <input
+                class="visually-hidden"
+                type="radio"
+                name="color"
+                value={c.id}
+                checked={c.id === current.id}
+                data-color-label={c.label?.[lang]}
+              />
+              <span class="visually-hidden">{c.label?.[lang]}</span>
+              {/* Градієнт кружка — атрибутами SVG (inline-стилі заборонені CSP). */}
+              <svg class="swatch__dot" viewBox="0 0 28 28" aria-hidden="true">
+                <defs>
+                  <linearGradient id={`sw-${product.slug}-${c.id}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color={c.swatch?.[0] ?? '#262626'} />
+                    <stop offset="1" stop-color={c.swatch?.[1] ?? c.swatch?.[0] ?? '#262626'} />
+                  </linearGradient>
+                </defs>
+                <circle cx="14" cy="14" r="14" fill={`url(#sw-${product.slug}-${c.id})`} />
+              </svg>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    )}
+
+    {product.sizes.length > 0 && (
+      <fieldset class="pfield" data-sizes>
+        <div class="pfield__row">
+          <legend class="pfield__label text-2">{t('product.size', lang)}</legend>
+          <button class="sguide-btn" type="button" data-sguide-open aria-haspopup="dialog">
+            {t('product.sizeGuide', lang)}
+            <ArrowCircle />
+          </button>
+        </div>
+        <div class="sizes">
+          {product.sizes.map((s) => (
+            <label class:list={['psize', { 'psize--out': s.soldOut }]}>
+              <input
+                class="visually-hidden"
+                type="radio"
+                name="size"
+                value={s.id}
+                checked={s.id === product.defaultSize}
+                aria-disabled={s.soldOut ? 'true' : undefined}
+                data-sold-out={s.soldOut ? '' : undefined}
+              />
+              <span class="chip psize__chip">{s.id}</span>
+            </label>
+          ))}
+        </div>
+        <p class="text-s text-2" role="status" data-size-hint hidden>
+          {t('product.chooseSize', lang)}
+        </p>
+        <div class="soldout" data-soldout hidden>
+          <p class="text-s text-2">
+            <span data-soldout-size /> {t('product.soldOut', lang)}
+          </p>
+          <form class="notify-form" data-soon-form novalidate>
+            <label class="visually-hidden" for="soldout-email">
+              {t('footer.email', lang)}
+            </label>
+            <input
+              class="field"
+              id="soldout-email"
+              type="email"
+              autocomplete="email"
+              placeholder={t('footer.email', lang)}
+            />
+            <Button type="submit" variant="outline">
+              {t('product.notifySubmit', lang)}
+            </Button>
+            <p class="text-s text-2" role="status" data-soon={t('product.soon', lang)} />
+          </form>
+        </div>
+      </fieldset>
+    )}
+
+    <div class="pmain__cta">
+      {shop ? (
+        <>
+          {/* Кошик поки в браузері (src/scripts/cart.ts). TODO: Shopify Storefront API — окремий етап. */}
+          <Button block data-action="add-to-cart">
+            {t('product.addToCart', lang)} — {price}
+          </Button>
+          <p class="text-s pmain__added" role="status" data-cart-added hidden>
+            {t('cart.added', lang)} ·{' '}
+            <a href={localizePath('panier', lang)}>{t('cart.view', lang)}</a>
+          </p>
+          <p class="text-s text-2">{t('product.codeNote', lang).replace('{code}', promoCode)}</p>
+        </>
+      ) : (
+        <details class="notify">
+          <summary class="notify__btn">{t('product.notify', lang)}</summary>
+          <form class="notify-form" data-soon-form novalidate>
+            <label class="visually-hidden" for="notify-email">
+              {t('footer.email', lang)}
+            </label>
+            <input
+              class="field"
+              id="notify-email"
+              type="email"
+              autocomplete="email"
+              placeholder={t('footer.email', lang)}
+            />
+            <Button type="submit" variant="outline">
+              {t('product.notifySubmit', lang)}
+            </Button>
+            <p class="text-s text-2" role="status" data-soon={t('product.soon', lang)} />
+          </form>
+        </details>
+      )}
+    </div>
+
+    {shop && (
+      <dl class="reassure">
+        {(
+          [
+            ['product.delivery', 'product.deliveryText'],
+            ['product.returns', 'product.returnsText'],
+            ['product.payment', 'product.paymentText'],
+          ] as const
+        ).map(([k, v]) => (
+          <div class="reassure__row">
+            <dt class="text-s">{t(k, lang)}</dt>
+            <dd class="text-s text-2">{t(v, lang)}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+
+    {product.details.length > 0 && (
+      <div class="pacc">
+        {product.details.map((d, i) => (
+          <details class="pacc__item" open={i === 0}>
+            <summary class="title">
+              {d.title[lang]}
+              <span class="pacc__sign" aria-hidden="true" />
+            </summary>
+            <p class="text-s text-2">{d.body[lang]}</p>
+          </details>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+{product.sizes.length > 0 && (
+  <dialog class="sguide" data-sguide aria-labelledby="sguide-title">
+    <div class="sguide__head">
+      <h2 id="sguide-title" class="sguide__title">
+        {t('product.sizeGuide', lang)}
+      </h2>
+      <button class="sguide__close" type="button" data-sguide-close>
+        <span class="visually-hidden">{t('nav.close', lang)}</span>
+        <CloseIcon />
+      </button>
+    </div>
+    <p class="text-2">{t('product.sizeGuideTodo', lang)}</p>
+  </dialog>
+)}
+
+<script>
+  import { initProduct } from '../../../scripts/product';
+  initProduct();
+</script>
+
+<style>
+  .pmain {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-bottom: var(--space-14);
+  }
+
+  /* ---------- Галерея ---------- */
+  .pgal[hidden] {
+    display: none;
+  }
+  /* Mobile: на всю ширину без відступів, свайп. Desktop: прокрутка лише мініатюрами. */
+  .pgal__track {
+    display: flex;
+    margin-inline: calc(var(--gutter) * -1);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .pgal__track::-webkit-scrollbar {
+    display: none;
+  }
+  .pgal__slide {
+    flex: 0 0 100%;
+    aspect-ratio: 390 / 488;
+    border-radius: 0;
+    scroll-snap-align: start;
+  }
+  .pgal__thumbs {
+    display: none;
+  }
+  .pgal__pager {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+  /* Лічильник — Label/Nav, як у відгуках. */
+  .pgal__count {
+    font-weight: 500;
+    font-size: var(--fs-label);
+    line-height: 1.23;
+    letter-spacing: 0.08em;
+    color: var(--color-text-2);
+    white-space: nowrap;
+  }
+  /* Смужки 32 × 2: активна заповнюється за 5 с (її кінець = наступне фото, src/scripts/product.ts). */
+  .pgal__bars {
+    display: flex;
+    gap: 6px;
+    margin-right: var(--space-2);
+  }
+  .pgal__bars li {
+    width: 2rem;
+    height: 2px;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+  .pgal__fill {
+    display: block;
+    height: 100%;
+    background: var(--color-text);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .pgal__bars .is-active .pgal__fill {
+    animation: pgal-progress 5s linear forwards;
+  }
+  .pgal.is-paused .pgal__bars .is-active .pgal__fill {
+    animation-play-state: paused;
+  }
+  @keyframes pgal-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pgal__bars .is-active .pgal__fill {
+      animation: none;
+      transform: none;
+    }
+  }
+  .pgal__arrow {
+    display: inline-flex;
+    color: var(--color-text);
+  }
+  @media (hover: hover) {
+    .pgal__arrow:hover :global(.arrow) {
+      background: var(--color-text);
+      color: var(--color-bg);
+    }
+  }
+
+  /* ---------- Інфо ---------- */
+  .pmain__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+  }
+  .pmain__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  /* На цій сторінці назва — h1, але стиль Desktop/H2 48 → Mobile/H1 32. */
+  .pmain__title {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-h1);
+  }
+  .pmain__price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: 1.214;
+  }
+  .pmain__price span + span {
+    font-family: var(--font-body);
+  }
+  .pfield {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .pfield__label {
+    padding: 0;
+    font-size: var(--fs-body-s);
+    line-height: 1.43;
+  }
+  .pfield__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  /* Кружки кольорів: вибраний — кільце 1 px з відступом 3 px. */
+  .swatches {
+    display: flex;
+    gap: var(--space-3);
+  }
+  .swatch {
+    display: grid;
+    place-items: center;
+    width: 2.375rem; /* 32 + 2 × 3 */
+    height: 2.375rem;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease);
+  }
+  .swatch__dot {
+    width: 2rem;
+    height: 2rem;
+  }
+  .swatch:has(input:checked) {
+    border-color: var(--color-text);
+  }
+  .swatch:has(input:focus-visible) {
+    outline: 2px solid var(--color-red-text);
+    outline-offset: 3px;
+  }
+
+  /* Розміри — Chip / Filter у radio-групі. Розпроданий — блідий, але клікабельний («Me prévenir»). */
+  .sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .psize {
+    cursor: pointer;
+  }
+  .psize__chip {
+    min-width: 4.125rem; /* 66 × 46 на mobile — зручніше пальцем */
+    min-height: 2.875rem;
+    padding-inline: var(--space-3);
+  }
+  .psize input:checked + .psize__chip {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-on-light);
+  }
+  .psize input:focus-visible + .psize__chip {
+    outline: 2px solid var(--color-red-text);
+    outline-offset: 3px;
+  }
+  .psize--out .psize__chip {
+    opacity: 0.35;
+  }
+  .sguide-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: var(--header-h);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  @media (hover: hover) {
+    .sguide-btn:hover :global(.arrow) {
+      background: var(--color-text);
+      color: var(--color-bg);
+    }
+  }
+  .soldout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .soldout[hidden],
+  [data-size-hint][hidden],
+  .pmain__added[hidden] {
+    display: none;
+  }
+  .pmain__added a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* CTA */
+  .pmain__cta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  /* «Me prévenir du lancement» — вигляд Button Primary на всю ширину (summary, тож працює без JS). */
+  .notify summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.25rem;
+    padding: 1.125rem 1.75rem;
+    border-radius: var(--radius-btn);
+    background: var(--color-text);
+    color: var(--color-on-light);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    line-height: 1.23;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    list-style: none;
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .notify summary:hover {
+      background: var(--color-primary-hover);
+    }
+  }
+  .notify summary:focus-visible {
+    background: var(--color-primary-hover);
+  }
+  .notify summary::-webkit-details-marker {
+    display: none;
+  }
+  .notify-form {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .notify-form [data-soon]:empty {
+    display: none;
+  }
+
+  /* Réassurance (лише з магазином) */
+  .reassure__row {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Акордеони — як FAQ: «+» / «−», лінія між пунктами. */
+  .pacc__item {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .pacc__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: 1.125rem;
+    list-style: none;
+    cursor: pointer;
+  }
+  .pacc__item summary::-webkit-details-marker {
+    display: none;
+  }
+  /* «+» закрито / «−» відкрито (Text/Title 18), як у Figma. */
+  .pacc__sign::before {
+    content: '+';
+    font-weight: 400;
+  }
+  .pacc__item[open] .pacc__sign::before {
+    content: '−';
+  }
+  .pacc__item p {
+    padding-bottom: var(--space-5);
+  }
+
+  /* Guide des tailles */
+  .sguide {
+    width: min(100% - 2 * var(--gutter), 40rem);
+    padding: var(--space-8);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-bg-alt);
+    color: var(--color-text);
+  }
+  .sguide::backdrop {
+    background: rgb(var(--shade) / 0.7);
+  }
+  .sguide__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .sguide__title {
+    font-size: var(--fs-h3);
+  }
+  .sguide__close {
+    display: inline-grid;
+    place-items: center;
+    width: var(--header-h);
+    height: var(--header-h);
+    margin-right: -0.625rem;
+  }
+
+  /* ---------- Desktop ≥ 1024 (Figma «01 Produit») ---------- */
+  @media (min-width: 768px) {
+    .swatch {
+      width: 2.125rem; /* 28 + 2 × 3 */
+      height: 2.125rem;
+    }
+    .swatch__dot {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+    .psize__chip {
+      min-width: 4rem; /* 64 × 38 */
+      min-height: 2.375rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .pmain {
+      display: grid;
+      grid-template-columns: minmax(0, 760fr) minmax(0, 440fr);
+      align-items: start;
+      gap: var(--space-20);
+      padding-bottom: var(--section-y);
+    }
+    .pgal__track {
+      margin: 0;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+    }
+    .pgal__slide {
+      aspect-ratio: 760 / 940;
+    }
+    .pgal__pager {
+      display: none;
+    }
+    .pgal__thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+    /* Активна — рамка 1 px з внутрішнім відступом 3 px; неактивні — бліді. */
+    .pgal__thumb {
+      aspect-ratio: 172 / 214;
+      padding: 3px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-card);
+      opacity: 0.55;
+      transition:
+        opacity var(--dur) var(--ease),
+        border-color var(--dur) var(--ease);
+    }
+    .pgal__thumb :global(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 2px;
+    }
+    .pgal__thumb:hover,
+    .pgal__thumb.is-active {
+      opacity: 1;
+    }
+    .pgal__thumb.is-active {
+      border-color: var(--color-text);
+    }
+    .pmain__info {
+      position: sticky;
+      top: calc(var(--header-total-h) + var(--space-8));
+      gap: var(--space-8);
+    }
+    .pmain__title {
+      font-size: var(--fs-h2);
+      line-height: var(--lh-h2);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pgal__track {
+      scroll-behavior: auto;
+    }
+  }
+</style>

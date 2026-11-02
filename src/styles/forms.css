@@ -15,3 +15,38 @@
   outline: none;
   border-color: var(--color-text);
 }
+.field--area {
+  display: block;
+  min-height: 8.75rem; /* 140 */
+  padding: var(--space-4);
+  resize: vertical;
+}
+.field--select {
+  appearance: none;
+  padding-right: var(--space-10);
+  cursor: pointer;
+}
+.field--select option {
+  background: var(--color-card);
+  color: var(--color-text);
+}
+/* Помилка (src/scripts/form.ts): рамка і текст під полем — --color-red-text. */
+.field[aria-invalid='true'] {
+  border-color: var(--color-red-text);
+}
+.field-error {
+  font-size: var(--fs-body-s);
+  color: var(--color-red-text);
+}
+.field-error[hidden] {
+  display: none;
+}
+/* Автозаповнення (Chrome / Safari фарбують поле в синій): лишаємо вигляд звичайного поля. */
+.field:-webkit-autofill,
+.field:-webkit-autofill:hover,
+.field:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text);
+  box-shadow: 0 0 0 100px var(--color-bg) inset; /* фон як у звичайного поля */
+  caret-color: var(--color-text);
+  transition: background-color 9999s; /* не дає браузеру перефарбувати */
+}

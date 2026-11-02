@@ -1,0 +1,60 @@
+---
+// Figma: Privilèges → 04 Questions (desktop 18:607, mobile 19:679). FAQ / Item — спільний FaqItems.
+// Desktop: ліворуч заголовок + «Contact», праворуч питання. Mobile: заголовок, текст, «Contact», питання.
+import Button from '../../ui/Button.astro';
+import FaqItems from '../../ui/FaqItems.astro';
+import type { PrivilegesData } from '../../../content.config';
+
+interface Props {
+  data: PrivilegesData['questions'];
+  contactHref: string;
+}
+const { data, contactHref } = Astro.props;
+---
+
+<section class="questions container" aria-labelledby="questions-title">
+  <div class="questions__head">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="questions-title">{data.title}</h2>
+      <p class="text-2">{data.body}</p>
+    </div>
+    <Button href={contactHref} variant="accent">
+      {data.link.label}
+    </Button>
+  </div>
+  <div class="questions__items">
+    <FaqItems items={data.items} name="privileges-faq" />
+  </div>
+</section>
+
+<style>
+  .questions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-block: var(--space-14);
+  }
+  .questions__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  @media (min-width: 1024px) {
+    .questions {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-24);
+      padding-block: var(--space-24);
+    }
+    .questions__head {
+      flex: 0 0 25rem;
+      gap: var(--space-5);
+    }
+    .questions__items {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+</style>

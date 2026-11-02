@@ -1,30 +1,31 @@
 ---
+// 404: один файл для будь-якої адреси (хостинг / GitHub Pages віддають 404.html). Тексти трьох мов —
+// видно мову з адреси (src/scripts/error-lang.ts). Шапка solid, noindex.
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Button from '../components/ui/Button.astro';
-import { localizePath, t } from '../i18n/utils';
+import ErrorHero, { type ErrorCopy } from '../components/sections/ErrorHero.astro';
+import { isBuilt } from '../i18n/nav';
+import { locales, localizePath, t, type Locale } from '../i18n/utils';
+
 const lang = 'fr';
+// Journal ще не готовий — друга кнопка веде на Privilèges (одна перевірка в nav.ts).
+const journal = isBuilt('journal');
+const copy = Object.fromEntries(
+  locales.map((l) => [
+    l,
+    {
+      title: `${t('404.title', l)} — Luigi Contessi`,
+      label: t('err.label', l),
+      heading: t('404.heading', l),
+      body: t('404.body', l),
+      primary: { label: t('404.primary', l), href: localizePath('', l) },
+      secondary: journal
+        ? { label: t('404.journal', l), href: localizePath('journal', l) }
+        : { label: t('404.privileges', l), href: localizePath('privileges', l) },
+    },
+  ]),
+) as Record<Locale, ErrorCopy>;
 ---
 
-<BaseLayout
-  lang={lang}
-  title={`${t('404.title', lang)} — Luigi Contessi`}
-  description="404"
-  noindex
->
-  <section class="nf container">
-    <p class="eyebrow">404</p>
-    <h1>{t('404.title', lang)}</h1>
-    <Button href={localizePath('', lang)}>{t('404.back', lang)}</Button>
-  </section>
+<BaseLayout lang={lang} title={copy.fr.title} description={copy.fr.body} noindex>
+  <ErrorHero code="404" copy={copy} />
 </BaseLayout>
-
-<style>
-  .nf {
-    display: grid;
-    justify-items: start;
-    gap: var(--space-6);
-    padding-block: var(--section-y);
-    min-height: 70vh;
-    align-content: center;
-  }
-</style>

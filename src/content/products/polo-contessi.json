@@ -1,0 +1,16 @@
+{
+  "slug": "polo-contessi",
+  "line": "Contessi Collection",
+  "name": {
+    "fr": "Polo Contessi",
+    "en": "Contessi polo",
+    "it": "Polo Contessi"
+  },
+  "price": null,
+  "colors": [
+    {
+      "id": "default",
+      "images": ["1.jpg"]
+    }
+  ]
+}

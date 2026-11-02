@@ -1,0 +1,27 @@
+{
+  "id": "chapeaux-10",
+  "brand": "[Marque]",
+  "category": "mode",
+  "offer": {
+    "fr": "−10 % sur les chapeaux",
+    "en": "10% off hats",
+    "it": "−10% sui cappelli"
+  },
+  "conditions": {
+    "fr": "Valable sur les chapeaux, sur le site de la marque. Hors articles déjà soldés. Jusqu’au [date de fin fixée par la marque].",
+    "en": "Valid on hats, on the brand’s website. Items already on sale are excluded. Until [end date set by the brand].",
+    "it": "Valido sui cappelli, sul sito del marchio. Esclusi gli articoli già in saldo. Fino al [data di fine fissata dal marchio]."
+  },
+  "conditionsShort": {
+    "fr": "Sur les chapeaux, hors soldes. Jusqu’au [date de la marque].",
+    "en": "On hats, sale items excluded. Until [the brand’s date].",
+    "it": "Sui cappelli, saldi esclusi. Fino al [data del marchio]."
+  },
+  "code": "CHAPEAU10",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": true,
+  "order": 0,
+  "image": "featured/chapeaux.jpg"
+}

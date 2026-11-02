@@ -24,11 +24,11 @@ const { data, href } = Astro.props;
     </div>
     <ul class="press__cards rail" role="list">
       {data.items.map((item) => (
-        <li class="pcard">
+        <li class="pcard hover-card">
           <p class="eyebrow eyebrow--muted">{item.meta}</p>
           <h3>{item.title}</h3>
           <p class="text-s text-2">{item.excerpt}</p>
-          <Button href={href} variant="accent">
+          <Button href={href} variant="accent" class="hover-card__link">
             {item.action}
           </Button>
         </li>

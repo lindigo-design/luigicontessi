@@ -1,0 +1,222 @@
+---
+// Figma: Privilèges → 03 Tous les codes (desktop 18:438, mobile 19:595).
+// Фільтри за категорією, сортування, «Voir plus» — src/scripts/codes.ts; стан у адресі (?cat=…&tri=…).
+// Без JS видно всі коди (від найновіших), а панель фільтрів і «Voir plus» сховані — вони без скрипта не працюють.
+// Код «À la une» тут не повторюємо — він уже вище.
+import Button from '../../ui/Button.astro';
+import CodeCard from '../../ui/CodeCard.astro';
+import { getCodeImage } from '../../../content/helpers';
+import { codeCategories, type CodeData } from '../../../content.config';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  codes: CodeData[];
+}
+const { lang, codes } = Astro.props;
+// Фільтр без кодів не показуємо.
+const categories = codeCategories.filter((c) => codes.some((code) => code.category === c));
+---
+
+<section class="allcodes" aria-labelledby="allcodes-title" data-codes>
+  <div class="container allcodes__inner">
+    <h2 id="allcodes-title" class="visually-hidden">
+      {t('codes.title', lang)}
+    </h2>
+
+    <div class="toolbar" data-codes-toolbar hidden>
+      <div class="toolbar__filters" role="group" aria-label={t('codes.filters', lang)}>
+        <button class="chip" type="button" aria-pressed="true" data-filter="all">
+          {t('codes.all', lang)}
+        </button>
+        {categories.map((c) => (
+          <button class="chip" type="button" aria-pressed="false" data-filter={c}>
+            {t(`codes.cat.${c}`, lang)}
+          </button>
+        ))}
+      </div>
+      <label class="sort">
+        <span class="text-s text-2">{t('codes.sort', lang)}</span>
+        <span class="sort__box">
+          <select data-sort>
+            <option value="recent">{t('codes.sortRecent', lang)}</option>
+            <option value="expire">{t('codes.sortExpire', lang)}</option>
+          </select>
+          <span class="sort__arrow" aria-hidden="true">
+            ▾
+          </span>
+        </span>
+      </label>
+    </div>
+
+    <ul class="allcodes__grid" role="list" data-codes-list>
+      {codes.map((c) => (
+        <li
+          tabindex="-1"
+          data-cat={c.category}
+          data-added={c.addedAt ?? ''}
+          data-expires={c.expiresAt ?? ''}
+          data-order={c.order ?? ''}
+        >
+          <CodeCard
+            lang={lang}
+            offer={c.offer[lang]}
+            code={c.code}
+            disclosure={t('codes.partner', lang)}
+            brandLabel={t('codes.brand', lang)}
+            brandUrl={c.url}
+            brand={c.brand}
+            logo={c.logo ? getCodeImage(c.logo) : null}
+          />
+        </li>
+      ))}
+    </ul>
+
+    <div class="allcodes__empty" data-codes-empty hidden>
+      <p class="text-2">{t('codes.empty', lang)}</p>
+      <Button variant="outline" data-codes-all>
+        {t('codes.emptyAll', lang)}
+      </Button>
+    </div>
+
+    <div class="allcodes__more" data-codes-more hidden>
+      <Button variant="outline" class="allcodes__more-btn">
+        {t('codes.more', lang)}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initCodes } from '../../../scripts/codes';
+  initCodes();
+</script>
+
+<style>
+  .allcodes {
+    background: var(--color-bg-alt);
+  }
+  .allcodes__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-block: var(--space-10) var(--space-14);
+  }
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  .toolbar[hidden] {
+    display: none;
+  }
+  /* Mobile: стрічка з горизонтальною прокруткою до країв екрана, без смуги прокрутки. */
+  .toolbar__filters {
+    display: flex;
+    gap: var(--space-2);
+    max-width: calc(100% + 2 * var(--gutter));
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .toolbar__filters::-webkit-scrollbar {
+    display: none;
+  }
+  .toolbar__filters .chip {
+    flex: none;
+  }
+  .sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .sort__box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  /* Нативний select у стилі Label/Nav. */
+  .sort select {
+    appearance: none;
+    min-height: 2.75rem;
+    padding: 0 var(--space-4) 0 0;
+    border: 0;
+    background: transparent;
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+  .sort select option {
+    background: var(--color-card);
+    text-transform: none;
+  }
+  .sort__arrow {
+    position: absolute;
+    right: 0;
+    font-size: var(--fs-eyebrow);
+    pointer-events: none;
+  }
+  .allcodes__grid {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .allcodes__grid > li:focus {
+    outline: none;
+  }
+  .allcodes__grid > li:focus-visible {
+    outline: 2px solid var(--color-red-text);
+    outline-offset: 3px;
+  }
+  .allcodes__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .allcodes__empty[hidden],
+  .allcodes__more[hidden] {
+    display: none;
+  }
+  .allcodes__more :global(.allcodes__more-btn) {
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .allcodes__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+  }
+  @media (min-width: 1024px) {
+    .allcodes__inner {
+      gap: var(--space-10);
+      padding-block: var(--space-24);
+    }
+    .toolbar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .toolbar__filters {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .allcodes__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .allcodes__more {
+      display: flex;
+      justify-content: center;
+    }
+    .allcodes__more :global(.allcodes__more-btn) {
+      width: auto;
+    }
+  }
+</style>

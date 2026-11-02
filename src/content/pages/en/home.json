@@ -38,20 +38,7 @@
     "eyebrow": "(01) About",
     "title": "Luigi Contessi",
     "body": "Entrepreneur and content creator. I share what I try myself: cars, watches, places. When I like a brand, I say so. When I don’t, I don’t talk about it.",
-    "stats": [
-      {
-        "value": "1.7M+",
-        "label": "Instagram followers"
-      },
-      {
-        "value": "500+",
-        "label": "collaborations"
-      },
-      {
-        "value": "30+",
-        "label": "countries"
-      }
-    ],
+    "stats": ["followers", "collaborations", "countries"],
     "link": {
       "label": "My story"
     },
@@ -125,6 +112,16 @@
         "image": {
           "alt": "Luigi Contessi in a grey Contessi suit"
         }
+      },
+      {
+        "tag": "Collection",
+        "name": "Contessi jacket",
+        "description": "Leather, tailored fit, embroidered Contessi logo. Over a shirt or a T-shirt.",
+        "action": "View",
+        "image": {
+          "alt": "Luigi Contessi in the black Contessi jacket"
+        },
+        "product": "veste-contessi"
       },
       {
         "tag": "Favourite · Affiliate link",
@@ -208,7 +205,8 @@
         "price": "[Price]",
         "image": {
           "alt": "Contessi white shirt"
-        }
+        },
+        "product": "chemise-blanche"
       },
       {
         "name": "Contessi shoes",

@@ -1,0 +1,16 @@
+{
+  "slug": "chemise-noire",
+  "line": "Contessi Collection",
+  "name": {
+    "fr": "Chemise Noire",
+    "en": "Black shirt",
+    "it": "Camicia nera"
+  },
+  "price": null,
+  "colors": [
+    {
+      "id": "default",
+      "images": ["1.jpg"]
+    }
+  ]
+}

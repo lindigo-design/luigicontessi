@@ -1,0 +1,65 @@
+---
+// Сторінка «Panier»: /<мова>/panier/. Будується лише коли магазин увімкнено (features.shop).
+// Кошик живе в браузері (src/scripts/cart.ts) і малюється скриптом, тож сюди вбудовуємо легкий JSON
+// товарів (назва, ціна, кольори + маленьке фото) і промокоди. Сторінка особиста — noindex.
+// TODO: Shopify — окремий етап (ціни, залишки, оплата).
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CartPage from '../../components/sections/cart/CartPage.astro';
+import CompleteLook from '../../components/sections/product/CompleteLook.astro';
+import { getProductImage, getProducts, getSettings, productPath } from '../../content/helpers';
+import { locales, t, type Locale } from '../../i18n/utils';
+import type { CartData } from '../../scripts/cart';
+
+export async function getStaticPaths() {
+  const { features } = await getSettings();
+  return features.shop ? locales.map((lang) => ({ params: { lang } })) : [];
+}
+
+const lang = Astro.params.lang as Locale;
+const settings = await getSettings();
+const products = await getProducts();
+
+// Фото рядка — 128 × 160 (×2 для чітких екранів), обрізане під формат картки.
+const thumb = async (slug: string, file: string) =>
+  (
+    await getImage({
+      src: getProductImage(slug, file),
+      width: 256,
+      height: 320,
+      fit: 'cover',
+      format: 'webp',
+    })
+  ).src;
+
+const data: CartData = {
+  products: await Promise.all(
+    products.map(async (p) => ({
+      slug: p.slug,
+      name: p.name[lang],
+      price: p.price ?? null,
+      url: productPath(p.slug, lang),
+      defaultColor: p.defaultColor ?? p.colors[0].id,
+      colors: await Promise.all(
+        p.colors.map(async (c) => ({
+          id: c.id,
+          label: c.label?.[lang] ?? '',
+          image: await thumb(p.slug, c.images[0]),
+        })),
+      ),
+    })),
+  ),
+  codes: settings.shopCodes.map((c) => ({ code: c.code.toUpperCase(), percent: c.percent })),
+};
+---
+
+<BaseLayout
+  lang={lang}
+  title={t('cart.seoTitle', lang)}
+  description={t('cart.seoDescription', lang)}
+  current="panier"
+  noindex
+>
+  <CartPage lang={lang} data={data} />
+  <CompleteLook lang={lang} shop={settings.features.shop} items={products} alt limit={4} />
+</BaseLayout>

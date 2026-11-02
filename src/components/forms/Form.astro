@@ -1,0 +1,113 @@
+---
+// Спільна обгортка форм (Contact, Partenariats): поле-пастка для ботів, рядок статусу, кнопка
+// і блок «Merci». Перевірку й надсилання робить src/scripts/form.ts (усі [data-form] на сторінці).
+// Куди надсилати — settings.json → forms.endpoint; порожньо — чесне «arrive bientôt» з адресою пошти.
+import Button from '../ui/Button.astro';
+import FormThanks from './FormThanks.astro';
+import { getSettings } from '../../content/helpers';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  /** Назва форми для листа (contact, partenariats). */
+  name: string;
+  /** Пошта для «écrivez-moi à …» (getEmail); порожньо — «[e-mail]». */
+  email: string;
+  submit: string;
+  thanks: { title: string; text: string; link: { label: string; href: string } };
+  class?: string;
+}
+const { lang, name, email, submit, thanks, class: extra } = Astro.props;
+const { forms } = await getSettings();
+const msg = (key: Parameters<typeof t>[0]) => t(key, lang);
+---
+
+<div class:list={['form-wrap', extra]}>
+  <form
+    class="form"
+    method="post"
+    novalidate
+    data-form={name}
+    data-endpoint={forms.endpoint.trim()}
+    data-email={email}
+    data-msg-required={msg('form.required')}
+    data-msg-email-no-at={msg('form.emailNoAt')}
+    data-msg-email-incomplete={msg('form.emailIncomplete')}
+    data-msg-email-domain={msg('form.emailDomain')}
+    data-msg-suggest={msg('form.suggest')}
+    data-msg-url={msg('form.url')}
+    data-msg-too-short={msg('form.tooShort')}
+    data-msg-choose={msg('form.choose')}
+    data-msg-consent={msg('form.consent')}
+    data-msg-sending={msg('form.sending')}
+    data-msg-soon={msg('form.soon')}
+    data-msg-error={msg('form.error')}
+    data-msg-no-email={msg('form.noEmail')}
+  >
+    <input type="hidden" name="form" value={name} />
+    <input type="hidden" name="lang" value={lang} />
+    <slot />
+    {/* Пастка для ботів: людина цього поля не бачить; заповнене — нічого не надсилаємо. */}
+    <div class="form__hp" aria-hidden="true">
+      <label>
+        {msg('form.honeypot')}
+        <input type="text" name="website_hp" tabindex="-1" autocomplete="off" />
+      </label>
+    </div>
+    <p class="form__status text-s" role="status" data-form-status hidden></p>
+    <Button type="submit" class="form__submit">
+      {submit}
+    </Button>
+  </form>
+  <FormThanks {...thanks} />
+</div>
+
+<script>
+  import { initForms } from '../../scripts/form';
+  initForms();
+</script>
+
+<style>
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .form[hidden] {
+    display: none;
+  }
+  .form__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .form__status {
+    color: var(--color-text-2);
+  }
+  .form__status[hidden] {
+    display: none;
+  }
+  .form__status :global(a) {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .form__status.is-error {
+    color: var(--color-red-text);
+  }
+  /* Mobile — кнопка на всю ширину, desktop — за шириною тексту. */
+  .form :global(.form__submit) {
+    width: 100%;
+  }
+  .form :global(.form__submit[aria-busy='true']) {
+    cursor: progress;
+  }
+  @media (min-width: 768px) {
+    .form :global(.form__submit) {
+      align-self: flex-start;
+      width: auto;
+    }
+  }
+</style>

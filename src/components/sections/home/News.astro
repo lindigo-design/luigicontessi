@@ -1,7 +1,9 @@
 ---
 // Figma: Home → 04 Nouveautés (desktop 3:76, mobile 6:245).
 // Карусель: активна картка більша й з описом, завжди по центру екрана. Трек — на всю ширину.
-// Стрілки (desktop), свайп і крапки (mobile), клавіші ← → на фокусі.
+// Безкінечна: по краях — копії 2 останніх / 2 перших карток (лише візуальні), скрипт тихо
+// перескакує з копії на справжню. Стрілки (desktop), свайп і крапки (mobile), клавіші ← → Home End.
+// Висота не стрибає: текстовий блок фіксованої висоти, опис — рівно 2 рядки.
 import { Image } from 'astro:assets';
 import Button from '../../ui/Button.astro';
 import ArrowCircle from '../../ui/ArrowCircle.astro';
@@ -10,6 +12,7 @@ import n2 from '../../../assets/img/home/news-2.jpg';
 import n3 from '../../../assets/img/home/news-3.jpg';
 import n4 from '../../../assets/img/home/news-4.jpg';
 import n5 from '../../../assets/img/home/news-5.jpg';
+import veste from '../../../assets/img/products/veste-contessi/noir-1.jpg';
 import { t, type Locale } from '../../../i18n/utils';
 import type { HomeData } from '../../../content.config';
 
@@ -17,13 +20,38 @@ interface Props {
   lang: Locale;
   data: HomeData['news'];
   href: string;
+  /** Адреса картки з товаром (тег «Collection») — сторінка товару. */
+  itemHref: (product: string | undefined, fallback: string) => string;
 }
-const { lang, data, href } = Astro.props;
-const images = [n1, n2, n3, n4, n5];
-const start = Math.floor(data.items.length / 2);
+const { lang, data, href, itemHref } = Astro.props;
+// Порядок = порядок карток у home.json → news.items. 4-та — «Veste Contessi», веде на сторінку товару.
+const images = [n1, n2, n3, veste, n4, n5];
+// Вертикальні фото у великій картці: яку частину кадру показати. low — нижче (видно ноги й сумку).
+const focus = new Map([
+  [n1, 'low'],
+  [n3, 'low'],
+]);
+const total = data.items.length;
+const start = Math.floor(total / 2);
+// Менше 3 карток — без зациклення і без стрілок.
+const loop = total >= 3;
+const CLONES = 2;
+const real = data.items.map((item, i) => ({ item, i, clone: false }));
+const slides = loop
+  ? [
+      ...real.slice(-CLONES).map((s) => ({ ...s, clone: true })),
+      ...real,
+      ...real.slice(0, CLONES).map((s) => ({ ...s, clone: true })),
+    ]
+  : real;
 ---
 
-<section class="news section section--alt" aria-labelledby="news-title" data-carousel>
+<section
+  class:list={['news', 'section', 'section--alt', { 'news--static': !loop }]}
+  aria-labelledby="news-title"
+  data-carousel
+  data-loop={loop ? '' : undefined}
+>
   <div class="container news__head">
     <p class="eyebrow">
       <span class="eyebrow--muted">{data.index}</span> {data.eyebrow}
@@ -35,13 +63,26 @@ const start = Math.floor(data.items.length / 2);
   </div>
 
   <ul class="news__track" role="list" data-track>
-    {data.items.map((item, i) => (
+    {slides.map(({ item, i, clone }) => (
       <li
-        class:list={['ncard', 'zoom-card', { 'is-active': i === start }]}
+        class:list={['ncard', 'zoom-card', { 'is-active': !clone && i === start }]}
         data-slide
-        aria-label={`${t('ui.slide', lang)} ${i + 1} / ${data.items.length}`}
+        data-index={i}
+        data-clone={clone ? '' : undefined}
+        aria-hidden={clone ? 'true' : undefined}
+        inert={clone}
+        aria-label={clone ? undefined : `${t('ui.slide', lang)} ${i + 1} / ${total}`}
       >
-        <a class="ncard__img media" href={href} tabindex="-1" aria-hidden="true">
+        <a
+          class:list={[
+            'ncard__img',
+            'media',
+            focus.has(images[i]) && `ncard__img--${focus.get(images[i])}`,
+          ]}
+          href={itemHref(item.product, href)}
+          tabindex="-1"
+          aria-hidden="true"
+        >
           <Image
             src={images[i]}
             alt=""
@@ -49,13 +90,25 @@ const start = Math.floor(data.items.length / 2);
             sizes="(min-width: 1024px) min(39vw, 720px), 80vw"
           />
         </a>
-        <p class="eyebrow eyebrow--muted">{item.tag}</p>
-        <h3 class="title">{item.name}</h3>
-        {item.description && <p class="ncard__desc text-s text-2">{item.description}</p>}
-        <Button href={href} variant="accent">
-          {item.action}
-          <span class="visually-hidden"> — {item.name}</span>
-        </Button>
+        <div class="ncard__info">
+          <p class="ncard__tag eyebrow eyebrow--muted">{item.tag}</p>
+          <h3 class="ncard__name title" title={item.name}>
+            {item.name}
+          </h3>
+          {item.description ? (
+            <p class="ncard__desc text-s text-2">{item.description}</p>
+          ) : (
+            <p class="ncard__desc text-s" aria-hidden="true" />
+          )}
+          <Button
+            href={itemHref(item.product, href)}
+            variant="accent"
+            tabindex={clone ? -1 : undefined}
+          >
+            {item.action}
+            <span class="visually-hidden"> — {item.name}</span>
+          </Button>
+        </div>
       </li>
     ))}
   </ul>
@@ -65,9 +118,17 @@ const start = Math.floor(data.items.length / 2);
       <span class="visually-hidden">{t('ui.prev', lang)}</span>
       <ArrowCircle size="l" dir="prev" />
     </button>
-    <ol class="news__dots" role="list" aria-hidden="true">
+    <ol class="news__dots" role="list">
       {data.items.map((_, i) => (
-        <li class:list={{ 'is-active': i === start }} data-dot />
+        <li>
+          <button
+            class:list={['news__dot', { 'is-active': i === start }]}
+            type="button"
+            aria-label={`${t('ui.slide', lang)} ${i + 1} / ${total}`}
+            aria-current={i === start ? 'true' : undefined}
+            data-dot
+          />
+        </li>
       ))}
     </ol>
     <button class="news__arrow" type="button" data-next>
@@ -87,6 +148,9 @@ const start = Math.floor(data.items.length / 2);
     /* Розміри карток ростуть разом з екраном: 240 → 280 (1440) → 360; активна 300 → 560 → 720. */
     --ncard-w: clamp(15rem, 19.5vw, 22.5rem);
     --ncard-w-active: clamp(18.75rem, 39vw, 45rem);
+    --ncard-ratio: 420 / 300; /* висота / ширина фото активної картки */
+    /* Текстовий блок фіксованої висоти: тег 16 + назва 26 + опис 40 + «Voir» 44 + 3 проміжки по 12. */
+    --ncard-info-h: calc(1rem + 1.625rem + 2.5rem + 2.75rem + 3 * var(--space-3));
     display: flex;
     flex-direction: column;
     gap: var(--space-10);
@@ -107,6 +171,10 @@ const start = Math.floor(data.items.length / 2);
     gap: var(--space-3);
     padding: 0;
     padding-inline: calc(50% - var(--ncard-w-active) / 2);
+    /* Висоту задає активна картка (фото + текстовий блок) — під час переходу вона не «дихає». */
+    min-height: calc(
+      var(--ncard-w-active) * var(--ncard-ratio) + var(--space-3) + var(--ncard-info-h)
+    );
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
@@ -127,14 +195,47 @@ const start = Math.floor(data.items.length / 2);
     width: 100%;
     aspect-ratio: 300 / 420;
   }
+  .ncard__img--low :global(img) {
+    object-position: 50% 78%;
+  }
+  /* Тихий перескок з копії на справжню картку: без прилипання і без анімації ширини.
+     is-moving — під час прокрутки стрілками/клавішами: інакше прилипання «доклеює» стрічку
+     до проміжного положення, поки ширини карток ще анімуються. */
+  .news__track.is-jumping,
+  .news__track.is-moving {
+    scroll-snap-type: none;
+  }
+  .news__track.is-jumping .ncard,
+  .news__track.is-jumping .ncard__img {
+    transition: none;
+  }
+  .ncard__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    width: 100%;
+  }
+  .ncard__tag,
+  .ncard__name {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   .ncard__desc {
     display: none;
   }
   .ncard.is-active {
     flex-basis: var(--ncard-w-active);
   }
+  /* Опис — рівно 2 рядки місця: коротший чи порожній не зсуває «Voir», довший обрізається. */
   .ncard.is-active .ncard__desc {
-    display: block;
+    display: -webkit-box;
+    min-height: calc(2 * 1.43em);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .news__controls {
     display: flex;
@@ -149,15 +250,27 @@ const start = Math.floor(data.items.length / 2);
     display: flex;
     gap: var(--space-2);
   }
-  .news__dots li {
+  /* Крапка 6 px, зона кліку 24 × 24. */
+  .news__dot {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-inline: -9px;
+  }
+  .news__dot::before {
+    content: '';
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--color-border);
     transition: background-color var(--dur) var(--ease);
   }
-  .news__dots li.is-active {
+  .news__dot.is-active::before {
     background: var(--color-text);
+  }
+  .news.news--static .news__arrow {
+    display: none;
   }
 
   @media (min-width: 1024px) {
@@ -176,6 +289,9 @@ const start = Math.floor(data.items.length / 2);
     }
     .news__title-d {
       display: inline;
+    }
+    .news {
+      --ncard-ratio: 680 / 560;
     }
     .news__track {
       gap: var(--space-6);
@@ -199,13 +315,14 @@ const start = Math.floor(data.items.length / 2);
     .news__dots {
       display: none;
     }
-    /* Стрілки — по боках від активної картки, на рівні її нижнього краю. */
+    /* Стрілки — по боках від активної картки (± 24 px), на рівні її текстового блоку. */
     .news__controls {
       position: relative;
       z-index: 1;
       justify-content: space-between;
       max-width: calc(var(--ncard-w-active) + 2 * (5.5rem + var(--space-6)));
-      margin-top: calc(-1 * (var(--space-12) + 5.5rem)); /* gap секції + висота стрілки */
+      /* gap секції + половина (текстовий блок + стрілка) → центр стрілки = центр текстового блоку */
+      margin-top: calc(-1 * (var(--space-12) + (var(--ncard-info-h) + 5.5rem) / 2));
       padding-inline: 0;
       pointer-events: none;
     }

@@ -7,12 +7,15 @@ import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
 import PlusIcon from '../../assets/icons/plus.svg';
 import { footerNav, legalNav } from '../../i18n/nav';
 import { localizePath, t, type Locale } from '../../i18n/utils';
-import { getSettings } from '../../content/helpers';
+import { consentCategories, getSettings } from '../../content/helpers';
 
 interface Props {
   lang: Locale;
+  /** path поточної сторінки (як у nav.ts) — посилання на неї червоне, aria-current. */
+  current?: string;
 }
-const { lang } = Astro.props;
+const { lang, current } = Astro.props;
+const isCurrent = (path: string) => (current && path === current ? 'page' : undefined);
 const settings = await getSettings();
 const shop = settings.features.shop;
 const to = (p: string) => localizePath(p, lang);
@@ -63,7 +66,9 @@ const year = new Date().getFullYear();
               .filter((i) => !i.shop || shop)
               .map((i) => (
                 <li>
-                  <a href={to(i.path)}>{t(i.key, lang)}</a>
+                  <a href={to(i.path)} aria-current={isCurrent(i.path)}>
+                    {t(i.key, lang)}
+                  </a>
                 </li>
               ))}
           </ul>
@@ -80,9 +85,18 @@ const year = new Date().getFullYear();
           .filter((i) => !i.shop || shop)
           .map((i) => (
             <li>
-              <a href={to(i.path)}>{t(i.key, lang)}</a>
+              <a href={to(i.path)} aria-current={isCurrent(i.path)}>
+                {t(i.key, lang)}
+              </a>
             </li>
           ))}
+        {consentCategories(settings).length > 0 && (
+          <li>
+            <button class="footer__cookies" type="button" data-consent-open>
+              {t('cookies.settings', lang)}
+            </button>
+          </li>
+        )}
       </ul>
       <div class="footer__meta">
         <LanguageSwitcher lang={lang} variant="footer" />
@@ -184,14 +198,26 @@ const year = new Date().getFullYear();
     padding-bottom: var(--space-5);
   }
   .footer__col a,
-  .footer__legal a {
+  .footer__legal a,
+  .footer__cookies {
     transition: color var(--dur) var(--ease);
   }
   .footer__col a:hover {
     color: var(--color-text-2);
   }
-  .footer__legal a:hover {
+  .footer__cookies {
+    font: inherit;
+    color: inherit;
+    text-align: start;
+  }
+  .footer__legal a:hover,
+  .footer__cookies:hover {
     color: var(--color-text);
+  }
+  /* Поточна сторінка — червоним (як у шапці й меню). */
+  .footer__col a[aria-current='page'],
+  .footer__legal a[aria-current='page'] {
+    color: var(--color-red-text);
   }
   .footer__legal {
     display: flex;

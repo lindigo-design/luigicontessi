@@ -11,7 +11,13 @@ const { data } = Astro.props;
 ---
 
 <section class="quote" aria-label={data.author}>
-  <Image class="quote__bg" src={bg} alt={data.image.alt} widths={[768, 1280, 1920]} sizes="100vw" />
+  <Image
+    class="quote__bg"
+    src={bg}
+    alt={data.image.alt}
+    widths={[768, 1280, 1920, 2560]}
+    sizes="100vw"
+  />
   <div class="container">
     <figure class="quote__card">
       <blockquote>
@@ -59,7 +65,12 @@ const { data } = Astro.props;
     line-height: 1.333; /* Mobile/Quote 24/32 */
     letter-spacing: -0.01em;
   }
+  /* Повноширинне фото (правило з CLAUDE.md): з 1024 висота росте з шириною — 1440 → 738 (51.25vw),
+     1920 → 984, але не вище за вікно. */
   @media (min-width: 1024px) {
+    .quote {
+      min-height: min(100svh, max(46.125rem, 51.25vw));
+    }
     /* Кадр як у Figma (desktop) */
     .quote__bg {
       object-position: 50% 59%;

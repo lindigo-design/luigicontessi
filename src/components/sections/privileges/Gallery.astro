@@ -1,0 +1,142 @@
+---
+// Figma: Privilèges → «Grid» (141:2796) — 3 фото між «Tous les codes» і «Questions».
+// ≥ 768: велике зліва + два вертикальні, притиснуті до верху (низ праворуч порожній — так задумано).
+// < 768: невелика карусель — свайп, крапки, автопрокрутка кожні 5 с (src/scripts/gallery.ts).
+// Фото декоративні (порожній alt), не посилання — без зуму і без підписів.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  images: { image: ImageMetadata; alt: string; position?: 'top' | 'center' | 'bottom' }[];
+}
+const { lang, images } = Astro.props;
+const total = images.length;
+---
+
+<section class="gallery container" data-gallery>
+  <ul class="gallery__track" role="list" data-gallery-track>
+    {images.map((img, i) => (
+      <li
+        class:list={['gallery__item', 'media', `gallery__item--${img.position ?? 'center'}`]}
+        data-gallery-slide
+      >
+        <Image
+          src={img.image}
+          alt={img.alt}
+          widths={i === 0 ? [600, 900, 1400, 1800] : [400, 600, 900, 1200]}
+          sizes={i === 0 ? '(min-width: 768px) 44vw, 80vw' : '(min-width: 768px) 21vw, 80vw'}
+          loading="lazy"
+        />
+      </li>
+    ))}
+  </ul>
+  <div class="gallery__dots">
+    {images.map((_, i) => (
+      <button
+        class:list={['gallery__dot', { 'is-active': i === 0 }]}
+        type="button"
+        aria-label={`${t('ui.photo', lang)} ${i + 1} ${t('ui.of', lang)} ${total}`}
+        aria-current={i === 0 ? 'true' : undefined}
+        tabindex="-1"
+        data-gallery-dot
+      />
+    ))}
+  </div>
+</section>
+
+<script>
+  import { initGallery } from '../../../scripts/gallery';
+  initGallery();
+</script>
+
+<style>
+  .gallery {
+    padding-bottom: var(--space-14);
+  }
+  /* Mobile: стрічка, слайд 80 % ширини екрана — видно, що є наступне фото. */
+  .gallery__track {
+    display: flex;
+    gap: var(--space-3);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .gallery__track::-webkit-scrollbar {
+    display: none;
+  }
+  .gallery__item {
+    flex: 0 0 80vw;
+    aspect-ratio: 3 / 4;
+    scroll-snap-align: start;
+  }
+  .gallery__item :global(img) {
+    object-position: 50% 50%;
+  }
+  .gallery__item--top :global(img) {
+    object-position: 50% 0%;
+  }
+  .gallery__item--bottom :global(img) {
+    object-position: 50% 100%;
+  }
+  /* Крапки 6 px, зона кліку 24 × 24. */
+  .gallery__dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+  .gallery__dot {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-inline: -9px;
+  }
+  .gallery__dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .gallery__dot.is-active::before {
+    background: var(--color-text);
+  }
+
+  /* ≥ 768: сітка як у Figma — 628 | 302 | 302 на 1280, проміжок 24. */
+  @media (min-width: 768px) {
+    .gallery {
+      padding-bottom: var(--space-16);
+    }
+    .gallery__track {
+      display: grid;
+      /* частки як у Figma (628 | 302 | 302 при проміжку 24) — на 1440 рівно 628 × 680 і 302 × 418 */
+      grid-template-columns: minmax(0, 628fr) minmax(0, 302fr) minmax(0, 302fr);
+      align-items: start;
+      gap: var(--space-6);
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .gallery__item {
+      aspect-ratio: 302 / 418;
+    }
+    .gallery__item:first-child {
+      aspect-ratio: 628 / 680;
+    }
+    .gallery__dots {
+      display: none;
+    }
+  }
+  @media (min-width: 1024px) {
+    .gallery {
+      padding-bottom: var(--space-24);
+    }
+  }
+</style>

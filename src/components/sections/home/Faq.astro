@@ -2,7 +2,7 @@
 // Figma: Home → 10 FAQ (desktop 4:203, mobile 6:430), FAQ / Item. Відповіді — <details>.
 import { Image } from 'astro:assets';
 import Button from '../../ui/Button.astro';
-import PlusIcon from '../../../assets/icons/plus.svg';
+import FaqItems from '../../ui/FaqItems.astro';
 import photo from '../../../assets/img/home/faq.jpg';
 import type { HomeData } from '../../../content.config';
 
@@ -25,18 +25,7 @@ const { data, href } = Astro.props;
           {data.link.label}
         </Button>
       </div>
-      <div class="faq__items">
-        {data.items.map((item, i) => (
-          <details class="qa" name="faq" open={i === 0}>
-            <summary>
-              <span class="qa__num text-2">{String(i + 1).padStart(2, '0')}</span>
-              <span class="qa__q title">{item.question}</span>
-              <PlusIcon />
-            </summary>
-            <p class="qa__a text-s text-2">{item.answer}</p>
-          </details>
-        ))}
-      </div>
+      <FaqItems items={data.items} name="faq" />
     </div>
     <div class="faq__img media">
       <Image src={photo} alt={data.image.alt} widths={[520, 1040]} sizes="520px" />
@@ -56,35 +45,6 @@ const { data, href } = Astro.props;
     align-items: flex-start;
     gap: var(--space-4);
   }
-  .qa {
-    border-bottom: 1px solid var(--color-border);
-  }
-  .qa summary {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-4);
-    padding-block: var(--space-6);
-    list-style: none;
-    cursor: pointer;
-  }
-  .qa summary::-webkit-details-marker {
-    display: none;
-  }
-  .qa__q {
-    flex: 1;
-  }
-  .qa summary :global(svg) {
-    flex: none;
-    align-self: center;
-    transition: transform var(--dur) var(--ease);
-  }
-  .qa[open] summary :global(svg) {
-    transform: rotate(45deg);
-  }
-  .qa__a {
-    padding: 0 var(--space-8) var(--space-6) calc(1rem + var(--space-4) + 0.25rem);
-    margin-top: calc(var(--space-3) * -1);
-  }
   .faq__img {
     display: none;
   }
@@ -101,12 +61,6 @@ const { data, href } = Astro.props;
       flex-direction: row;
       align-items: flex-end;
       justify-content: space-between;
-    }
-    .qa summary {
-      gap: var(--space-8);
-    }
-    .qa__a {
-      padding-left: calc(1rem + var(--space-8) + 0.25rem);
     }
     .faq__img {
       display: block;

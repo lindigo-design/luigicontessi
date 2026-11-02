@@ -1,0 +1,59 @@
+---
+// Хлібні крихти сторінки товару. Магазин вимкнено — без «Boutique».
+import { localizePath, t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  shop: boolean;
+  name: string;
+}
+const { lang, shop, name } = Astro.props;
+const to = (p: string) => localizePath(p, lang);
+const items = [
+  ...(shop ? [{ label: t('nav.shop', lang), href: to('boutique') }] : []),
+  { label: t('nav.collection', lang), href: to('collection') },
+];
+---
+
+<nav class="crumbs container" aria-label={t('nav.breadcrumb', lang)}>
+  <ol role="list">
+    {items.map((i) => (
+      <li>
+        <a href={i.href}>{i.label}</a>
+        <span class="crumbs__sep" aria-hidden="true">
+          /
+        </span>
+      </li>
+    ))}
+    <li>
+      <span aria-current="page">{name}</span>
+    </li>
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    padding-block: var(--space-6);
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: var(--fs-body-s);
+    line-height: 1.43;
+    color: var(--color-text-2);
+  }
+  .crumbs li {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .crumbs a {
+    transition: color var(--dur) var(--ease);
+  }
+  .crumbs a:hover {
+    color: var(--color-text);
+  }
+  .crumbs [aria-current] {
+    color: var(--color-text);
+  }
+</style>

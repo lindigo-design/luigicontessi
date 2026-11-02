@@ -1,0 +1,133 @@
+---
+// Figma: États → 404 (55:536 / 55:612), 500 (147:613 / 147:671).
+// Рядок «цифра · K із сердечком · цифра» + заголовок, опис, дві кнопки.
+// Хостинг віддає один файл на будь-яку адресу, тому тут тексти всіх трьох мов: видно FR,
+// src/scripts/error-lang.ts показує EN / IT за першим сегментом адреси (без JS — FR).
+import Button from '../ui/Button.astro';
+import CornerK from '../../assets/brand/corner-k-tall.svg';
+import { locales, type Locale } from '../../i18n/utils';
+
+interface Link {
+  label: string;
+  href: string;
+}
+export interface ErrorCopy {
+  title: string; // <title> сторінки
+  label: string; // «Erreur» — для читалки перед заголовком
+  heading: string;
+  body: string;
+  primary: Link;
+  secondary: Link;
+}
+interface Props {
+  code: '404' | '500';
+  copy: Record<Locale, ErrorCopy>;
+}
+const { code, copy } = Astro.props;
+---
+
+<section class="err container">
+  <p class="err__code" aria-hidden="true">
+    <span>{code[0]}</span>
+    <CornerK class="err__k" />
+    <span>{code[2]}</span>
+  </p>
+  {locales.map((l) => (
+    <div class="err__copy" lang={l} hidden={l !== 'fr'} data-err-copy data-title={copy[l].title}>
+      <h1 class="err__title">
+        <span class="visually-hidden">
+          {copy[l].label} {code} —{' '}
+        </span>
+        {copy[l].heading}
+      </h1>
+      <p class="err__body text-2">{copy[l].body}</p>
+      <div class="err__ctas">
+        <Button href={copy[l].primary.href}>{copy[l].primary.label}</Button>
+        <Button href={copy[l].secondary.href} variant="accent">
+          {copy[l].secondary.label}
+        </Button>
+      </div>
+    </div>
+  ))}
+</section>
+
+<script>
+  import { initErrorLang } from '../../scripts/error-lang';
+  initErrorLang();
+</script>
+
+<style>
+  .err {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    min-height: 60svh;
+    padding-block: var(--space-20);
+    text-align: center;
+  }
+  /* Цифри — стиль слова CONTESSI (Boldonse, 56 → 200); логотип і проміжок — у пропорції Figma
+     (247 / 200 і 24 / 200 від кегля), тож рядок однаковий на будь-якій ширині. */
+  .err__code {
+    display: flex;
+    align-items: center;
+    gap: 0.12em;
+    font-family: var(--font-logo);
+    font-size: var(--fs-wordmark);
+    line-height: 1.24;
+    color: var(--color-text);
+  }
+  .err__code :global(.err__k) {
+    width: auto;
+    height: 1.235em;
+  }
+  .err__code :global(.err__k path) {
+    fill: var(--color-red);
+  }
+  .err__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+  }
+  .err__copy[hidden] {
+    display: none;
+  }
+  .err__title {
+    max-width: 35rem;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+  }
+  .err__body {
+    max-width: 35rem;
+  }
+  /* Mobile: Primary на всю ширину, Link Accent по центру під нею. */
+  .err__ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+  }
+  .err__ctas :global(.btn--primary) {
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .err {
+      gap: var(--space-6);
+      padding-block: 10rem; /* 160 */
+    }
+    .err__copy {
+      gap: var(--space-6);
+    }
+    .err__ctas {
+      flex-direction: row;
+      justify-content: center;
+    }
+    .err__ctas :global(.btn--primary) {
+      width: auto;
+    }
+  }
+</style>

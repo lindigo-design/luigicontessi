@@ -1,0 +1,27 @@
+---
+// 500: хостинг (Apache) віддає 500.html, коли ламається сервер (також 503 — див. public/.htaccess).
+// Лише статичний HTML + CSS, без запитів до даних. Тексти трьох мов — видно мову з адреси
+// (src/scripts/error-lang.ts). «Réessayer» — посилання href="" (та сама адреса ще раз, без JS).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ErrorHero, { type ErrorCopy } from '../components/sections/ErrorHero.astro';
+import { locales, localizePath, t, type Locale } from '../i18n/utils';
+
+const lang = 'fr';
+const copy = Object.fromEntries(
+  locales.map((l) => [
+    l,
+    {
+      title: `${t('500.title', l)} — Luigi Contessi`,
+      label: t('err.label', l),
+      heading: t('500.heading', l),
+      body: t('500.body', l),
+      primary: { label: t('500.primary', l), href: '' },
+      secondary: { label: t('500.home', l), href: localizePath('', l) },
+    },
+  ]),
+) as Record<Locale, ErrorCopy>;
+---
+
+<BaseLayout lang={lang} title={copy.fr.title} description={copy.fr.body} noindex>
+  <ErrorHero code="500" copy={copy} />
+</BaseLayout>

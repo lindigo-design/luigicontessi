@@ -1,0 +1,98 @@
+---
+// Figma: Partenariats → 03 Collaborations (desktop 47:478). 4 картки --color-card з hover як у
+// текстових карток (завдання 13); уся картка — посилання на форму з вибраним типом
+// (?type=ambassadeur#proposer). Деталі внизу картки: порожньо — сховано. Mobile — без деталей.
+import { localizePath, type Locale } from '../../../i18n/utils';
+import type { PartenariatsData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: PartenariatsData['collaborations'];
+}
+const { lang, data } = Astro.props;
+const page = localizePath('partenariats', lang);
+---
+
+<section class="collabs section" aria-labelledby="collabs-title">
+  <div class="container collabs__inner">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="collabs-title">{data.title}</h2>
+    </div>
+    <ul class="collabs__grid" role="list">
+      {data.items.map((c) => (
+        <li class="ccard hover-card">
+          <h3 class="ccard__title">
+            <a class="hover-card__link" href={`${page}?type=${c.type}#proposer`}>
+              {c.title}
+            </a>
+          </h3>
+          <p class="text-s text-2">{c.text}</p>
+          {c.details && <p class="ccard__details text-s">{c.details}</p>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .collabs__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .collabs__grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .ccard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .ccard__title {
+    font-family: var(--font-body);
+    font-size: var(--fs-title);
+    font-weight: 500;
+    line-height: 1.444;
+    letter-spacing: normal;
+  }
+  /* Mobile — лише короткий опис (як у Figma). */
+  .ccard__details {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .collabs__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+    .ccard {
+      gap: 0.875rem; /* 14 */
+      min-height: 16.125rem; /* 258 */
+      padding: var(--space-7);
+    }
+    .ccard__title {
+      font-family: var(--font-display);
+      font-size: var(--fs-h3);
+      font-weight: 400;
+      line-height: var(--lh-h3);
+      letter-spacing: -0.01em;
+    }
+    .ccard__details {
+      display: block;
+      margin-top: auto; /* притиснуто до низу картки */
+      padding-top: var(--space-4);
+    }
+  }
+  @media (min-width: 1024px) {
+    .collabs__inner {
+      gap: var(--space-14);
+    }
+    .collabs__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

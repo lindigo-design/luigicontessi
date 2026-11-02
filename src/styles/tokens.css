@@ -8,14 +8,14 @@
   --color-card: #1e1e1e; /* surface/card */
   --color-image: #262626; /* surface/image */
   --color-border: #2a2a2a; /* border/subtle */
-  --color-text: #edeae4; /* text/primary */
-  --color-text-2: #a09d99; /* text/secondary */
+  --color-text: #efefef; /* text/primary */
+  --color-text-2: #d4d1cb; /* text/secondary */
   --color-on-light: #0e0e0e; /* text/on-light */
   --color-red-text: #e5484d; /* accent/red-text — текст і посилання */
   --color-red: #c41e2a; /* accent/red — плашки, знак ♥ */
   --color-ghost: #1a1a1a; /* text/wordmark-ghost */
   --color-primary-hover: #c9c5bd; /* surface/primary-hover — Primary при наведенні */
-  --color-hover-tint: rgb(237 234 228 / 0.08); /* surface/hover-tint — легка підсвітка Outline */
+  --color-hover-tint: rgb(239 239 239 / 0.08); /* surface/hover-tint — легка підсвітка Outline */
   --ghost-light-opacity: 0.4; /* світлий шар CONTESSI під «прожектором» у футері */
 
   /* Затемнення фото (як у hero / yachts у Figma) */
@@ -42,6 +42,7 @@
 
   --lh-h1: 1.154; /* 60/52 */
   --lh-h2: 1.167; /* 56/48 */
+  --lh-h3: 1.214; /* 34/28 */
   --lh-tight: 1.2;
 
   /* Відступи (крок 4 px) */
@@ -70,7 +71,9 @@
   --radius-btn: 2px;
   --radius-card: 4px;
   --header-h: 2.75rem; /* 44 */
-  --header-pad: var(--space-5); /* відступ над меню: 20 → 32 */
+  --header-pad: var(--space-5); /* шапка поверх фото (overlay): відступ зверху 20 → 32 */
+  --header-solid-pad: var(--space-3); /* звичайна шапка (solid): відступ зверху і знизу 12 → 20 */
+  --header-total-h: calc(var(--header-h) + 2 * var(--header-solid-pad)); /* висота смуги solid */
   --promo-h: 4rem; /* 64 — висота промо-смуги */
   --spot-r: 40vw; /* радіус «прожектора» над CONTESSI у футері */
 
@@ -80,10 +83,15 @@
   --zoom-scale: 1.05; /* зум фото в клікабельній картці при наведенні */
   --zoom-dur: 300ms;
   --zoom-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Текстова картка-посилання без фото (Card / Presse): зум, світло за курсором, рамка */
+  --card-scale: 1.02;
+  --card-glow: rgb(239 239 239 / 0.07);
+  --card-edge-hover: rgb(239 239 239 / 0.16);
 }
 @media (min-width: 768px) {
   :root {
     --promo-h: 4.25rem; /* 68 */
+    --header-solid-pad: var(--space-5);
   }
 }
 @media (min-width: 1100px) {

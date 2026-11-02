@@ -1,0 +1,72 @@
+---
+// Figma: Contact → 01 Contact (desktop 50:655, mobile 50:771).
+// Заголовок (eyebrow → H1 → текст), під ним рядок: Options 440 зліва, форма справа (slot, крок C).
+// Mobile — усе одним стовпчиком.
+import Options from './Options.astro';
+import type { Locale } from '../../../i18n/utils';
+import type { ContactData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: ContactData;
+  pressEmail: string;
+  instagram: { handle: string; url: string };
+}
+const { lang, data, pressEmail, instagram } = Astro.props;
+---
+
+<section class="contact container" aria-labelledby="contact-title">
+  <div class="contact__head">
+    <p class="eyebrow">{data.intro.eyebrow}</p>
+    <h1 id="contact-title">{data.intro.title}</h1>
+    <p class="contact__body text-2">{data.intro.body}</p>
+  </div>
+  <div class="contact__row">
+    <Options lang={lang} options={data.options} pressEmail={pressEmail} instagram={instagram} />
+    <div class="contact__form">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10); /* 40 — верхній градієнт фото яхти дає «повітря» */
+  }
+  .contact__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .contact__body {
+    font-size: var(--fs-body-l);
+  }
+  .contact__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .contact__form:empty {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .contact {
+      gap: var(--space-16);
+      padding-top: var(--space-24);
+      padding-bottom: var(--space-16); /* 64 */
+    }
+    .contact__head {
+      gap: var(--space-5);
+    }
+    .contact__row {
+      display: grid;
+      grid-template-columns: minmax(0, 440fr) minmax(0, 744fr);
+      align-items: start;
+      gap: var(--space-24);
+    }
+  }
+</style>

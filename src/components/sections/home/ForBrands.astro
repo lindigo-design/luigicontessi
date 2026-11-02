@@ -26,8 +26,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <Image
         src={photo}
         alt={data.image.alt}
-        widths={[400, 720, 1040]}
-        sizes="(min-width: 1024px) 520px, 100vw"
+        widths={[400, 720, 1040, 1440]}
+        sizes="(min-width: 1024px) 40vw, 100vw"
         loading="lazy"
       />
     </div>
@@ -65,7 +65,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
             {total > 1 && (
               <div class="slider__nav">
-                <p class="slider__count" aria-live="off" data-count>
+                <p class="slider__count" aria-live="off" data-counter>
                   <span data-current>01</span> / {pad(total)}
                 </p>
                 <ol class="slider__bars" role="list" aria-hidden="true">
@@ -271,11 +271,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
       align-items: center;
       gap: var(--space-24);
     }
+    /* Як в About: фото росте з екраном (40 % контейнера), але завжди вертикальне 3 : 4 —
+       не розтягуємо на висоту тексту, інакше кадр стає квадратним і обрізає голову.
+       Межа 42rem (672 × 896), щоб на дуже широких екранах фото не ставало вищим за вікно. */
     .brands__img {
-      flex: 0 0 min(36%, 32.5rem);
-      align-self: stretch;
-      min-height: 37.5rem;
-      aspect-ratio: auto;
+      flex: 0 0 min(40%, 42rem);
+      align-self: center;
+      aspect-ratio: 3 / 4;
+    }
+    .brands__img :global(img) {
+      object-position: 50% 20%; /* голова завжди в кадрі */
     }
     .brands__content {
       flex: 1;

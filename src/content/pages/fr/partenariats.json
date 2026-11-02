@@ -1,0 +1,142 @@
+{
+  "seoTitle": "Partenariats — Luigi Contessi",
+  "seoDescription": "Collaborations avec Luigi Contessi : contenus Instagram, ambassadeur, événements. Audience, méthode et media kit.",
+  "intro": {
+    "eyebrow": "Partenariats",
+    "title": "Votre marque, racontée comme je raconte ma vie",
+    "body": "Je travaille avec des marques que j’utilise vraiment. Pour vous, ça veut dire des contenus crédibles, vus par une audience qui me fait confiance.",
+    "primary": {
+      "label": "Proposer un projet"
+    },
+    "mediaKit": {
+      "label": "Télécharger le media kit"
+    },
+    "mediaKitRequest": {
+      "label": "Demander le media kit"
+    },
+    "imageAlt": "Luigi Contessi en smoking devant une voiture de sport rouge"
+  },
+  "audience": {
+    "eyebrow": "Audience",
+    "title": "Mon audience en chiffres",
+    "body": "Des chiffres réels, d’une vraie audience. Les personnes qui me suivent choisissent avec soin ce qu’elles achètent et font confiance à ce que je partage. Voici ce que voit une marque qui travaille avec moi.",
+    "stats": ["followers", "engagement", "impressions", "collaborations"],
+    "countries": {
+      "title": "Pays",
+      "items": [
+        {
+          "label": "France",
+          "percent": null
+        },
+        {
+          "label": "Italie",
+          "percent": null
+        },
+        {
+          "label": "États-Unis",
+          "percent": null
+        },
+        {
+          "label": "Autres",
+          "percent": null
+        }
+      ]
+    },
+    "ages": {
+      "title": "Âge",
+      "items": [
+        {
+          "label": "18–24",
+          "percent": null
+        },
+        {
+          "label": "25–34",
+          "percent": null
+        },
+        {
+          "label": "35–44",
+          "percent": null
+        },
+        {
+          "label": "45+",
+          "percent": null
+        }
+      ]
+    },
+    "date": "",
+    "source": "Données au {date} · Source : Instagram Insights"
+  },
+  "collaborations": {
+    "eyebrow": "Collaborations",
+    "title": "Ce que je propose",
+    "items": [
+      {
+        "type": "contenus",
+        "title": "Contenus Instagram",
+        "text": "Posts, reels et stories, tournés et montés par mon équipe.",
+        "details": "Formats : posts, reels, stories. Photo et vidéo pro."
+      },
+      {
+        "type": "ambassadeur",
+        "title": "Ambassadeur",
+        "text": "Une présence sur l’année, avec plusieurs prises de parole.",
+        "details": ""
+      },
+      {
+        "type": "evenement",
+        "title": "Événements",
+        "text": "Lancements, press trips, soirées. Je viens, je filme, je partage.",
+        "details": ""
+      },
+      {
+        "type": "sur-mesure",
+        "title": "Sur mesure",
+        "text": "Une idée qui ne rentre dans aucune case ? Parlons-en.",
+        "details": null
+      }
+    ]
+  },
+  "method": {
+    "eyebrow": "Méthode",
+    "title": "Comment on travaille",
+    "steps": [
+      {
+        "title": "Brief",
+        "text": "Vous me présentez la marque, l’objectif et le budget."
+      },
+      {
+        "title": "Proposition",
+        "text": "Je reviens avec une idée de contenu et un calendrier."
+      },
+      {
+        "title": "Création",
+        "text": "On tourne. Vous validez avant publication."
+      },
+      {
+        "title": "Rapport",
+        "text": "Vues, clics, utilisations du code : vous recevez les chiffres."
+      }
+    ]
+  },
+  "references": {
+    "eyebrow": "Références",
+    "title": "Ils m’ont fait confiance"
+  },
+  "press": {
+    "eyebrow": "Presse",
+    "title": "Dans la presse"
+  },
+  "mediaKit": {
+    "title": "Media kit {year}",
+    "text": "Audience, formats, tarifs indicatifs et références.",
+    "pages": "PDF, {pages} pages.",
+    "download": {
+      "label": "Télécharger le PDF"
+    },
+    "previewAlt": "Aperçu du media kit"
+  },
+  "referencesItems": {
+    "logos": [],
+    "cases": []
+  }
+}

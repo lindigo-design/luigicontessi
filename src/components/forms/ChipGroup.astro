@@ -1,0 +1,72 @@
+---
+// Figma: Chip / Filter (Default / Active) як радіо-група — так само, як розміри на сторінці товару.
+// <fieldset><legend> + приховані input type="radio": стрілки ←/→ працюють самі (так уміє браузер).
+// Чипи переносяться на новий рядок — на mobile в Figma вони не вміщаються в 358 px.
+interface Props {
+  legend: string;
+  name: string;
+  options: { value: string; label: string }[];
+  /** Вибраний за замовчуванням. */
+  selected?: string;
+  required?: boolean;
+  id?: string;
+}
+const { legend, name, options, selected, required = false, id = `f-${name}` } = Astro.props;
+---
+
+<fieldset class="chips-field" data-field data-chip-group={name}>
+  <legend class="chips-field__legend text-s text-2">{legend}</legend>
+  <div class="chips-field__list">
+    {options.map((o, i) => (
+      <label class="chips-field__item">
+        <input
+          class="visually-hidden"
+          type="radio"
+          name={name}
+          value={o.value}
+          checked={o.value === selected}
+          required={required && i === 0}
+          data-error-id={`${id}-error`}
+        />
+        <span class="chip">{o.label}</span>
+      </label>
+    ))}
+  </div>
+  <p class="field-error" id={`${id}-error`} hidden></p>
+</fieldset>
+
+<style>
+  .chips-field {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .chips-field__legend {
+    margin-bottom: var(--space-2);
+    padding: 0;
+  }
+  .chips-field .field-error {
+    margin-top: var(--space-2);
+  }
+  .chips-field__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .chips-field__item {
+    cursor: pointer;
+  }
+  .chips-field__item input:checked + :global(.chip) {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-on-light);
+  }
+  .chips-field__item input:focus-visible + :global(.chip) {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+  }
+  .chips-field__item input[aria-invalid='true'] + :global(.chip) {
+    border-color: var(--color-red-text);
+  }
+</style>

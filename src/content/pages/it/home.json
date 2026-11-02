@@ -38,20 +38,7 @@
     "eyebrow": "(01) Chi sono",
     "title": "Luigi Contessi",
     "body": "Imprenditore e creatore di contenuti. Condivido ciò che provo io stesso: auto, orologi, luoghi. Quando un marchio mi piace, lo dico. Quando no, non ne parlo.",
-    "stats": [
-      {
-        "value": "1,7 M+",
-        "label": "follower su Instagram"
-      },
-      {
-        "value": "500+",
-        "label": "collaborazioni"
-      },
-      {
-        "value": "30+",
-        "label": "paesi"
-      }
-    ],
+    "stats": ["followers", "collaborations", "countries"],
     "link": {
       "label": "La mia storia"
     },
@@ -125,6 +112,16 @@
         "image": {
           "alt": "Luigi Contessi in abito grigio Contessi"
         }
+      },
+      {
+        "tag": "Collezione",
+        "name": "Giacca Contessi",
+        "description": "Pelle, taglio aderente, logo Contessi ricamato. Su camicia o su t-shirt.",
+        "action": "Vedi",
+        "image": {
+          "alt": "Luigi Contessi con la giacca nera Contessi"
+        },
+        "product": "veste-contessi"
       },
       {
         "tag": "Preferito · Link affiliato",
@@ -208,7 +205,8 @@
         "price": "[Prezzo]",
         "image": {
           "alt": "Camicia bianca Contessi"
-        }
+        },
+        "product": "chemise-blanche"
       },
       {
         "name": "Scarpe Contessi",

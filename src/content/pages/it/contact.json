@@ -1,0 +1,66 @@
+{
+  "seoTitle": "Contatti — Luigi Contessi",
+  "seoDescription": "Una domanda, un progetto, la stampa? Scrivi a Luigi Contessi.",
+  "intro": {
+    "eyebrow": "Contatti",
+    "title": "Scrivimi",
+    "body": "Leggo tutti i messaggi. Scegli l’argomento giusto, sarà più veloce."
+  },
+  "options": [
+    {
+      "kind": "partenariats",
+      "title": "Sei un marchio",
+      "text": "Collaborazioni, eventi, media kit.",
+      "label": "Partnership"
+    },
+    {
+      "kind": "yachts",
+      "title": "Ti interessa uno yacht",
+      "text": "Visita, prova in mare, off-market.",
+      "label": "Pagina Yachts"
+    },
+    {
+      "kind": "press",
+      "title": "Stampa",
+      "text": "Interviste, foto, informazioni."
+    },
+    {
+      "kind": "instagram",
+      "title": "Instagram",
+      "text": "Il modo più veloce per una piccola domanda."
+    }
+  ],
+  "form": {
+    "title": "Altra domanda",
+    "name": {
+      "label": "Nome",
+      "placeholder": "Il tuo nome"
+    },
+    "email": {
+      "label": "E-mail",
+      "placeholder": "tu@esempio.com"
+    },
+    "subject": {
+      "legend": "Argomento",
+      "options": {
+        "question": "Domanda",
+        "code": "Codice partner",
+        "presse": "Stampa",
+        "autre": "Altro"
+      }
+    },
+    "message": {
+      "label": "Messaggio",
+      "placeholder": "Il tuo messaggio"
+    },
+    "consent": "Accetto che le mie informazioni siano usate per rispondere al mio messaggio.",
+    "submit": "Invia",
+    "thanks": {
+      "title": "Messaggio ricevuto.",
+      "text": "Ti rispondo personalmente.",
+      "link": {
+        "label": "Torna alla home"
+      }
+    }
+  }
+}

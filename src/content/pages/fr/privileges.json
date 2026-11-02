@@ -1,0 +1,75 @@
+{
+  "seoTitle": "Codes promo de Luigi Contessi — marques partenaires",
+  "seoDescription": "Les codes de réduction de Luigi Contessi chez ses marques partenaires. Copiez le code, ouvrez le site de la marque, la réduction s’applique au paiement.",
+  "intro": {
+    "eyebrow": "Privilèges",
+    "title": "Mes codes chez les\nmarques partenaires",
+    "body": "Des marques que j’utilise vraiment. Un code, une réduction, sur le site de la marque.",
+    "disclosure": {
+      "title": "Transparence",
+      "text": "Ces liens et codes sont des partenariats. Je peux recevoir une commission. Votre prix ne change pas."
+    },
+    "steps": [
+      {
+        "title": "Copiez le code",
+        "titleMobile": "",
+        "text": "Un clic sur « Copier le code »."
+      },
+      {
+        "title": "Ouvrez le site",
+        "titleMobile": "Ouvrez le site de la marque",
+        "text": "Le lien mène directement à la marque."
+      },
+      {
+        "title": "Collez au paiement",
+        "titleMobile": "",
+        "text": "La réduction s’applique tout de suite."
+      }
+    ]
+  },
+  "featured": {
+    "eyebrow": "À la une"
+  },
+  "gallery": {
+    "images": [
+      {
+        "image": "../../../assets/img/privileges/gallery-1.jpg",
+        "alt": ""
+      },
+      {
+        "image": "../../../assets/img/privileges/gallery-2.jpg",
+        "alt": ""
+      },
+      {
+        "image": "../../../assets/img/privileges/gallery-3.jpg",
+        "alt": ""
+      }
+    ]
+  },
+  "questions": {
+    "eyebrow": "Questions",
+    "title": "Un code ne marche pas ?",
+    "body": "Écrivez-moi. Je vérifie avec la marque.",
+    "link": {
+      "label": "Contact"
+    },
+    "items": [
+      {
+        "question": "Le code ne fonctionne pas. Que faire ?",
+        "answer": "Vérifiez les conditions de l’offre (date, montant minimum). Si le problème reste, écrivez-moi via Contact."
+      },
+      {
+        "question": "Qui vend et livre les produits ?",
+        "answer": "[Réponse à compléter]"
+      },
+      {
+        "question": "Pourquoi utiliser ces codes ?",
+        "answer": "[Réponse à compléter]"
+      },
+      {
+        "question": "Les codes sont-ils cumulables ?",
+        "answer": "[Réponse à compléter]"
+      }
+    ]
+  }
+}

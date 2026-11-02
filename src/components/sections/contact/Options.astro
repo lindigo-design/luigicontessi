@@ -1,0 +1,67 @@
+---
+// Figma: Contact → 01 Contact → Options (desktop 50:661). 4 варіанти зв'язку, лінія під кожним.
+// Куди веде кнопка — за kind: сторінка (заглушка, поки її немає), пошта преси, Instagram.
+import Button from '../../ui/Button.astro';
+import PageLink from '../../ui/PageLink.astro';
+import { t, type Locale } from '../../../i18n/utils';
+import type { ContactData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  options: ContactData['options'];
+  pressEmail: string;
+  instagram: { handle: string; url: string };
+}
+const { lang, options, pressEmail, instagram } = Astro.props;
+---
+
+<ul class="copts" role="list">
+  {options.map((o) => (
+    <li class="copt">
+      <h2 class="copt__title title">{o.title}</h2>
+      <p class="text-s text-2">{o.text}</p>
+      {(o.kind === 'partenariats' || o.kind === 'yachts') && (
+        <PageLink lang={lang} label={o.label || o.title} path={o.kind} />
+      )}
+      {o.kind === 'press' &&
+        (pressEmail ? (
+          <Button href={`mailto:${pressEmail}`} variant="accent">
+            {o.label || pressEmail}
+          </Button>
+        ) : (
+          <span class="copt__nomail eyebrow">{t('form.noEmail', lang)}</span>
+        ))}
+      {o.kind === 'instagram' && (
+        <Button href={instagram.url} variant="accent" external>
+          {o.label || instagram.handle}
+          <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
+        </Button>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .copt {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .copt:first-child {
+    padding-top: 0;
+  }
+  /* Text/Title 18 — Manrope, не стиль заголовків H2. */
+  .copt__title {
+    font-family: var(--font-body);
+    letter-spacing: normal;
+  }
+  .copt__nomail {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-text-2);
+  }
+</style>

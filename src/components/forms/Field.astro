@@ -1,0 +1,146 @@
+---
+// Figma: Form / Field (Default, Textarea). Підпис над полем (Body S, secondary), проміжок 8.
+// Правило для всіх форм: обовʼязкових більше, ніж необовʼязкових, — тож без зірочок; необовʼязкові
+// позначені дрібно «(facultatif)». Читалка чує «обовʼязкове» з атрибута required.
+// Помилку під полем показує src/scripts/form.ts (рамка і текст --color-red-text, aria-invalid).
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  label: string;
+  name: string;
+  /** id поля; за замовчуванням — f-<name>. Дві форми на сторінці — передай свій. */
+  id?: string;
+  type?: 'text' | 'email' | 'url' | 'month';
+  placeholder?: string;
+  required?: boolean;
+  autocomplete?: string;
+  /** Мінімум символів (без пробілів на краях). Під полем — лічильник «12 / 30». */
+  minlength?: number;
+  textarea?: boolean;
+  /** Список замість поля: перший пункт — підказка «Choisissez…» з порожнім значенням. */
+  options?: { value: string; label: string }[];
+  class?: string;
+}
+const {
+  lang,
+  label,
+  name,
+  id = `f-${name}`,
+  type = 'text',
+  placeholder,
+  required = false,
+  autocomplete,
+  minlength,
+  textarea = false,
+  options,
+  class: extra,
+} = Astro.props;
+// Є мінімум — читалка чує «30 caractères minimum» (aria-describedby), а лічильник лише для очей
+// (без aria-live, щоб не озвучувати кожне число).
+const hintId = minlength ? `${id}-hint` : undefined;
+const common = {
+  id,
+  name,
+  required,
+  autocomplete,
+  'data-error-id': `${id}-error`,
+  'data-hint-id': hintId,
+  'aria-describedby': hintId,
+};
+---
+
+<div class:list={['fgroup', extra]} data-field>
+  <label class="fgroup__label text-s text-2" for={id}>
+    {label}
+    {!required && <span class="fgroup__opt"> {t('form.optional', lang)}</span>}
+  </label>
+  {options ? (
+    <span class="fgroup__select">
+      <select class="field field--select" {...common}>
+        {options.map((o) => (
+          <option value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </span>
+  ) : textarea ? (
+    <textarea
+      class="field field--area"
+      placeholder={placeholder}
+      minlength={minlength}
+      {...common}
+    />
+  ) : (
+    <input class="field" type={type} placeholder={placeholder} minlength={minlength} {...common} />
+  )}
+  <div class="fgroup__below">
+    <p class="field-error" id={`${id}-error`} hidden></p>
+    {type === 'email' && <p class="field-suggest text-s text-2" data-suggest hidden />}
+    {minlength && (
+      <>
+        <span class="visually-hidden" id={hintId}>
+          {t('form.minChars', lang).replace('{min}', String(minlength))}
+        </span>
+        <p class="fgroup__count text-s text-2" aria-hidden="true" data-char-count={minlength}>
+          0 / {minlength}
+        </p>
+      </>
+    )}
+  </div>
+</div>
+
+<style>
+  .fgroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .fgroup__opt {
+    font-size: var(--fs-body-s);
+  }
+  /* Під полем: помилка ліворуч, лічильник «12 / 30» праворуч. */
+  .fgroup__below {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .fgroup__below:not(:has(:not([hidden]):not(.visually-hidden))) {
+    display: none;
+  }
+  .fgroup__count {
+    margin-left: auto;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .field-suggest[hidden] {
+    display: none;
+  }
+  /* «Vouliez-vous dire …» — адреса-кнопка: клік підставляє її в поле. */
+  .field-suggest :global(button) {
+    color: var(--color-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .fgroup__count[hidden] {
+    display: none;
+  }
+  /* Стрілка списку — рамкою (без картинок і inline-стилів). */
+  .fgroup__select {
+    position: relative;
+    display: block;
+  }
+  .fgroup__select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: var(--space-4);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1.5px solid var(--color-text-2);
+    border-bottom: 1.5px solid var(--color-text-2);
+    transform: translateY(-75%) rotate(45deg);
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+// Сторінка «Privilèges»: усі коди партнерів. Не залежить від features.shop.
+// Тут лише порядок секцій: Intro → À la une → Tous les codes → фото → Questions (по кроках).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Intro from '../../components/sections/privileges/Intro.astro';
+import Featured from '../../components/sections/privileges/Featured.astro';
+import AllCodes from '../../components/sections/privileges/AllCodes.astro';
+import Gallery from '../../components/sections/privileges/Gallery.astro';
+import Questions from '../../components/sections/privileges/Questions.astro';
+import { getCodes, getPrivileges } from '../../content/helpers';
+import { locales, localizePath, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getPrivileges(lang);
+const codes = await getCodes();
+const featured = codes.find((c) => c.featured);
+const others = codes.filter((c) => c !== featured);
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.seoTitle}
+  description={page.seoDescription}
+  current="privileges"
+>
+  <Intro data={page.intro} />
+  {featured && <Featured lang={lang} data={page.featured} code={featured} />}
+  <AllCodes lang={lang} codes={others} />
+  <Gallery lang={lang} images={page.gallery.images} />
+  <Questions data={page.questions} contactHref={`${localizePath('contact', lang)}?sujet=code`} />
+</BaseLayout>

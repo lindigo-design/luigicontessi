@@ -1,0 +1,90 @@
+---
+// Figma: Fiche produit → 02 Le mot de Luigi (desktop 28:477, mobile 29:418).
+// Desktop: фото 480 × 560 зліва (Luigi у цій речі), текст справа по центру висоти, проміжок 80.
+// Mobile: без фото (так у Figma), лише текст. Немає цитати в даних — секції немає.
+import { Image } from 'astro:assets';
+import { getProductImage } from '../../../content/helpers';
+import { t, type Locale } from '../../../i18n/utils';
+import type { ProductData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  product: ProductData;
+  author: string;
+}
+const { lang, product, author } = Astro.props;
+const luigi = product.luigi;
+const quote = luigi?.quote[lang];
+const text = luigi?.text[lang];
+---
+
+{luigi && quote && (
+  <section class="lword section section--alt" aria-labelledby="lword-title">
+    <div class="container lword__row">
+      {luigi.image && (
+        <div class="lword__img media">
+          <Image
+            src={getProductImage(product.slug, luigi.image)}
+            alt={`${author} — ${product.name[lang]}`}
+            widths={[480, 960]}
+            sizes="480px"
+            loading="lazy"
+          />
+        </div>
+      )}
+      <figure class="lword__text">
+        <p class="eyebrow" id="lword-title">
+          {t('product.luigiWord', lang)}
+        </p>
+        <blockquote class="lword__quote">
+          <p>{`${t('ui.quoteOpen', lang)}${quote}${t('ui.quoteClose', lang)}`}</p>
+        </blockquote>
+        {text && <p class="text-2">{text}</p>}
+        <figcaption class="eyebrow eyebrow--muted">— {author}</figcaption>
+      </figure>
+    </div>
+  </section>
+)}
+
+<style>
+  .lword {
+    padding-block: var(--space-14);
+  }
+  .lword__img {
+    display: none;
+  }
+  .lword__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin: 0;
+  }
+  /* Mobile/Quote 24/32 → Desktop/Quote 36/46 */
+  .lword__quote p {
+    font-family: var(--font-display);
+    font-size: var(--fs-quote);
+    line-height: 1.333;
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 1024px) {
+    .lword {
+      padding-block: var(--section-y);
+    }
+    .lword__row {
+      display: grid;
+      grid-template-columns: minmax(0, 480fr) minmax(0, 720fr);
+      align-items: center;
+      gap: var(--space-20);
+    }
+    .lword__img {
+      display: block;
+      aspect-ratio: 480 / 560;
+    }
+    .lword__text {
+      gap: var(--space-6);
+    }
+    .lword__quote p {
+      line-height: 1.278;
+    }
+  }
+</style>

@@ -1,0 +1,16 @@
+{
+  "id": "premiere-commande-10",
+  "brand": "[Marque]",
+  "category": "mode",
+  "offer": {
+    "fr": "−10 % sur la première commande",
+    "en": "10% off your first order",
+    "it": "−10% sul primo ordine"
+  },
+  "code": "LUIGI10",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 3
+}

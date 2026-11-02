@@ -3,6 +3,8 @@
 import '../styles/global.css';
 import Header from '../components/sections/Header.astro';
 import Footer from '../components/sections/Footer.astro';
+import CookieConsent from '../components/sections/CookieConsent.astro';
+import { consentCategories } from '../content/helpers';
 import { locales, localizePath, switchLocale, t, type Locale } from '../i18n/utils';
 import { getSettings } from '../content/helpers';
 
@@ -12,9 +14,12 @@ interface Props {
   description: string;
   current?: string;
   noindex?: boolean;
+  /** overlay — шапка поверх першого фото (головна, Article); solid — окрема смуга (усі інші). */
+  header?: 'overlay' | 'solid';
 }
-const { lang, title, description, current, noindex = false } = Astro.props;
+const { lang, title, description, current, noindex = false, header = 'solid' } = Astro.props;
 const settings = await getSettings();
+const cookies = consentCategories(settings); // підключені сервіси, яким потрібна згода
 const site = Astro.site ?? new URL('https://luigicontessi.com');
 const canonical = new URL(Astro.url.pathname, site).href;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
@@ -70,15 +75,24 @@ const jsonLd = JSON.stringify({
     </a>
     <slot name="top" />
     <div class="page-top">
-      <Header lang={lang} current={current} />
+      <Header lang={lang} current={current} mode={header} />
       <main id="main">
         <slot />
       </main>
     </div>
-    <Footer lang={lang} />
+    <Footer lang={lang} current={current} />
+    {cookies.length > 0 && <CookieConsent lang={lang} categories={cookies} />}
     <script>
+      import { initCartCount } from '../scripts/cart';
       import { initCopy } from '../scripts/copy';
+      import { initCountUp } from '../scripts/count-up';
+      import { initHoverCards } from '../scripts/hover-card';
+      import { initPlaceholderLinks } from '../scripts/placeholder-links';
       initCopy();
+      initCartCount();
+      initPlaceholderLinks();
+      initCountUp();
+      initHoverCards();
     </script>
   </body>
 </html>

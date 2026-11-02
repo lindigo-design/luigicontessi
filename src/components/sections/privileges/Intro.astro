@@ -1,0 +1,158 @@
+---
+// Figma: Privilèges → 01 Intro (desktop 18:391, mobile 19:556).
+// «Transparence» — обовʼязкова позначка (закон Франції про інфлюенсерів 2023): видно на всіх ширинах.
+import type { PrivilegesData } from '../../../content.config';
+
+interface Props {
+  data: PrivilegesData['intro'];
+}
+const { data } = Astro.props;
+const [line1, line2] = data.title.split('\n');
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="intro container" aria-labelledby="privileges-title">
+  <div class="intro__row">
+    <div class="intro__title">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h1 id="privileges-title">
+        {line1}
+        {line2 && <br class="intro__br" />} {line2}
+      </h1>
+      <p class="intro__body text-2">{data.body}</p>
+    </div>
+    <aside class="intro__disclosure">
+      <p class="eyebrow eyebrow--muted">{data.disclosure.title}</p>
+      <p class="text-s text-2">{data.disclosure.text}</p>
+    </aside>
+  </div>
+
+  <ol class="steps" role="list">
+    {data.steps.map((s, i) => (
+      <li class="step">
+        <span class="step__num">{pad(i + 1)}</span>
+        <span class="step__text">
+          {s.titleMobile ? (
+            <>
+              <span class="step__title step__title--m">{s.titleMobile}</span>
+              <span class="step__title step__title--d">{s.title}</span>
+            </>
+          ) : (
+            <span class="step__title">{s.title}</span>
+          )}
+          <span class="step__hint text-s text-2">{s.text}</span>
+        </span>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-block: var(--space-10);
+  }
+  .intro__row,
+  .intro__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .intro__br {
+    display: none;
+  }
+  .intro__body {
+    font-size: var(--fs-body-l);
+    line-height: 1.5;
+  }
+  /* Лінія зліва, текст з відступом. */
+  .intro__disclosure {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--color-border);
+  }
+  /* Mobile: список з лінією над кожним кроком, лише номер + заголовок. */
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding-block: var(--space-4) 0.8125rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .step__num {
+    font-size: var(--fs-title);
+    line-height: 1.444;
+    color: var(--color-text-2);
+  }
+  .step__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .step__title {
+    font-size: var(--fs-title);
+    font-weight: 500;
+    line-height: 1.444;
+  }
+  .step__title--d,
+  .step__hint {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .intro {
+      gap: var(--space-10);
+      padding-block: var(--space-24) var(--space-16);
+    }
+    /* Та сама сітка, що в кроків: «Transparence» стоїть над кроком 03 — лінія над «03»,
+       текст на одній вертикалі з «Collez au paiement». */
+    .intro {
+      --step-num: 2.5rem; /* колонка номера кроку */
+    }
+    .intro__row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: end;
+      gap: var(--space-6);
+    }
+    .intro__title {
+      grid-column: 1 / 3;
+      max-width: 50rem;
+    }
+    .intro__br {
+      display: inline;
+    }
+    .intro__disclosure {
+      grid-column: 3;
+      gap: var(--space-2);
+      padding-left: calc(var(--step-num) + var(--space-5) - 1px); /* мінус лінія 1 px */
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+    .step {
+      display: grid;
+      grid-template-columns: var(--step-num) minmax(0, 1fr);
+      gap: var(--space-5);
+      padding-block: var(--space-6) 0;
+    }
+    .step__num {
+      font-family: var(--font-display);
+      font-size: var(--fs-h3);
+      line-height: 1.214;
+    }
+    .step__title--m {
+      display: none;
+    }
+    .step__title--d,
+    .step__hint {
+      display: block;
+    }
+  }
+</style>

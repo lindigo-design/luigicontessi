@@ -1,0 +1,16 @@
+{
+  "slug": "veste-lin",
+  "line": "Contessi Collection",
+  "name": {
+    "fr": "Veste Lin",
+    "en": "Linen jacket",
+    "it": "Giacca di lino"
+  },
+  "price": null,
+  "colors": [
+    {
+      "id": "default",
+      "images": ["1.jpg"]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+---
+// Figma: Card / Code partenaire — головна «07 Privilèges» і сторінка Privilèges «03 Tous les codes».
+// «Partenariat» обовʼязковий (закон про інфлюенсерів 2023). Hover як у Card / Presse (.hover-card),
+// але без .hover-card__link: дві окремі дії (копіювати / перейти на сайт), картка — не одне посилання.
+// brand — показати плашку логотипа: logo, або сіра «LOGO» (назва марки — для читалки).
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import BrandLink from './BrandLink.astro';
+import CodeRow from './CodeRow.astro';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  offer: string;
+  code: string;
+  disclosure: string;
+  brandLabel: string;
+  /** Сайт марки — нова вкладка, rel="sponsored noopener"; немає — заглушка (BrandLink). */
+  brandUrl?: string | null;
+  brand?: string;
+  logo?: ImageMetadata | null;
+}
+const { lang, offer, code, disclosure, brandLabel, brandUrl, brand, logo } = Astro.props;
+---
+
+<article class="ccard hover-card">
+  <div class:list={['ccard__top', { 'ccard__top--logo': brand }]}>
+    {brand &&
+      (logo ? (
+        <Image class="ccard__logo" src={logo} alt={brand} height={80} />
+      ) : (
+        <span class="ccard__logo ccard__logo--empty">
+          <span aria-hidden="true">{t('codes.logo', lang)}</span>
+          <span class="visually-hidden">{brand}</span>
+        </span>
+      ))}
+    <p class="eyebrow eyebrow--muted">{disclosure}</p>
+  </div>
+  <h3 class="ccard__offer">{offer}</h3>
+  <CodeRow lang={lang} code={code} />
+  <BrandLink lang={lang} label={brandLabel} url={brandUrl} />
+</article>
+
+<style>
+  .ccard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .ccard__top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    width: 100%;
+  }
+  .ccard__top--logo {
+    justify-content: space-between;
+  }
+  .ccard__logo {
+    width: 7.5rem; /* 120 × 40 */
+    height: 2.5rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+  .ccard__logo--empty {
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-btn);
+    background: var(--color-image);
+    font-weight: 500;
+    font-size: var(--fs-eyebrow);
+    letter-spacing: 0.2em;
+    color: var(--color-text-2);
+  }
+  /* 68 px — 2 рядки: однакова висота пропозиції в усіх картках */
+  .ccard__offer {
+    min-height: 4.25rem;
+  }
+  @media (min-width: 768px) {
+    .ccard {
+      gap: var(--space-5);
+      padding: var(--space-7);
+    }
+  }
+</style>

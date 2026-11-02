@@ -1,0 +1,43 @@
+---
+// Велика цифра (Desktop/Stat): «1,7 M+», «500+». Якщо є count — рахує 0 → значення (src/scripts/count-up.ts).
+// Три шари: final — невидимий, тримає ширину (сусіди не зсуваються); live — те, що рахує;
+// visually-hidden — для читалок одразу фінальне. У HTML live = фінальне значення (без JS — без нулів).
+interface Props {
+  value: string;
+  count?: number;
+  decimals?: number;
+  class?: string;
+}
+const { value, count, decimals = 0, class: extra } = Astro.props;
+---
+
+{count === undefined ? (
+  <dd class:list={['stat-value', extra]}>{value}</dd>
+) : (
+  <dd
+    class:list={['stat-value', 'stat-value--count', extra]}
+    data-count={count}
+    data-decimals={decimals}
+  >
+    <span class="stat-value__final" aria-hidden="true">
+      {value}
+    </span>
+    <span class="stat-value__live" aria-hidden="true" data-count-live>
+      {value}
+    </span>
+    <span class="visually-hidden">{value}</span>
+  </dd>
+)}
+
+<style>
+  .stat-value--count {
+    display: grid;
+  }
+  .stat-value__final,
+  .stat-value__live {
+    grid-area: 1 / 1;
+  }
+  .stat-value__final {
+    visibility: hidden;
+  }
+</style>

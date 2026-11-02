@@ -1,0 +1,16 @@
+{
+  "id": "essai-offert",
+  "brand": "[Marque]",
+  "category": "mobilite",
+  "offer": {
+    "fr": "Essai offert",
+    "en": "Free trial",
+    "it": "Prova gratuita"
+  },
+  "code": "LUIGIDRIVE",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 9
+}

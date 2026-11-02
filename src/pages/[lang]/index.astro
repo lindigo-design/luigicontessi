@@ -14,7 +14,7 @@ import Yachts from '../../components/sections/home/Yachts.astro';
 import Instagram from '../../components/sections/home/Instagram.astro';
 import Faq from '../../components/sections/home/Faq.astro';
 import ForBrands from '../../components/sections/home/ForBrands.astro';
-import { getHome, getSettings } from '../../content/helpers';
+import { getHome, getProducts, getSettings, getStats, productPath } from '../../content/helpers';
 import { locales, localizePath, type Locale } from '../../i18n/utils';
 
 export function getStaticPaths() {
@@ -25,9 +25,17 @@ const lang = Astro.params.lang as Locale;
 const page = await getHome(lang);
 const settings = await getSettings();
 const to = (path: string) => localizePath(path, lang);
+// Картки з полем product ведуть на сторінку товару; slug перевіряємо, щоб не було битих посилань.
+const productSlugs = new Set((await getProducts()).map((p) => p.slug));
+const productHref = (product: string | undefined, fallback: string) => {
+  if (!product) return fallback;
+  if (!productSlugs.has(product))
+    throw new Error(`Головна: немає товару «${product}» (поле product)`);
+  return productPath(product, lang);
+};
 ---
 
-<BaseLayout lang={lang} title={page.seoTitle} description={page.seoDescription}>
+<BaseLayout lang={lang} title={page.seoTitle} description={page.seoDescription} header="overlay">
   <PromoBar slot="top" lang={lang} data={page.promo} />
   <Hero
     data={page.hero}
@@ -35,12 +43,16 @@ const to = (path: string) => localizePath(path, lang);
     secondaryHref={to('collection')}
     cardHref={to('coups-de-coeur')}
   />
-  <About data={page.about} href={to('a-propos')} />
+  <About data={page.about} stats={await getStats(page.about.stats, lang)} href={to('a-propos')} />
   <Quote data={page.quote} />
   <Press data={page.press} href={to('presse')} />
-  <News lang={lang} data={page.news} href={to('coups-de-coeur')} />
+  <News lang={lang} data={page.news} href={to('coups-de-coeur')} itemHref={productHref} />
   <Universes data={page.universes} href={to('journal')} />
-  <Collection data={page.collection} href={to('collection')} />
+  <Collection
+    data={page.collection}
+    href={to('collection')}
+    itemHref={(product) => productHref(product, to('collection'))}
+  />
   <Privileges lang={lang} data={page.privileges} href={to('privileges')} />
   <Yachts data={page.yachts} listHref={to('yachts')} contactHref={to('contact')} />
   <Instagram

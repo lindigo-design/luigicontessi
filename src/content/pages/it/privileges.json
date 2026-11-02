@@ -1,0 +1,75 @@
+{
+  "seoTitle": "Codici sconto di Luigi Contessi — marchi partner",
+  "seoDescription": "I codici sconto di Luigi Contessi presso i suoi marchi partner. Copia il codice, apri il sito del marchio, lo sconto si applica al pagamento.",
+  "intro": {
+    "eyebrow": "Privilegi",
+    "title": "I miei codici presso\ni marchi partner",
+    "body": "Marchi che uso davvero. Un codice, uno sconto, sul sito del marchio.",
+    "disclosure": {
+      "title": "Trasparenza",
+      "text": "Questi link e codici sono partnership. Posso ricevere una commissione. Il tuo prezzo non cambia."
+    },
+    "steps": [
+      {
+        "title": "Copia il codice",
+        "titleMobile": "",
+        "text": "Un clic su «Copia il codice»."
+      },
+      {
+        "title": "Apri il sito",
+        "titleMobile": "Apri il sito del marchio",
+        "text": "Il link porta direttamente al marchio."
+      },
+      {
+        "title": "Incolla al pagamento",
+        "titleMobile": "",
+        "text": "Lo sconto si applica subito."
+      }
+    ]
+  },
+  "featured": {
+    "eyebrow": "In evidenza"
+  },
+  "gallery": {
+    "images": [
+      {
+        "image": "../../../assets/img/privileges/gallery-1.jpg",
+        "alt": ""
+      },
+      {
+        "image": "../../../assets/img/privileges/gallery-2.jpg",
+        "alt": ""
+      },
+      {
+        "image": "../../../assets/img/privileges/gallery-3.jpg",
+        "alt": ""
+      }
+    ]
+  },
+  "questions": {
+    "eyebrow": "Domande",
+    "title": "Un codice non funziona?",
+    "body": "Scrivimi. Verifico con il marchio.",
+    "link": {
+      "label": "Contatti"
+    },
+    "items": [
+      {
+        "question": "Il codice non funziona. Cosa fare?",
+        "answer": "Controlla le condizioni dell’offerta (data, importo minimo). Se il problema persiste, scrivimi tramite Contatti."
+      },
+      {
+        "question": "Chi vende e consegna i prodotti?",
+        "answer": "[Risposta da completare]"
+      },
+      {
+        "question": "Perché usare questi codici?",
+        "answer": "[Risposta da completare]"
+      },
+      {
+        "question": "I codici sono cumulabili?",
+        "answer": "[Risposta da completare]"
+      }
+    ]
+  }
+}

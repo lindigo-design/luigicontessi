@@ -1,0 +1,183 @@
+---
+// Figma: Partenariats → 02 Audience (desktop 47:406, mobile 48:439). Фон --color-bg-alt.
+// 4 великі цифри (з settings.json → stats, count-up — src/scripts/count-up.ts), під ними картки Pays / Âge.
+// Відсотків або дати ще немає — картки й підпис «Données au …» сховані (без вигаданих чисел).
+// Смужки — <meter> (без inline-стилів, CSP): ширина заповнення = відсоток.
+import StatValue from '../../ui/StatValue.astro';
+import type { PartenariatsData } from '../../../content.config';
+
+interface Props {
+  data: PartenariatsData['audience'];
+  stats: { value: string; label: string; count?: number; decimals?: number }[];
+  /** Чи показувати картки Pays / Âge (є відсотки і дата). */
+  showSplit: boolean;
+}
+const { data, stats, showSplit } = Astro.props;
+const cards = [data.countries, data.ages];
+---
+
+<section class="audience section section--alt" aria-labelledby="audience-title">
+  <div class="container audience__inner">
+    <div class="audience__head">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="audience-title">{data.title}</h2>
+      <p class="audience__body text-2">{data.body}</p>
+    </div>
+
+    <dl class="audience__stats">
+      {stats.map((s) => (
+        <div class="astat">
+          <dt class="text-s text-2">{s.label}</dt>
+          <StatValue class="astat__value" value={s.value} count={s.count} decimals={s.decimals} />
+        </div>
+      ))}
+    </dl>
+
+    {showSplit && (
+      <>
+        <div class="audience__split">
+          {cards.map((card) => (
+            <div class="split">
+              <h3 class="split__title title">{card.title}</h3>
+              <ul class="split__rows" role="list">
+                {card.items.map((i) => (
+                  <li class="split__row">
+                    <span class="split__label text-s">
+                      <span>{i.label}</span>
+                      <span>{i.percent} %</span>
+                    </span>
+                    <meter
+                      class="split__bar"
+                      min="0"
+                      max="100"
+                      value={i.percent}
+                      aria-hidden="true"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p class="text-s text-2">{data.source.replace('{date}', data.date)}</p>
+      </>
+    )}
+  </div>
+</section>
+
+<style>
+  .audience__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .audience__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .audience__body {
+    max-width: 40rem; /* 640 */
+  }
+  /* Цифри: mobile 2 × 2, desktop 4 в ряд; лінія зверху. */
+  .audience__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-4);
+  }
+  .astat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .astat :global(.astat__value) {
+    font-family: var(--font-display);
+    font-size: var(--fs-stat);
+    line-height: 1.125;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* Pays / Âge */
+  .audience__split {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .split {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .split__title {
+    font-family: var(--font-body);
+    letter-spacing: normal;
+  }
+  .split__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .split__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem; /* 6 */
+  }
+  .split__label {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .split__bar {
+    display: block;
+    width: 100%;
+    height: 0.375rem;
+    border: 0;
+    border-radius: 3px;
+    background: var(--color-border);
+    appearance: none;
+  }
+  .split__bar::-webkit-meter-bar {
+    height: 0.375rem;
+    border: 0;
+    border-radius: 3px;
+    background: var(--color-border);
+  }
+  .split__bar::-webkit-meter-optimum-value,
+  .split__bar::-webkit-meter-suboptimum-value,
+  .split__bar::-webkit-meter-even-less-good-value {
+    border-radius: 3px;
+    background: var(--color-text);
+  }
+  .split__bar::-moz-meter-bar {
+    border-radius: 3px;
+    background: var(--color-text);
+  }
+
+  @media (min-width: 1024px) {
+    .audience__inner {
+      gap: var(--space-14);
+    }
+    .audience__head {
+      gap: var(--space-5);
+    }
+    .audience__stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+    .audience__split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+    .split {
+      padding: var(--space-8);
+    }
+  }
+</style>

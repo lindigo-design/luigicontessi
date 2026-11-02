@@ -1,0 +1,91 @@
+---
+// Figma: Partenariats → 04 Méthode (desktop 47:503). Фон --color-bg-alt. 4 кроки з лінією зверху:
+// номер «01» → назва → текст. Номери світлі, як у Figma (червоний — лише для дій і eyebrow).
+// Mobile: рядок «номер + назва й текст».
+import type { PartenariatsData } from '../../../content.config';
+
+interface Props {
+  data: PartenariatsData['method'];
+}
+const { data } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="method section section--alt" aria-labelledby="method-title">
+  <div class="container method__inner">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="method-title">{data.title}</h2>
+    </div>
+    <ol class="method__steps" role="list">
+      {data.steps.map((s, i) => (
+        <li class="mstep">
+          <span class="mstep__num" aria-hidden="true">
+            {pad(i + 1)}
+          </span>
+          <span class="mstep__body">
+            <span class="mstep__title title">{s.title}</span>
+            <span class="text-s text-2">{s.text}</span>
+          </span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .method__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .method__steps {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .mstep {
+    display: flex;
+    gap: var(--space-4);
+    padding-top: 0.875rem; /* 14 */
+    border-top: 1px solid var(--color-border);
+  }
+  .mstep__num {
+    flex: none;
+    min-width: 1.75rem;
+    font-family: var(--font-display);
+    font-size: var(--fs-title);
+    line-height: 1.444;
+    font-variant-numeric: tabular-nums;
+  }
+  .mstep__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  @media (min-width: 768px) {
+    .method__steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8) var(--space-6);
+    }
+    .mstep {
+      flex-direction: column;
+      gap: var(--space-3);
+      padding-top: var(--space-6);
+    }
+    .mstep__num {
+      font-size: var(--fs-h3);
+      line-height: var(--lh-h3);
+    }
+    .mstep__body {
+      gap: var(--space-3);
+    }
+  }
+  @media (min-width: 1024px) {
+    .method__inner {
+      gap: var(--space-14);
+    }
+    .method__steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

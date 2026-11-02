@@ -1,0 +1,131 @@
+{
+  "slug": "veste-contessi",
+  "line": "Contessi Collection",
+  "name": {
+    "fr": "Veste Contessi",
+    "en": "Contessi jacket",
+    "it": "Giacca Contessi"
+  },
+  "price": null,
+  "summary": {
+    "fr": "Cuir, coupe ajustée, logo Contessi brodé sur la poitrine. Une veste qui se porte sur une chemise comme sur un t-shirt.",
+    "en": "Leather, slim fit, Contessi logo embroidered on the chest. A jacket you can wear over a shirt or a T-shirt.",
+    "it": "Pelle, taglio aderente, logo Contessi ricamato sul petto. Una giacca da portare sopra una camicia o una t-shirt."
+  },
+  "defaultColor": "noir",
+  "colors": [
+    {
+      "id": "noir",
+      "label": {
+        "fr": "Noir",
+        "en": "Black",
+        "it": "Nero"
+      },
+      "swatch": ["#2B2B2B", "#0F0F0F"],
+      "images": ["noir-1.jpg", "noir-2.jpg", "noir-3.jpg", "noir-4.jpg"]
+    },
+    {
+      "id": "navy",
+      "label": {
+        "fr": "Navy",
+        "en": "Navy",
+        "it": "Blu navy"
+      },
+      "swatch": ["#333D5C", "#172140"],
+      "images": ["navy-1.jpg", "navy-2.jpg", "navy-3.jpg", "navy-4.jpg"]
+    },
+    {
+      "id": "creme",
+      "label": {
+        "fr": "Crème",
+        "en": "Cream",
+        "it": "Crema"
+      },
+      "swatch": ["#EDE3D1", "#D1C7B5"],
+      "images": ["creme-1.jpg", "creme-2.jpg", "creme-3.jpg", "creme-4.jpg"]
+    }
+  ],
+  "sizes": [
+    {
+      "id": "S"
+    },
+    {
+      "id": "M"
+    },
+    {
+      "id": "L"
+    },
+    {
+      "id": "XL"
+    },
+    {
+      "id": "XXL",
+      "soldOut": true
+    }
+  ],
+  "defaultSize": "M",
+  "details": [
+    {
+      "title": {
+        "fr": "Description",
+        "en": "Description",
+        "it": "Descrizione"
+      },
+      "body": {
+        "fr": "Veste en cuir zippée, doublure légère. Le logo est brodé ton sur ton.",
+        "en": "Zipped leather jacket, light lining. The logo is embroidered tone on tone.",
+        "it": "Giacca in pelle con zip, fodera leggera. Il logo è ricamato tono su tono."
+      }
+    },
+    {
+      "title": {
+        "fr": "Composition & entretien",
+        "en": "Composition & care",
+        "it": "Composizione e cura"
+      },
+      "body": {
+        "fr": "[à compléter]",
+        "en": "[to be completed]",
+        "it": "[da completare]"
+      }
+    },
+    {
+      "title": {
+        "fr": "Taille et coupe",
+        "en": "Size & fit",
+        "it": "Taglia e vestibilità"
+      },
+      "body": {
+        "fr": "[à compléter]",
+        "en": "[to be completed]",
+        "it": "[da completare]"
+      }
+    }
+  ],
+  "luigi": {
+    "quote": {
+      "fr": "Je voulais une veste que je peux porter en avion, puis au dîner, sans me changer.",
+      "en": "I wanted a jacket I can wear on the plane, then at dinner, without changing.",
+      "it": "Volevo una giacca da portare in aereo e poi a cena, senza cambiarmi."
+    },
+    "text": {
+      "fr": "[Texte de Luigi : pourquoi cette pièce, où il la porte, avec quoi.]",
+      "en": "[Luigi’s text: why this piece, where he wears it, and with what.]",
+      "it": "[Testo di Luigi: perché questo capo, dove lo indossa e con cosa.]"
+    },
+    "image": "luigi-wears.jpg"
+  },
+  "related": ["chemise-blanche", "chemise-noire", "polo-contessi", "veste-lin"],
+  "seo": {
+    "title": {
+      "fr": "Veste Contessi — Contessi Collection | Luigi Contessi",
+      "en": "Contessi jacket — Contessi Collection | Luigi Contessi",
+      "it": "Giacca Contessi — Contessi Collection | Luigi Contessi"
+    },
+    "description": {
+      "fr": "Veste Contessi en cuir, coupe ajustée, logo brodé sur la poitrine. Noir, navy ou crème.",
+      "en": "Contessi leather jacket, slim fit, logo embroidered on the chest. Black, navy or cream.",
+      "it": "Giacca Contessi in pelle, taglio aderente, logo ricamato sul petto. Nero, blu navy o crema."
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "livraison-offerte",
+  "brand": "[Marque]",
+  "category": "mode",
+  "offer": {
+    "fr": "Livraison offerte",
+    "en": "Free delivery",
+    "it": "Spedizione gratuita"
+  },
+  "code": "CONTESSI",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 2
+}

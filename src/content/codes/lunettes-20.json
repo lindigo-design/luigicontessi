@@ -1,0 +1,16 @@
+{
+  "id": "lunettes-20",
+  "brand": "[Marque]",
+  "category": "mode",
+  "offer": {
+    "fr": "−20 % sur les lunettes",
+    "en": "20% off glasses",
+    "it": "−20% sugli occhiali"
+  },
+  "code": "LUIGI20",
+  "url": null,
+  "addedAt": null,
+  "expiresAt": null,
+  "featured": false,
+  "order": 7
+}

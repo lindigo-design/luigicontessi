@@ -1,0 +1,108 @@
+---
+// Figma: Partenariats → 01 Intro (desktop 47:393, mobile 48:439).
+// Desktop: текст 680 ліворуч (по центру висоти фото), фото 520 × 640 праворуч, проміжок 80.
+// Mobile: фото зверху 358 × 400, далі текст і кнопки стовпчиком на всю ширину.
+// Media kit: є PDF — «Télécharger le media kit»; немає — «Demander le media kit» → форма (#proposer).
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import photo from '../../../assets/img/home/brands.jpg';
+import type { PartenariatsData } from '../../../content.config';
+
+interface Props {
+  data: PartenariatsData['intro'];
+  /** Адреса PDF media kit або null (файлу ще немає). */
+  mediaKitUrl: string | null;
+}
+const { data, mediaKitUrl } = Astro.props;
+---
+
+<section class="pintro container" aria-labelledby="pintro-title">
+  <div class="pintro__img media">
+    <Image
+      src={photo}
+      alt={data.imageAlt}
+      widths={[400, 716, 1040]}
+      sizes="(min-width: 1024px) 520px, 100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  <div class="pintro__text">
+    <p class="eyebrow">{data.eyebrow}</p>
+    <h1 id="pintro-title">{data.title}</h1>
+    <p class="pintro__body text-2">{data.body}</p>
+    <div class="pintro__ctas">
+      <Button href="#proposer">{data.primary.label}</Button>
+      {mediaKitUrl ? (
+        <Button href={mediaKitUrl} variant="outline" download>
+          {data.mediaKit.label}
+        </Button>
+      ) : (
+        <Button href="#proposer" variant="outline">
+          {data.mediaKitRequest.label}
+        </Button>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .pintro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-14);
+  }
+  .pintro__img {
+    aspect-ratio: 358 / 400;
+    border-radius: var(--radius-card);
+  }
+  .pintro__img :global(img) {
+    object-position: 50% 22%; /* обличчя в кадрі */
+  }
+  .pintro__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .pintro__body {
+    font-size: var(--fs-body-l);
+  }
+  .pintro__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-top: var(--space-1);
+  }
+  @media (min-width: 768px) {
+    /* Планшет: фото на всю ширину, але нижче (≈ 4 : 3), щоб текст не відʼїжджав за екран. */
+    .pintro__img {
+      aspect-ratio: 4 / 3;
+    }
+    .pintro__ctas {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+  @media (min-width: 1024px) {
+    .pintro {
+      display: grid;
+      grid-template-columns: minmax(0, 680fr) minmax(0, 520fr);
+      align-items: center;
+      gap: var(--space-20);
+      padding-top: var(--space-24);
+      padding-bottom: 7.5rem; /* 120 */
+    }
+    .pintro__img {
+      order: 2;
+      aspect-ratio: 520 / 640;
+    }
+    .pintro__text {
+      gap: var(--space-7);
+    }
+    .pintro__ctas {
+      margin-top: 0;
+    }
+  }
+</style>

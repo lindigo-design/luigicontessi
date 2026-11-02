@@ -1,0 +1,60 @@
+---
+// Figma: États → «Merci» (desktop 55:512, mobile 55:522). Картка --color-card: K із сердечком,
+// заголовок, текст, Link Accent. Прихована, доки src/scripts/form.ts не покаже її замість форми.
+import Button from '../ui/Button.astro';
+import CornerK from '../../assets/brand/corner-k-tall.svg';
+
+interface Props {
+  title: string;
+  text: string;
+  link: { label: string; href: string };
+}
+const { title, text, link } = Astro.props;
+---
+
+<div class="thanks" data-form-thanks aria-live="polite" hidden>
+  <CornerK class="thanks__k" aria-hidden="true" />
+  <h2 class="thanks__title" tabindex="-1" data-form-thanks-title>
+    {title}
+  </h2>
+  <p class="text-2">{text}</p>
+  <Button href={link.href} variant="accent">
+    {link.label}
+  </Button>
+</div>
+
+<style>
+  .thanks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .thanks[hidden] {
+    display: none;
+  }
+  /* Corner K logo: 65 → 78 по висоті. */
+  .thanks :global(.thanks__k) {
+    width: auto;
+    height: 4.0625rem;
+  }
+  .thanks :global(.thanks__k path) {
+    fill: var(--color-red);
+  }
+  .thanks__title {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    outline: none;
+  }
+  @media (min-width: 768px) {
+    .thanks {
+      padding: var(--space-12);
+    }
+    .thanks :global(.thanks__k) {
+      height: 4.875rem;
+    }
+  }
+</style>

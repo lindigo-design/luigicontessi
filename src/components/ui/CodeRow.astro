@@ -1,0 +1,66 @@
+---
+// Figma: Card / Code partenaire → рядок коду: код у рамці + кнопка Primary «Copier le code».
+// short: на mobile кнопка коротка «Copier» — перемикання через CSS, читалка завжди чує «Copier le code».
+import Button from './Button.astro';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  code: string;
+  short?: boolean;
+}
+const { lang, code, short = false } = Astro.props;
+---
+
+<div class:list={['coderow', { 'coderow--short': short }]}>
+  <span class="coderow__value">{code}</span>
+  <Button data-copy={code} data-copied={t('codes.copied', lang)}>
+    <span class="coderow__long">{t('ui.copyCode', lang)}</span>
+    {short && (
+      <span class="coderow__short" aria-hidden="true">
+        {t('ui.copy', lang)}
+      </span>
+    )}
+  </Button>
+</div>
+
+<style>
+  .coderow {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-btn);
+  }
+  .coderow__value {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding-inline: var(--space-4);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    letter-spacing: 0.12em;
+  }
+  .coderow__short {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .coderow--short .coderow__long {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+    .coderow--short .coderow__short {
+      display: inline;
+    }
+  }
+  @media (min-width: 768px) {
+    .coderow__value {
+      padding-inline: var(--space-5);
+    }
+  }
+</style>

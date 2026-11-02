@@ -1,0 +1,87 @@
+---
+// Сторінка «Partenariats» (для брендів): /<мова>/partenariats/. Тут лише порядок секцій:
+// Intro → Audience → Collaborations → Méthode → Références → Presse / Media kit → Proposer un projet (по кроках).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Intro from '../../components/sections/partenariats/Intro.astro';
+import Audience from '../../components/sections/partenariats/Audience.astro';
+import Collaborations from '../../components/sections/partenariats/Collaborations.astro';
+import Method from '../../components/sections/partenariats/Method.astro';
+import References from '../../components/sections/partenariats/References.astro';
+import PressKit from '../../components/sections/partenariats/PressKit.astro';
+import {
+  getHome,
+  getPartenariats,
+  getSettings,
+  getStats,
+  warnMissing,
+} from '../../content/helpers';
+import { locales, localizePath, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getPartenariats(lang);
+const { mediaKit } = await getSettings();
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const mediaKitUrl = mediaKit.file.trim() ? `${base}media-kit/${mediaKit.file.trim()}` : null;
+if (!mediaKitUrl)
+  warnMissing('Partenariats', 'settings.json → mediaKit.file (PDF у public/media-kit/)');
+
+// Audience: картки Pays / Âge — лише коли є всі відсотки і дата (інакше сховані).
+const { audience } = page;
+const splitRows = [...audience.countries.items, ...audience.ages.items];
+const showSplit = !!audience.date.trim() && splitRows.every((i) => i.percent !== null);
+if (!showSplit)
+  warnMissing('Partenariats', 'audience: відсотки Pays / Âge і дата (Instagram Insights)');
+
+// Collaborations: порожні деталі сховані; «Sur mesure» без деталей за задумом.
+page.collaborations.items
+  .filter((c) => c.type !== 'sur-mesure' && !c.details?.trim())
+  .forEach((c) => warnMissing('Partenariats', `collaborations: деталі картки «${c.title}»`));
+
+// Références: немає ні логотипів, ні кейсів — секція схована.
+const { logos, cases } = page.referencesItems;
+if (!logos.length) warnMissing('Partenariats', 'références: логотипи марок');
+if (!cases.length) warnMissing('Partenariats', 'références: кейси (études de cas)');
+
+// Presse: ті самі статті, що на головній (перші 3), без заглушок «[…]».
+const placeholder = /\[[^\]]*\]/;
+const articles = (await getHome(lang)).press.items
+  .slice(0, 3)
+  .filter((a) => !placeholder.test(`${a.title} ${a.meta}`));
+if (!articles.length) warnMissing('Partenariats', 'presse: статті (дані «Presse» на головній)');
+
+// Media kit: «Media kit 2026», «… PDF, 12 pages.» — лише відомі значення.
+const kitTitle = page.mediaKit.title.replace('{year}', mediaKit.year.trim()).trim();
+const kitText = mediaKit.pages
+  ? `${page.mediaKit.text} ${page.mediaKit.pages.replace('{pages}', String(mediaKit.pages))}`
+  : page.mediaKit.text;
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.seoTitle}
+  description={page.seoDescription}
+  current="partenariats"
+>
+  <Intro data={page.intro} mediaKitUrl={mediaKitUrl} />
+  <Audience data={audience} stats={await getStats(audience.stats, lang)} showSplit={showSplit} />
+  <Collaborations lang={lang} data={page.collaborations} />
+  <Method data={page.method} />
+  {(logos.length > 0 || cases.length > 0) && (
+    <References data={page.references} logos={logos} cases={cases} />
+  )}
+  <PressKit
+    press={page.press}
+    articles={articles}
+    articlesHref={localizePath('presse', lang)}
+    kit={page.mediaKit}
+    kitTitle={kitTitle}
+    kitText={kitText}
+    kitUrl={mediaKitUrl}
+    requestLabel={page.intro.mediaKitRequest.label}
+    preview={page.mediaKitPreview}
+  />
+</BaseLayout>

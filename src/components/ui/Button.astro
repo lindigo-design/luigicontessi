@@ -10,7 +10,16 @@ interface Props {
   type?: 'button' | 'submit';
   block?: boolean;
   external?: boolean;
+  /** Для партнерських посилань: 'sponsored noopener' (так Google бачить, що це реклама). */
+  rel?: string;
   class?: string;
+  tabindex?: number;
+  title?: string;
+  'aria-disabled'?: 'true';
+  /** Коло-стрілка для Link (у Link Accent вона завжди). */
+  arrow?: boolean;
+  /** Посилання на файл, який завантажується (media kit PDF). */
+  download?: boolean;
   [key: `data-${string}`]: string | undefined;
 }
 const {
@@ -19,21 +28,34 @@ const {
   type = 'button',
   block = false,
   external = false,
+  rel,
+  arrow = false,
+  download = false,
   class: extra,
   ...rest
 } = Astro.props;
-const Tag = href ? 'a' : 'button';
+// href="" — теж посилання (на ту саму адресу, напр. «Réessayer» на 500).
+const Tag = href !== undefined ? 'a' : 'button';
 const cls = ['btn', `btn--${variant}`, block && 'btn--block', extra];
-const linkAttrs = href
-  ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
-  : { type };
+const linkAttrs =
+  href !== undefined
+    ? {
+        href,
+        ...(external
+          ? { target: '_blank', rel: rel ?? 'noopener noreferrer' }
+          : rel
+            ? { rel }
+            : {}),
+        ...(download ? { download: '' } : {}),
+      }
+    : { type };
 ---
 
 <Tag class:list={cls} {...linkAttrs} {...rest}>
   <span class="btn__label">
     <slot />
   </span>
-  {variant === 'accent' && <ArrowCircle />}
+  {(variant === 'accent' || arrow) && <ArrowCircle />}
 </Tag>
 
 <style>
