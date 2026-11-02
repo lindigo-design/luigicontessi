@@ -1,0 +1,161 @@
+{
+  "slug": "aurora",
+  "name": "Aurora",
+  "length": 45,
+  "year": null,
+  "cabins": null,
+  "price": null,
+  "featured": true,
+  "image": "../../assets/img/yachts/featured.jpg",
+  "imageAlt": {
+    "fr": "Yacht à moteur blanc en mer (illustration)",
+    "en": "White motor yacht at sea (illustration)",
+    "it": "Yacht a motore bianco in mare (illustrazione)"
+  },
+  "demo": true,
+  "order": 1,
+  "builder": null,
+  "architect": null,
+  "refit": null,
+  "beam": null,
+  "draft": null,
+  "guests": null,
+  "crew": null,
+  "cruiseSpeed": null,
+  "engines": null,
+  "flag": {
+    "fr": "",
+    "en": "",
+    "it": ""
+  },
+  "port": {
+    "fr": "",
+    "en": "",
+    "it": ""
+  },
+  "headline": {
+    "fr": "Pensé pour vivre en mer, pas seulement pour naviguer",
+    "en": "Made for living at sea, not just for sailing",
+    "it": "Pensato per vivere in mare, non solo per navigare"
+  },
+  "intro": {
+    "fr": "Un yacht à moteur de 45 m, avec de grands espaces ouverts sur la mer.",
+    "en": "A 45 m motor yacht, with large spaces open to the sea.",
+    "it": "Uno yacht a motore di 45 m, con grandi spazi aperti sul mare."
+  },
+  "summaryTitle": {
+    "fr": "De la place pour recevoir, à quai comme en mer",
+    "en": "Room to host, at the dock and at sea",
+    "it": "Spazio per ricevere, in banchina e in mare"
+  },
+  "gallery": [
+    {
+      "label": {
+        "fr": "Salon",
+        "en": "Saloon",
+        "it": "Salone"
+      }
+    },
+    {
+      "label": {
+        "fr": "Cabine principale",
+        "en": "Master cabin",
+        "it": "Cabina principale"
+      }
+    }
+  ],
+  "interiors": [
+    {
+      "title": {
+        "fr": "Salon principal",
+        "en": "Main saloon",
+        "it": "Salone principale"
+      },
+      "deck": {
+        "fr": "",
+        "en": "",
+        "it": ""
+      }
+    },
+    {
+      "title": {
+        "fr": "Cabine propriétaire",
+        "en": "Owner’s cabin",
+        "it": "Cabina armatoriale"
+      },
+      "deck": {
+        "fr": "",
+        "en": "",
+        "it": ""
+      }
+    },
+    {
+      "title": {
+        "fr": "Salle à manger",
+        "en": "Dining room",
+        "it": "Sala da pranzo"
+      },
+      "deck": {
+        "fr": "",
+        "en": "",
+        "it": ""
+      }
+    },
+    {
+      "title": {
+        "fr": "Pont soleil",
+        "en": "Sun deck",
+        "it": "Ponte sole"
+      },
+      "deck": {
+        "fr": "",
+        "en": "",
+        "it": ""
+      }
+    }
+  ],
+  "decks": [
+    {
+      "id": "main",
+      "label": {
+        "fr": "Pont principal",
+        "en": "Main deck",
+        "it": "Ponte principale"
+      }
+    },
+    {
+      "id": "lower",
+      "label": {
+        "fr": "Pont inférieur",
+        "en": "Lower deck",
+        "it": "Ponte inferiore"
+      }
+    },
+    {
+      "id": "flybridge",
+      "label": {
+        "fr": "Flybridge",
+        "en": "Flybridge",
+        "it": "Flybridge"
+      }
+    }
+  ],
+  "video": {
+    "src": "",
+    "poster": "",
+    "teaser": "",
+    "duration": null,
+    "chapters": [],
+    "captions": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    }
+  },
+  "luigiWord": {
+    "fr": "",
+    "en": "",
+    "it": ""
+  },
+  "sheetPdf": ""
+}

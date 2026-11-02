@@ -1,0 +1,274 @@
+---
+// Figma: Fiche yacht → 02b Film — visite vidéo (desktop 45:581, mobile 45:608).
+// Блок 16 : 9 на всю ширину. Спершу тизер без звуку по колу поверх постера (не грає при зменшеному русі
+// чи «економії трафіку»), по центру «Regarder la visite». Клік → повне відео з контролами, звуком і
+// субтитрами (мова сторінки за замовчуванням). Під відео — розділи: клік перемотує, активний — світлий.
+// Власні файли (public/video/yachts/<slug>/), не YouTube: без сторонніх скриптів (CSP).
+import ArrowCircle from '../../ui/ArrowCircle.astro';
+import { locales, t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  video: {
+    src: string;
+    poster: string;
+    teaser: string;
+    duration?: number | null;
+    chapters: { t: number; label: string }[];
+    captions: Record<Locale, string>;
+  };
+  demoLabel?: string;
+}
+const { lang, video, demoLabel } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const url = (path: string) => (path ? `${base}${path.replace(/^\//, '')}` : '');
+const tracks = locales.filter((l) => video.captions[l]);
+const time = (s: number) =>
+  `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+---
+
+<section class="yfilm" aria-label={t('yachts.watch', lang)} data-yacht-film>
+  <div class="yfilm__stage">
+    <video
+      class="yfilm__media yfilm__teaser"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={url(video.poster) || undefined}
+      aria-hidden="true"
+      data-film-teaser
+    >
+      {video.teaser && <source src={url(video.teaser)} type="video/mp4" />}
+    </video>
+    <video
+      class="yfilm__media yfilm__full"
+      controls
+      playsinline
+      preload="none"
+      poster={url(video.poster) || undefined}
+      hidden
+      data-film-full
+    >
+      <source src={url(video.src)} type="video/mp4" />
+      {tracks.map((l) => (
+        <track
+          kind="subtitles"
+          src={url(video.captions[l])}
+          srclang={l}
+          label={t(`lang.${l}`, lang)}
+          default={l === lang}
+        />
+      ))}
+    </video>
+
+    <div class="yfilm__overlay" data-film-overlay>
+      {demoLabel && <span class="yfilm__demo text-s">{demoLabel}</span>}
+      <button class="yfilm__play" type="button" data-film-play>
+        <ArrowCircle size="l" />
+        <span class="yfilm__play-label">{t('yachts.watch', lang)}</span>
+      </button>
+      <div class="yfilm__bottom text-s">
+        <span>
+          {t('yachts.visitWith', lang)}
+          {video.duration &&
+            ` · ${t('yachts.minutes', lang).replace('{n}', String(video.duration))}`}
+        </span>
+        {tracks.length > 0 && (
+          <span class="yfilm__subs">
+            {t('yachts.soundSubs', lang)} {tracks.map((l) => l.toUpperCase()).join(' / ')}
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {video.chapters.length > 0 && (
+    <ol class="yfilm__chapters" role="list" aria-label={t('yachts.chapters', lang)}>
+      {video.chapters.map((c, i) => (
+        <li>
+          <button
+            class:list={['yfilm__chapter', { 'is-active': i === 0 }]}
+            type="button"
+            data-film-chapter={c.t}
+          >
+            <span class="text-s text-2">{time(c.t)}</span>
+            <span class="text-s">{c.label}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
+  )}
+</section>
+
+<script>
+  import { initYachtFilm } from '../../../scripts/yacht-film';
+  initYachtFilm();
+</script>
+
+<style>
+  .yfilm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-bottom: var(--space-12);
+  }
+  .yfilm__stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-height: 100svh; /* на дуже широких екранах — не вище за вікно */
+    overflow: hidden;
+    background: var(--color-bg-alt);
+    isolation: isolate;
+  }
+  .yfilm__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .yfilm__media[hidden] {
+    display: none;
+  }
+  .yfilm__full {
+    object-fit: contain;
+    background: #000; /* поля відео без обрізання — чорні, як у будь-якому плеєрі */
+  }
+  /* Над тизером: кнопка по центру, підписи знизу; градієнт знизу під текстом. */
+  .yfilm__overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--shade) / 0.25) 0%,
+      rgb(var(--shade) / 0) 30%,
+      rgb(var(--shade) / 0.2) 60%,
+      rgb(var(--shade) / 0.85) 100%
+    );
+  }
+  .yfilm__overlay[hidden] {
+    display: none;
+  }
+  .yfilm__demo {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-btn);
+    background: rgb(var(--shade) / 0.6);
+  }
+  .yfilm__play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--color-text);
+  }
+  .yfilm__play-label {
+    font-size: var(--fs-title);
+    font-weight: 500;
+  }
+  @media (hover: hover) {
+    .yfilm__play:hover :global(.arrow) {
+      background: var(--color-text);
+      color: var(--color-bg);
+    }
+  }
+  .yfilm__play:focus-visible {
+    outline: none;
+  }
+  .yfilm__play:focus-visible :global(.arrow) {
+    background: var(--color-text);
+    color: var(--color-bg);
+    outline: 2px solid var(--color-text);
+    outline-offset: 4px;
+  }
+  .yfilm__bottom {
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  /* Mobile (Figma 45:616): лише «Visite avec Luigi · 4 min». */
+  .yfilm__subs {
+    display: none;
+  }
+
+  /* Розділи: mobile — горизонтальна прокрутка. */
+  .yfilm__chapters {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-inline: var(--gutter);
+  }
+  .yfilm__chapters::-webkit-scrollbar {
+    display: none;
+  }
+  .yfilm__chapters li {
+    flex: 0 0 8.75rem; /* 140 */
+  }
+  .yfilm__chapter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    width: 100%;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    text-align: left;
+    color: var(--color-text-2);
+    transition:
+      color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+  .yfilm__chapter.is-active,
+  .yfilm__chapter.is-active span {
+    border-color: var(--color-text);
+    color: var(--color-text);
+  }
+  @media (hover: hover) {
+    .yfilm__chapter:hover span {
+      color: var(--color-text);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .yfilm__bottom {
+      left: var(--gutter);
+      right: var(--gutter);
+      bottom: var(--space-12);
+    }
+    .yfilm__demo {
+      top: var(--space-12);
+      left: var(--gutter);
+    }
+    .yfilm__subs {
+      display: inline;
+    }
+    .yfilm__play :global(.arrow) {
+      width: 7.5rem; /* 120 */
+      height: 7.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .yfilm {
+      gap: var(--space-6);
+      padding-bottom: var(--space-24);
+    }
+    .yfilm__chapters {
+      gap: var(--space-6);
+      overflow: visible;
+    }
+    .yfilm__chapters li {
+      flex: 1 1 0;
+    }
+  }
+</style>

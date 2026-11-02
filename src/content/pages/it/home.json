@@ -2,8 +2,10 @@
   "seoTitle": "Luigi Contessi — auto, orologi, yacht, viaggi",
   "seoDescription": "Luigi Contessi condivide ciò che sceglie in prima persona: auto, orologi, yacht, hotel. Preferiti, codici partner e la Contessi Collection.",
   "promo": {
-    "text": "Codice LUIGI10 — −10% sul primo ordine",
-    "code": "LUIGI10"
+    "label": "Codice",
+    "code": "LUIGI10",
+    "offer": "−10% sul primo ordine",
+    "offerShort": "−10% sul 1° ordine"
   },
   "hero": {
     "eyebrow": "Luxury lifestyle curator",
@@ -62,18 +64,24 @@
     "items": [
       {
         "meta": "Stampa · [data]",
+        "image": "../../../assets/img/press/press-1.jpg",
+        "imagePosition": "50% 87%",
         "title": "[Titolo dell’articolo]",
         "excerpt": "« [Breve citazione dall’articolo, una frase.] »",
         "action": "Leggi l’articolo"
       },
       {
         "meta": "TV · [data]",
+        "image": "../../../assets/img/press/press-2.jpg",
+        "imagePosition": "50% 33%",
         "title": "[Titolo del servizio]",
         "excerpt": "« [Breve citazione dal servizio, una frase.] »",
         "action": "Guarda"
       },
       {
         "meta": "Podcast · [data]",
+        "image": "../../../assets/img/press/press-3.jpg",
+        "imagePosition": "50% 90%",
         "title": "[Titolo dell’episodio]",
         "excerpt": "« [Breve citazione dall’episodio, una frase.] »",
         "action": "Ascolta"

@@ -1,0 +1,134 @@
+---
+// Figma: Fiche yacht → 03 Résumé (desktop 38:500, mobile 39:579). Ліворуч заголовок + «Il est basé à …»,
+// ціна, «Demander des informations» (→ #demande), унизу «Représenté par Luigi Contessi pour …»;
+// праворуч фото 500 × 358. Mobile: продовження «Le yacht» — без заголовка й фото: рядок «Prix · Sur demande»,
+// кнопка на всю ширину, «Représenté par…».
+import type { ImageMetadata } from 'astro';
+import Button from '../../ui/Button.astro';
+import YachtPhoto from './YachtPhoto.astro';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  port: string;
+  price: string;
+  /** Назва продавця або '' — тоді «Représenté par Luigi Contessi». */
+  partner: string;
+  image: ImageMetadata;
+  imageAlt: string;
+  demoLabel?: string;
+}
+const { lang, title, port, price, partner, image, imageAlt, demoLabel } = Astro.props;
+const based = [
+  port && t('yachts.basedIn', lang).replace('{port}', port),
+  t('yachts.visitInfo', lang),
+]
+  .filter(Boolean)
+  .join(' ');
+const represented = partner
+  ? t('yachts.representedFor', lang).replace('{partner}', partner)
+  : t('yachts.representedBy', lang);
+---
+
+<section class="yres" aria-label={t('yachts.price', lang)}>
+  <div class="container yres__row">
+    <div class="yres__text">
+      <div class="yres__intro">
+        {title && <h2 class="yres__title">{title}</h2>}
+        <p class="yres__based text-s text-2">{based}</p>
+      </div>
+      <dl class="yres__price">
+        <dt class="eyebrow eyebrow--muted">{t('yachts.price', lang)}</dt>
+        <dd class="yres__value">{price}</dd>
+      </dl>
+      <Button href="#demande" class="yres__cta">
+        {t('yachts.ask', lang)}
+      </Button>
+      <p class="yres__rep eyebrow eyebrow--muted">{represented}</p>
+    </div>
+    <YachtPhoto
+      image={image}
+      alt={imageAlt}
+      demoLabel={demoLabel}
+      widths={[500, 750, 1000]}
+      sizes="(min-width: 1024px) 35vw, 100vw"
+      class="yres__photo"
+    />
+  </div>
+</section>
+
+<style>
+  .yres__row {
+    padding-bottom: var(--space-14);
+  }
+  .yres__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  /* Mobile: без заголовка й фото (вони — у «Le yacht»), текст про порт лишається. */
+  .yres__title,
+  .yres :global(.yres__photo) {
+    display: none;
+  }
+  .yres__price {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .yres__value {
+    font-family: var(--font-display);
+    font-size: var(--fs-title);
+  }
+  .yres :global(.yres__cta) {
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .yres__row {
+      display: grid;
+      grid-template-columns: minmax(0, 700fr) minmax(0, 500fr);
+      align-items: start;
+      gap: var(--space-20);
+      padding-top: var(--space-12);
+      padding-bottom: 7.5rem; /* 120 */
+    }
+    .yres__text {
+      align-self: stretch;
+      gap: var(--space-8);
+      padding-left: var(--space-24);
+    }
+    .yres__intro {
+      display: grid;
+      grid-template-columns: minmax(0, 340fr) minmax(0, 220fr);
+      gap: var(--space-10);
+      padding-top: var(--space-6);
+    }
+    .yres__title {
+      display: block;
+      font-size: var(--fs-h3);
+      line-height: var(--lh-h3);
+    }
+    .yres__price {
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: var(--space-1);
+    }
+    .yres__value {
+      font-size: var(--fs-h3);
+      line-height: var(--lh-h3);
+    }
+    .yres :global(.yres__cta) {
+      align-self: flex-start;
+      width: auto;
+    }
+    .yres__rep {
+      margin-top: auto; /* притиснуто донизу */
+    }
+    .yres :global(.yres__photo) {
+      display: grid;
+      aspect-ratio: 500 / 358;
+    }
+  }
+</style>

@@ -8,11 +8,15 @@ import Collaborations from '../../components/sections/partenariats/Collaboration
 import Method from '../../components/sections/partenariats/Method.astro';
 import References from '../../components/sections/partenariats/References.astro';
 import PressKit from '../../components/sections/partenariats/PressKit.astro';
+import Proposal from '../../components/sections/partenariats/Proposal.astro';
+import PhotoBreak from '../../components/ui/PhotoBreak.astro';
 import {
+  getEmail,
   getHome,
   getPartenariats,
   getSettings,
   getStats,
+  isPreview,
   warnMissing,
 } from '../../content/helpers';
 import { locales, localizePath, type Locale } from '../../i18n/utils';
@@ -23,7 +27,8 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Locale;
 const page = await getPartenariats(lang);
-const { mediaKit } = await getSettings();
+const settings = await getSettings();
+const { mediaKit } = settings;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const mediaKitUrl = mediaKit.file.trim() ? `${base}media-kit/${mediaKit.file.trim()}` : null;
 if (!mediaKitUrl)
@@ -45,6 +50,10 @@ page.collaborations.items
 const { logos, cases } = page.referencesItems;
 if (!logos.length) warnMissing('Partenariats', 'références: логотипи марок');
 if (!cases.length) warnMissing('Partenariats', 'références: кейси (études de cas)');
+const unfinished = cases.filter((c) => !c.type?.trim() || !c.results.length).map((c) => c.brand);
+if (unfinished.length) {
+  warnMissing('Partenariats', `références: тип / результати кейсів ${unfinished.join(', ')}`);
+}
 
 // Presse: ті самі статті, що на головній (перші 3), без заглушок «[…]».
 const placeholder = /\[[^\]]*\]/;
@@ -58,6 +67,8 @@ const kitTitle = page.mediaKit.title.replace('{year}', mediaKit.year.trim()).tri
 const kitText = mediaKit.pages
   ? `${page.mediaKit.text} ${page.mediaKit.pages.replace('{pages}', String(mediaKit.pages))}`
   : page.mediaKit.text;
+// Перегляд (dev / тестова збірка без індексації): заглушки з Figma там, де ще немає даних.
+const preview = isPreview();
 ---
 
 <BaseLayout
@@ -67,11 +78,28 @@ const kitText = mediaKit.pages
   current="partenariats"
 >
   <Intro data={page.intro} mediaKitUrl={mediaKitUrl} />
-  <Audience data={audience} stats={await getStats(audience.stats, lang)} showSplit={showSplit} />
+  <Audience
+    data={audience}
+    stats={await getStats(audience.stats, lang)}
+    showSplit={showSplit}
+    preview={preview}
+  />
   <Collaborations lang={lang} data={page.collaborations} />
+  {/* Відео-пауза з яхтою (Figma 168:3077): зверху — без градієнта (чіткий край), знизу плавно в Méthode (--color-bg-alt). */}
+  <PhotoBreak
+    video={{
+      src: 'video/partenariats/yacht-1920.mp4',
+      srcMobile: 'video/partenariats/yacht-960.mp4',
+      poster: 'video/partenariats/yacht-poster.jpg',
+    }}
+    height={516}
+    positionDesktop="50% 33%"
+    fadeTop="none"
+    fadeBottom="alt"
+  />
   <Method data={page.method} />
   {(logos.length > 0 || cases.length > 0) && (
-    <References data={page.references} logos={logos} cases={cases} />
+    <References data={page.references} logos={logos} cases={cases} lang={lang} preview={preview} />
   )}
   <PressKit
     press={page.press}
@@ -84,4 +112,5 @@ const kitText = mediaKit.pages
     requestLabel={page.intro.mediaKitRequest.label}
     preview={page.mediaKitPreview}
   />
+  <Proposal lang={lang} data={page.proposal} email={getEmail(settings, 'partnerships')} />
 </BaseLayout>

@@ -1,0 +1,17 @@
+{
+  "slug": "orizzonte",
+  "name": "Orizzonte",
+  "length": 70,
+  "year": null,
+  "cabins": null,
+  "price": null,
+  "featured": false,
+  "image": "../../assets/img/yachts/yacht-3.jpg",
+  "imageAlt": {
+    "fr": "Grand yacht en mer (illustration)",
+    "en": "Large yacht at sea (illustration)",
+    "it": "Grande yacht in mare (illustrazione)"
+  },
+  "demo": true,
+  "order": 4
+}

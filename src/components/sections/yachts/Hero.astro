@@ -1,0 +1,194 @@
+---
+// Figma: Yachts → 01 Hero (desktop 36:393, mobile 37:479). Шапка поверх фото (overlay).
+// Фото на весь блок + два шари градієнта до --color-bg під текстом (дослівно як у Figma):
+// desktop — згори вниз і зліва направо; mobile — лише згори вниз. Вміст притиснутий донизу.
+// Праворуч «En partenariat avec» + логотип продавця (немає логотипа — блок схований).
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import heroImg from '../../../assets/img/yachts/hero.jpg';
+import type { YachtsPageData } from '../../../content.config';
+
+interface Props {
+  data: YachtsPageData['hero'];
+  /** Назва продавця або «mon partenaire» — замість {partner}. */
+  partner: string;
+  logo: ImageMetadata | null;
+  /** Демо-режим: фото — ілюстрація (плашка «Illustration»). */
+  demoLabel?: string;
+}
+const { data, partner, logo, demoLabel } = Astro.props;
+const fill = (s: string) => s.replace('{partner}', partner);
+---
+
+<section class="yhero" aria-labelledby="yhero-title">
+  <Image
+    class="yhero__bg"
+    src={heroImg}
+    alt={data.imageAlt}
+    widths={[768, 1280, 1920, 2400]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="container yhero__inner">
+    <div class="yhero__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h1 id="yhero-title">{data.title}</h1>
+      <p class="yhero__body">
+        <span class="yhero__long">{fill(data.body)}</span>
+        <span class="yhero__short">{fill(data.bodyMobile)}</span>
+      </p>
+      <div class="yhero__ctas">
+        <Button href="#disponibles">{data.primary.label}</Button>
+        <Button href="#demande" variant="outline">
+          {data.secondary.label}
+        </Button>
+      </div>
+    </div>
+    {logo && (
+      <div class="yhero__partner">
+        <p class="eyebrow eyebrow--muted">{data.partner}</p>
+        <Image src={logo} alt={partner} class="yhero__logo" widths={[180, 360]} sizes="180px" />
+      </div>
+    )}
+  </div>
+  {demoLabel && <p class="yhero__demo text-s">{demoLabel}</p>}
+</section>
+
+<style>
+  .yhero {
+    position: relative;
+    display: flex;
+    min-height: max(100svh, 40rem);
+    isolation: isolate;
+    background: var(--color-image);
+  }
+  .yhero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 45% 50%; /* mobile: яхта в кадрі */
+    z-index: -2;
+  }
+  /* Затемнення під текстом (mobile, Figma 37:479): лише згори вниз. */
+  .yhero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--shade) / 0.4) 0%,
+      rgb(var(--shade) / 0) 18%,
+      rgb(var(--shade) / 0.15) 30%,
+      rgb(var(--shade) / 0.75) 43%,
+      rgb(var(--shade) / 0.92) 55%,
+      rgb(var(--shade) / 0.97) 100%
+    );
+  }
+  .yhero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-6);
+    width: 100%;
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-8);
+  }
+  .yhero__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .yhero__body {
+    font-size: var(--fs-body-l);
+  }
+  .yhero__long {
+    display: none;
+  }
+  .yhero__ctas {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .yhero__partner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .yhero__partner :global(.yhero__logo) {
+    width: 7.5rem; /* 120 × 40 */
+    height: 2.5rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+  /* Демо-режим: плашка «Illustration» у лівому верхньому куті (під шапкою). */
+  .yhero__demo {
+    position: absolute;
+    top: calc(var(--header-total-h) + var(--space-2));
+    left: var(--gutter);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-btn);
+    background: rgb(var(--shade) / 0.6);
+  }
+
+  @media (min-width: 768px) {
+    .yhero__ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+  }
+  @media (min-width: 1024px) {
+    .yhero {
+      min-height: min(100svh, max(45rem, 52.8vw)); /* 1440 → 760 */
+    }
+    .yhero__bg {
+      object-position: 50% 40%;
+    }
+    /* Desktop (Figma 36:393): згори вниз + зліва направо. */
+    .yhero::before {
+      background:
+        linear-gradient(
+          to bottom,
+          rgb(var(--shade) / 0.35) 0%,
+          rgb(var(--shade) / 0) 25%,
+          rgb(var(--shade) / 0.25) 50%,
+          rgb(var(--shade) / 0.8) 78%,
+          rgb(var(--shade) / 0.95) 100%
+        ),
+        linear-gradient(to right, rgb(var(--shade) / 0.7) 0%, rgb(var(--shade) / 0) 60%);
+    }
+    .yhero__inner {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-10);
+      padding-top: var(--space-10);
+      padding-bottom: var(--space-20);
+    }
+    .yhero__text {
+      gap: var(--space-6);
+      max-width: 47.5rem; /* 760 */
+    }
+    .yhero__long {
+      display: inline;
+    }
+    .yhero__short {
+      display: none;
+    }
+    .yhero__partner {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-3);
+    }
+    .yhero__partner :global(.yhero__logo) {
+      width: 11.25rem; /* 180 × 56 */
+      height: 3.5rem;
+      object-position: right center;
+    }
+  }
+</style>

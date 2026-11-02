@@ -3,7 +3,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactMain from '../../components/sections/contact/ContactMain.astro';
 import ContactForm from '../../components/sections/contact/ContactForm.astro';
-import ContactPhoto from '../../components/sections/contact/ContactPhoto.astro';
+import PhotoBreak from '../../components/ui/PhotoBreak.astro';
+import yacht from '../../assets/img/contact/yacht.jpg';
 import { getContact, getEmail, getSettings } from '../../content/helpers';
 import { locales, type Locale } from '../../i18n/utils';
 
@@ -25,5 +26,6 @@ const settings = await getSettings();
   >
     <ContactForm lang={lang} data={page.form} email={getEmail(settings, 'contact')} />
   </ContactMain>
-  <ContactPhoto />
+  {/* Фото яхти перед футером (Figma 161:3054): форма й футер — обидва на --color-bg. */}
+  <PhotoBreak image={yacht} height={800} />
 </BaseLayout>

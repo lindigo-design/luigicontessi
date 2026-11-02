@@ -1,0 +1,232 @@
+---
+// Figma: Yachts → 06 Demande (desktop 36:549, mobile 37:609). id="demande".
+// Ліворуч текст, праворуч форма (спільні компоненти, src/scripts/form.ts); на mobile ті самі поля стовпчиком.
+// З адреси (src/scripts/yachts.ts → initYachtRequest): ?yacht=aurora — рядок «Yacht : Aurora · 45 m» + «Changer»
+// і приховане поле yacht; ?topic=off-market — рядок «Accès off-market»; ?taille=30-50 — у «Taille recherchée».
+// На сторінці яхти (fixed): рядок «Yacht : Aurora · 45 m» без «Changer», yacht = slug, без «Taille recherchée»,
+// «Merci» → «Voir les autres yachts» на сторінку Yachts.
+import Form from '../../forms/Form.astro';
+import Field from '../../forms/Field.astro';
+import Consent from '../../forms/Consent.astro';
+import type { Locale } from '../../../i18n/utils';
+import type { YachtsPageData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: YachtsPageData['request'];
+  /** Назва продавця або «mon partenaire». */
+  partner: string;
+  /** settings.emails.yachts (getEmail). */
+  email: string;
+  yachts: { slug: string; name: string; length: number }[];
+  /** Сторінка однієї яхти: яхта вже відома. */
+  fixed?: { slug: string; name: string; length: number };
+  /** Куди веде «Voir les autres yachts» після «Merci» (за замовчуванням — #disponibles). */
+  thanksHref?: string;
+}
+const { lang, data, partner, email, yachts, fixed, thanksHref = '#disponibles' } = Astro.props;
+const f = data.form;
+const fill = (s: string) => s.replaceAll('{partner}', partner);
+const num = new Intl.NumberFormat(lang);
+const sizes = (['lt30', '30-50', 'gt50', 'unknown'] as const).map((value) => ({
+  value,
+  label: f.size.options[value],
+}));
+const budget = [
+  { value: '', label: f.budget.placeholder },
+  ...f.budget.options.map((o) => ({ value: o, label: o })),
+];
+---
+
+<section class="yrequest section" id="demande" aria-labelledby="yrequest-title" data-yacht-request>
+  <div class="container yrequest__row">
+    <div class="yrequest__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="yrequest-title">{data.title}</h2>
+      <p class="text-2">{data.body}</p>
+    </div>
+
+    <div class="yrequest__form">
+      {fixed && (
+        <p class="ychoice">
+          <span>
+            <span class="text-2">{f.yacht} :</span> {fixed.name} · {num.format(fixed.length)} m
+          </span>
+        </p>
+      )}
+      {/* Вибрана яхта / тема off-market (показує скрипт за адресою). */}
+      {!fixed &&
+        yachts.map((y) => (
+          <p class="ychoice" data-yacht-choice={y.slug} hidden>
+            <span>
+              <span class="text-2">{f.yacht} :</span> {y.name} · {num.format(y.length)} m
+            </span>
+            <button class="ychoice__change text-s" type="button" data-yacht-clear>
+              {f.change}
+            </button>
+          </p>
+        ))}
+      {!fixed && (
+        <p class="ychoice" data-yacht-choice="off-market" hidden>
+          <span>{f.offMarket}</span>
+          <button class="ychoice__change text-s" type="button" data-yacht-clear>
+            {f.change}
+          </button>
+        </p>
+      )}
+
+      <Form
+        lang={lang}
+        name="yachts"
+        email={email}
+        submit={f.submit}
+        thanks={{
+          title: f.thanks.title,
+          text: fill(f.thanks.text),
+          link: { label: f.thanks.link.label, href: thanksHref },
+        }}
+      >
+        {fixed ? (
+          <input type="hidden" name="yacht" value={fixed.slug} />
+        ) : (
+          <>
+            <input type="hidden" name="yacht" value="" data-yacht-field />
+            <input type="hidden" name="topic" value="" data-topic-field />
+          </>
+        )}
+        <div class="yrequest__pair">
+          <Field
+            lang={lang}
+            label={f.name.label}
+            name="name"
+            placeholder={f.name.placeholder}
+            autocomplete="name"
+            required
+          />
+          <Field
+            lang={lang}
+            label={f.email.label}
+            name="email"
+            type="email"
+            placeholder={f.email.placeholder}
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="yrequest__pair">
+          <Field
+            lang={lang}
+            label={f.phone.label}
+            name="phone"
+            type="tel"
+            placeholder={f.phone.placeholder}
+            autocomplete="tel"
+          />
+          <Field
+            lang={lang}
+            label={f.country.label}
+            name="country"
+            placeholder={f.country.placeholder}
+            autocomplete="country-name"
+          />
+        </div>
+        {fixed ? (
+          <Field lang={lang} label={f.budget.label} name="budget" options={budget} />
+        ) : (
+          <div class="yrequest__pair">
+            <Field
+              lang={lang}
+              label={f.size.label}
+              name="size"
+              options={[{ value: '', label: f.size.placeholder }, ...sizes]}
+            />
+            <Field lang={lang} label={f.budget.label} name="budget" options={budget} />
+          </div>
+        )}
+        <Field
+          lang={lang}
+          label={f.message.label}
+          name="message"
+          placeholder={f.message.placeholder}
+          textarea
+          minlength={30}
+          required
+        />
+        <Consent lang={lang} label={fill(f.consent)} />
+      </Form>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initYachtRequest } from '../../../scripts/yachts';
+  initYachtRequest();
+</script>
+
+<style>
+  .yrequest__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .yrequest__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .yrequest__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .yrequest__pair {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  /* «Yacht : Aurora · 45 m — Changer» над формою. */
+  .ychoice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-btn);
+  }
+  .ychoice[hidden],
+  .yrequest__form:has(form[hidden]) .ychoice {
+    display: none; /* після «Merci» рядок вибору вже не потрібен */
+  }
+  .ychoice__change {
+    min-height: 2.75rem;
+    color: var(--color-text-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .ychoice__change:hover {
+      color: var(--color-text);
+    }
+  }
+  @media (min-width: 768px) {
+    .yrequest__pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+  @media (min-width: 1024px) {
+    .yrequest__row {
+      display: grid;
+      grid-template-columns: minmax(0, 440fr) minmax(0, 744fr);
+      align-items: start;
+      gap: var(--space-24);
+    }
+    .yrequest__text {
+      gap: var(--space-5);
+    }
+  }
+</style>

@@ -14,7 +14,7 @@
     "mediaKitRequest": {
       "label": "Richiedi il media kit"
     },
-    "imageAlt": "Luigi Contessi in smoking davanti a un’auto sportiva rossa"
+    "imageAlt": "Luigi Contessi in smoking e occhiali da sole, davanti a un’auto sportiva rossa"
   },
   "audience": {
     "eyebrow": "Pubblico",
@@ -137,6 +137,85 @@
   },
   "referencesItems": {
     "logos": [],
-    "cases": []
-  }
+    "cases": [
+      {
+        "brand": "GAC",
+        "image": "../../../assets/img/partenariats/case-gac.jpg",
+        "position": "50% 22%",
+        "type": "",
+        "title": "",
+        "alt": "Luigi Contessi per la campagna GAC",
+        "results": []
+      },
+      {
+        "brand": "Golden Concept",
+        "image": "../../../assets/img/partenariats/case-golden-concept.jpg",
+        "position": "50% 65%",
+        "type": "",
+        "title": "",
+        "alt": "Luigi Contessi per la campagna Golden Concept",
+        "results": []
+      }
+    ]
+  },
+  "proposal": {
+    "eyebrow": "Proponi un progetto",
+    "title": "Parliamo del tuo marchio",
+    "body": "Leggo ogni proposta. Più il brief è preciso, più lo sarà la mia risposta.",
+    "form": {
+      "brand": {
+        "label": "Marchio",
+        "placeholder": "Nome del marchio"
+      },
+      "site": {
+        "label": "Sito web",
+        "placeholder": "www."
+      },
+      "name": {
+        "label": "Il tuo nome",
+        "placeholder": "Nome Cognome"
+      },
+      "email": {
+        "label": "E-mail",
+        "placeholder": "tu@marchio.com"
+      },
+      "type": {
+        "legend": "Tipo di collaborazione",
+        "options": {
+          "contenus": "Contenuti Instagram",
+          "ambassadeur": "Ambassador",
+          "evenement": "Evento",
+          "sur-mesure": "Su misura"
+        }
+      },
+      "budget": {
+        "label": "Budget",
+        "placeholder": "Scegli",
+        "options": [
+          "Meno di 5.000 €",
+          "5.000 – 15.000 €",
+          "15.000 – 50.000 €",
+          "Più di 50.000 €",
+          "Da discutere"
+        ]
+      },
+      "dates": {
+        "label": "Date desiderate"
+      },
+      "message": {
+        "label": "Messaggio",
+        "placeholder": "Obiettivo, prodotto, idee…"
+      },
+      "consent": "Accetto che le mie informazioni siano usate per rispondere alla mia richiesta.",
+      "submit": "Invia la proposta",
+      "thanks": {
+        "title": "Grazie per la tua proposta.",
+        "text": "Leggo ogni brief. Se il progetto fa per me, ti rispondo via e-mail.",
+        "link": {
+          "label": "Torna alle collaborazioni"
+        }
+      }
+    }
+  },
+  "mediaKitPreview": "../../../assets/img/partenariats/media-kit.jpg"
 }

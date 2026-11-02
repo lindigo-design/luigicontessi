@@ -1,5 +1,6 @@
 /* Content: відступ --gutter, контент не ширший за --content-max (на 2560 поля ростуть).
-   Bleed: header, footer, hero — на всю ширину екрана, лише бічний відступ. */
+   Bleed: лише header і footer — на всю ширину екрана, бічний відступ. Hero: фото на всю ширину, а текст — у звичайному
+   .container, на одній лінії з секціями нижче. */
 .container {
   width: 100%;
   max-width: calc(var(--content-max) + 2 * var(--gutter));

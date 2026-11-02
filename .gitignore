@@ -9,3 +9,6 @@ public/api/_smtp_password.php
 
 # тимчасові архіви для перевірок
 .tmp-*
+
+# Оригінали відео (великі, HEVC) — не в git. Веб-версії лежать у public/video/.
+src/assets/video/

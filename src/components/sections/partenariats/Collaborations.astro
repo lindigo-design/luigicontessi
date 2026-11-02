@@ -53,6 +53,14 @@ const page = localizePath('partenariats', lang);
     border-radius: var(--radius-card);
     background: var(--color-card);
   }
+  /* Уся картка — посилання: розтягнуте ::after посилання має покрити картку, а не лише заголовок,
+     і лежати над текстом (клік по опису теж веде до форми). */
+  .ccard .ccard__title {
+    position: static;
+  }
+  .ccard :global(.hover-card__link::after) {
+    z-index: 1;
+  }
   .ccard__title {
     font-family: var(--font-body);
     font-size: var(--fs-title);

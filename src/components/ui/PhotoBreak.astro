@@ -1,0 +1,155 @@
+---
+// Фото-пауза на всю ширину між секціями (Contact → 08 Yachts 161:3054, Partenariats → 168:3077).
+// Без тексту; градієнт зверху й знизу в колір сусідніх секцій (fadeTop / fadeBottom), тож шва не видно.
+// Висота й кадр — набором варіантів (inline-стилі заборонені CSP):
+//   height 800 — 440 → 800 при 1440 → росте з шириною, не вище за вікно (Contact);
+//   height 516 — < 1024: 320 → 516; ≥ 1024: 516 при 1440, росте, не вище за вікно (Partenariats).
+// Mobile < 768: кадр 86% 50% (яхта в кадрі). Без паралакса.
+// Режим відео (video): замість фото — <video> без звуку по колу (Partenariats). Вантажиться й грає,
+// лише коли блок видно (src/scripts/autoplay-video.ts); зменшений рух / економія трафіку — лише постер.
+// Розміри, кадр (mobile 70% 50% — ніс яхти) і градієнт поверх — ті самі, що для фото.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  image?: ImageMetadata;
+  /** Відео замість фото: шляхи від кореня сайту (без base), напр. video/partenariats/yacht-1920.mp4. */
+  video?: { src: string; srcMobile?: string; poster: string };
+  /** Порожньо — декоративне фото (alt="" + aria-hidden). */
+  alt?: string;
+  height: 800 | 516;
+  positionDesktop?: '50% 50%' | '50% 33%';
+  /** Колір секції зверху / знизу: bg (--color-bg) або alt (--color-bg-alt); none — без градієнта з цього боку. */
+  fadeTop?: 'bg' | 'alt' | 'none';
+  fadeBottom?: 'bg' | 'alt';
+}
+const {
+  image,
+  video,
+  alt = '',
+  height,
+  positionDesktop = '50% 50%',
+  fadeTop = 'bg',
+  fadeBottom = 'bg',
+} = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const url = (path: string) => `${base}${path.replace(/^\//, '')}`;
+---
+
+<div
+  class:list={[
+    'photobreak',
+    `photobreak--h${height}`,
+    { 'photobreak--upper': positionDesktop === '50% 33%' },
+    `photobreak--top-${fadeTop}`,
+    `photobreak--bottom-${fadeBottom}`,
+    { 'photobreak--video': video },
+  ]}
+  aria-hidden={alt || video ? undefined : 'true'}
+>
+  {video ? (
+    <video
+      class="photobreak__img"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={url(video.poster)}
+      aria-hidden="true"
+      data-autoplay-video
+    >
+      {video.srcMobile && (
+        <source src={url(video.srcMobile)} type="video/mp4" media="(max-width: 767px)" />
+      )}
+      <source src={url(video.src)} type="video/mp4" />
+    </video>
+  ) : (
+    image && (
+      <Image
+        src={image}
+        alt={alt}
+        widths={[768, 1280, 1920, 2560]}
+        sizes="100vw"
+        loading="lazy"
+        class="photobreak__img"
+      />
+    )
+  )}
+</div>
+
+<script>
+  import { initAutoplayVideos } from '../../scripts/autoplay-video';
+  initAutoplayVideos();
+</script>
+
+<style>
+  .photobreak {
+    --top: var(--shade);
+    --bottom: var(--shade);
+    position: relative;
+    overflow: hidden;
+  }
+  .photobreak--top-alt {
+    --top: var(--shade-alt);
+  }
+  .photobreak--bottom-alt {
+    --bottom: var(--shade-alt);
+  }
+  .photobreak--h800 {
+    height: clamp(27.5rem, 55.5vw, 100svh);
+  }
+  .photobreak--h516 {
+    height: clamp(20rem, 60vw, 32.25rem);
+  }
+  .photobreak :global(.photobreak__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 86% 50%; /* mobile: яхта в кадрі */
+  }
+  .photobreak--video :global(.photobreak__img) {
+    display: block;
+    object-position: 70% 50%; /* mobile: ніс яхти в кадрі */
+  }
+  /* Градієнт: 100 % → 75 % → 0 на 0 / 6 / 20 % згори; 0 → 55 % → 90 % → 100 % на 60 / 80 / 93 / 100 % знизу. */
+  .photobreak::before,
+  .photobreak::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .photobreak::before {
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--top) / 1) 0%,
+      rgb(var(--top) / 0.75) 6%,
+      rgb(var(--top) / 0) 20%
+    );
+  }
+  .photobreak--top-none::before {
+    display: none;
+  }
+  .photobreak::after {
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--bottom) / 0) 60%,
+      rgb(var(--bottom) / 0.55) 80%,
+      rgb(var(--bottom) / 0.9) 93%,
+      rgb(var(--bottom) / 1) 100%
+    );
+  }
+  @media (min-width: 768px) {
+    .photobreak :global(.photobreak__img) {
+      object-position: 50% 50%;
+    }
+    .photobreak--upper :global(.photobreak__img) {
+      object-position: 50% 33%;
+    }
+  }
+  @media (min-width: 1024px) {
+    .photobreak--h516 {
+      height: min(100svh, max(32.25rem, 35.8vw));
+    }
+  }
+</style>

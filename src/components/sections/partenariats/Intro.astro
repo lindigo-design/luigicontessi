@@ -1,11 +1,12 @@
 ---
 // Figma: Partenariats → 01 Intro (desktop 47:393, mobile 48:439).
-// Desktop: текст 680 ліворуч (по центру висоти фото), фото 520 × 640 праворуч, проміжок 80.
+// Desktop: текст ліворуч (по центру висоти фото), портрет праворуч — 40 % контейнера (1440 → 512,
+// росте з екраном, як About на головній), пропорція 520 / 640, проміжок 80.
 // Mobile: фото зверху 358 × 400, далі текст і кнопки стовпчиком на всю ширину.
 // Media kit: є PDF — «Télécharger le media kit»; немає — «Demander le media kit» → форма (#proposer).
 import { Image } from 'astro:assets';
 import Button from '../../ui/Button.astro';
-import photo from '../../../assets/img/home/brands.jpg';
+import photo from '../../../assets/img/partenariats/intro.jpg';
 import type { PartenariatsData } from '../../../content.config';
 
 interface Props {
@@ -21,8 +22,8 @@ const { data, mediaKitUrl } = Astro.props;
     <Image
       src={photo}
       alt={data.imageAlt}
-      widths={[400, 716, 1040]}
-      sizes="(min-width: 1024px) 520px, 100vw"
+      widths={[400, 720, 1040, 1440]}
+      sizes="(min-width: 1024px) 40vw, 100vw"
       loading="eager"
       fetchpriority="high"
     />
@@ -58,8 +59,9 @@ const { data, mediaKitUrl } = Astro.props;
     aspect-ratio: 358 / 400;
     border-radius: var(--radius-card);
   }
+  /* Mobile / планшет: кадр нижчий за портрет — тримаємо обличчя в кадрі. */
   .pintro__img :global(img) {
-    object-position: 50% 22%; /* обличчя в кадрі */
+    object-position: 50% 22%;
   }
   .pintro__text {
     display: flex;
@@ -87,8 +89,7 @@ const { data, mediaKitUrl } = Astro.props;
   }
   @media (min-width: 1024px) {
     .pintro {
-      display: grid;
-      grid-template-columns: minmax(0, 680fr) minmax(0, 520fr);
+      flex-direction: row;
       align-items: center;
       gap: var(--space-20);
       padding-top: var(--space-24);
@@ -96,9 +97,15 @@ const { data, mediaKitUrl } = Astro.props;
     }
     .pintro__img {
       order: 2;
+      flex: 0 0 40%;
       aspect-ratio: 520 / 640;
     }
+    .pintro__img :global(img) {
+      object-position: 50% 50%;
+    }
     .pintro__text {
+      flex: 1;
+      min-width: 0;
       gap: var(--space-7);
     }
     .pintro__ctas {

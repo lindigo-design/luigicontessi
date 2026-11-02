@@ -35,7 +35,13 @@ const productHref = (product: string | undefined, fallback: string) => {
 };
 ---
 
-<BaseLayout lang={lang} title={page.seoTitle} description={page.seoDescription} header="overlay">
+<BaseLayout
+  lang={lang}
+  title={page.seoTitle}
+  description={page.seoDescription}
+  header="overlay"
+  current=""
+>
   <PromoBar slot="top" lang={lang} data={page.promo} />
   <Hero
     data={page.hero}

@@ -2,8 +2,10 @@
   "seoTitle": "Luigi Contessi — cars, watches, yachts, travel",
   "seoDescription": "Luigi Contessi shares what he chooses himself: cars, watches, yachts, hotels. Favourites, partner codes and the Contessi Collection.",
   "promo": {
-    "text": "Code LUIGI10 — 10% off your first order",
-    "code": "LUIGI10"
+    "label": "Code",
+    "code": "LUIGI10",
+    "offer": "10% off your first order",
+    "offerShort": "10% off 1st order"
   },
   "hero": {
     "eyebrow": "Luxury lifestyle curator",
@@ -62,18 +64,24 @@
     "items": [
       {
         "meta": "Print · [date]",
+        "image": "../../../assets/img/press/press-1.jpg",
+        "imagePosition": "50% 87%",
         "title": "[Article title]",
         "excerpt": "“[Short quote from the article, one sentence.]”",
         "action": "Read the article"
       },
       {
         "meta": "TV · [date]",
+        "image": "../../../assets/img/press/press-2.jpg",
+        "imagePosition": "50% 33%",
         "title": "[Report title]",
         "excerpt": "“[Short quote from the report, one sentence.]”",
         "action": "Watch"
       },
       {
         "meta": "Podcast · [date]",
+        "image": "../../../assets/img/press/press-3.jpg",
+        "imagePosition": "50% 90%",
         "title": "[Episode title]",
         "excerpt": "“[Short quote from the episode, one sentence.]”",
         "action": "Listen"

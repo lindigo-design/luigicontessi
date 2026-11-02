@@ -1,0 +1,151 @@
+{
+  "seoTitle": "Yachts à vendre — Luigi Contessi",
+  "seoDescription": "Yachts à vendre avec Luigi Contessi : visite, essai en mer, off-market. Un seul interlocuteur du premier contact à la signature.",
+  "hero": {
+    "eyebrow": "Yachts à vendre",
+    "title": "Du premier contact à la signature",
+    "body": "Je représente {partner} pour la vente de yachts. Je vous accompagne à chaque étape : visite, essai en mer, négociation, signature.",
+    "bodyMobile": "Je représente {partner} pour la vente de yachts. Je vous accompagne à chaque étape.",
+    "primary": {
+      "label": "Voir les yachts"
+    },
+    "secondary": {
+      "label": "Demander des informations"
+    },
+    "partner": "En partenariat avec",
+    "imageAlt": "Grand yacht au mouillage dans une crique au coucher du soleil (illustration)"
+  },
+  "process": {
+    "eyebrow": "Comment ça se passe",
+    "title": "Quatre étapes, un seul interlocuteur",
+    "steps": [
+      {
+        "title": "Votre demande",
+        "text": "Vous me dites ce que vous cherchez : taille, usage, budget, zone de navigation.",
+        "textShort": "Taille, usage, budget, zone de navigation."
+      },
+      {
+        "title": "Un appel",
+        "text": "Je vous rappelle et vous propose les yachts qui correspondent, y compris hors catalogue.",
+        "textShort": "Je vous propose les yachts qui correspondent."
+      },
+      {
+        "title": "Visite et essai",
+        "text": "On visite à quai, puis on sort en mer. Vous voyez le bateau vivre.",
+        "textShort": "À quai, puis en mer."
+      },
+      {
+        "title": "Signature",
+        "text": "La vente est conclue avec {partner}. Je reste votre contact jusqu’à la remise des clés.",
+        "textShort": "Avec {partner}. Je reste votre contact."
+      }
+    ]
+  },
+  "why": {
+    "eyebrow": "Pourquoi passer par moi",
+    "title": "Quelqu’un qui connaît les bateaux, et vous",
+    "items": [
+      {
+        "title": "Je monte à bord",
+        "text": "Je visite les yachts que je propose. Je vous dis ce que j’ai vu, pas seulement la fiche technique.",
+        "textShort": "Je visite les yachts que je propose."
+      },
+      {
+        "title": "Un seul contact",
+        "text": "Une personne du début à la fin. Pas de transfert d’un service à l’autre.",
+        "textShort": "Une personne du début à la fin."
+      },
+      {
+        "title": "Discrétion",
+        "text": "Vos échanges restent entre vous, {partner} et moi."
+      }
+    ]
+  },
+  "available": {
+    "eyebrow": "Disponibles",
+    "title": "Yachts à vendre",
+    "filters": {
+      "legend": "Filtrer par taille",
+      "all": "Tous",
+      "lt30": "Moins de 30 m",
+      "30-50": "30 – 50 m",
+      "gt50": "Plus de 50 m"
+    },
+    "featured": "À la une",
+    "empty": "Aucun yacht dans cette taille pour le moment.",
+    "emptyLink": "Demandez l’off-market.",
+    "offMarket": {
+      "eyebrow": "Off-market",
+      "title": "Certains yachts ne sont pas publiés",
+      "text": "Les propriétaires préfèrent souvent la discrétion. Dites-moi ce que vous cherchez, je vous présente ce qui n’est pas en ligne.",
+      "textShort": "Dites-moi ce que vous cherchez, je vous présente ce qui n’est pas en ligne.",
+      "cta": {
+        "label": "Demander l’accès"
+      }
+    }
+  },
+  "seller": {
+    "eyebrow": "Le vendeur",
+    "link": "Site de {name}"
+  },
+  "request": {
+    "eyebrow": "Demande",
+    "title": "Parlons de votre projet",
+    "body": "Je vous réponds personnellement. Toutes les informations restent confidentielles.",
+    "form": {
+      "name": {
+        "label": "Nom",
+        "placeholder": "Votre nom"
+      },
+      "email": {
+        "label": "E-mail",
+        "placeholder": "vous@exemple.com"
+      },
+      "phone": {
+        "label": "Téléphone",
+        "placeholder": "+33 …"
+      },
+      "country": {
+        "label": "Pays",
+        "placeholder": "France"
+      },
+      "size": {
+        "label": "Taille recherchée",
+        "placeholder": "Choisir",
+        "options": {
+          "lt30": "Moins de 30 m",
+          "30-50": "30 – 50 m",
+          "gt50": "Plus de 50 m",
+          "unknown": "Je ne sais pas encore"
+        }
+      },
+      "budget": {
+        "label": "Budget",
+        "placeholder": "Choisir",
+        "options": [
+          "Moins de 5 M€",
+          "5 – 15 M€",
+          "15 – 40 M€",
+          "Plus de 40 M€",
+          "Je préfère en parler"
+        ]
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Ce que vous cherchez, vos dates, vos questions…"
+      },
+      "consent": "J’accepte que mes informations soient transmises à {partner} pour traiter ma demande.",
+      "submit": "Envoyer la demande",
+      "yacht": "Yacht",
+      "offMarket": "Accès off-market",
+      "change": "Changer",
+      "thanks": {
+        "title": "Merci, c’est envoyé.",
+        "text": "Je vous rappelle personnellement pour parler de votre projet. Vos informations ont été transmises à {partner}.",
+        "link": {
+          "label": "Voir les autres yachts"
+        }
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@
     "mediaKitRequest": {
       "label": "Request the media kit"
     },
-    "imageAlt": "Luigi Contessi in a tuxedo in front of a red sports car"
+    "imageAlt": "Luigi Contessi in a tuxedo and sunglasses, in front of a red sports car"
   },
   "audience": {
     "eyebrow": "Audience",
@@ -137,6 +137,85 @@
   },
   "referencesItems": {
     "logos": [],
-    "cases": []
-  }
+    "cases": [
+      {
+        "brand": "GAC",
+        "image": "../../../assets/img/partenariats/case-gac.jpg",
+        "position": "50% 22%",
+        "type": "",
+        "title": "",
+        "alt": "Luigi Contessi for the GAC campaign",
+        "results": []
+      },
+      {
+        "brand": "Golden Concept",
+        "image": "../../../assets/img/partenariats/case-golden-concept.jpg",
+        "position": "50% 65%",
+        "type": "",
+        "title": "",
+        "alt": "Luigi Contessi for the Golden Concept campaign",
+        "results": []
+      }
+    ]
+  },
+  "proposal": {
+    "eyebrow": "Suggest a project",
+    "title": "Let’s talk about your brand",
+    "body": "I read every proposal. The clearer the brief, the clearer my answer.",
+    "form": {
+      "brand": {
+        "label": "Brand",
+        "placeholder": "Brand name"
+      },
+      "site": {
+        "label": "Website",
+        "placeholder": "www."
+      },
+      "name": {
+        "label": "Your name",
+        "placeholder": "First and last name"
+      },
+      "email": {
+        "label": "E-mail",
+        "placeholder": "you@brand.com"
+      },
+      "type": {
+        "legend": "Type of collaboration",
+        "options": {
+          "contenus": "Instagram content",
+          "ambassadeur": "Ambassador",
+          "evenement": "Event",
+          "sur-mesure": "Made to measure"
+        }
+      },
+      "budget": {
+        "label": "Budget",
+        "placeholder": "Choose",
+        "options": [
+          "Under €5,000",
+          "€5,000 – €15,000",
+          "€15,000 – €50,000",
+          "Over €50,000",
+          "To be discussed"
+        ]
+      },
+      "dates": {
+        "label": "Preferred dates"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Goal, product, ideas…"
+      },
+      "consent": "I agree that my information is used to reply to my request.",
+      "submit": "Send the proposal",
+      "thanks": {
+        "title": "Thank you for your proposal.",
+        "text": "I read every brief. If the project is right for me, I’ll get back to you by e-mail.",
+        "link": {
+          "label": "Back to partnerships"
+        }
+      }
+    }
+  },
+  "mediaKitPreview": "../../../assets/img/partenariats/media-kit.jpg"
 }

@@ -1,0 +1,89 @@
+---
+// Кроки «01 → назва → текст» з лінією зверху: Partenariats → Méthode, Yachts → Comment ça se passe.
+// Desktop — 4 в ряд (768–1023 — 2 × 2); mobile — рядок «номер + назва й текст».
+// Номери світлі, як у Figma (червоний — лише для дій і eyebrow). textShort — коротший текст на mobile.
+interface Props {
+  steps: { title: string; text: string; textShort?: string }[];
+}
+const { steps } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol class="steps" role="list">
+  {steps.map((s, i) => (
+    <li class="step">
+      <span class="step__num" aria-hidden="true">
+        {pad(i + 1)}
+      </span>
+      <span class="step__body">
+        <span class="title">{s.title}</span>
+        {s.textShort ? (
+          <>
+            <span class="step__text step__text--short text-s text-2">{s.textShort}</span>
+            <span class="step__text step__text--long text-s text-2">{s.text}</span>
+          </>
+        ) : (
+          <span class="step__text text-s text-2">{s.text}</span>
+        )}
+      </span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    gap: 0;
+  }
+  .step {
+    display: flex;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+  .step__num {
+    flex: none;
+    min-width: 1.75rem;
+    font-family: var(--font-display);
+    font-size: var(--fs-title);
+    line-height: 1.444;
+    font-variant-numeric: tabular-nums;
+  }
+  .step__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .step__text--long {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-8) var(--space-6);
+    }
+    .step {
+      flex-direction: column;
+      gap: var(--space-3);
+      padding-block: var(--space-6) 0;
+    }
+    .step__num {
+      font-size: var(--fs-h3);
+      line-height: var(--lh-h3);
+    }
+    .step__body {
+      gap: var(--space-3);
+    }
+    .step__text--long {
+      display: inline;
+    }
+    .step__text--short {
+      display: none;
+    }
+  }
+  @media (min-width: 1024px) {
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

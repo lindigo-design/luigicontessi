@@ -1,16 +1,36 @@
 ---
-// Figma: 00 Promo bar — код Luigi з кнопкою «Copier».
+// Figma: Home → 00 Promo bar (desktop 3:3, mobile 6:186). «Code» · купон LUIGI10 · умова · «Copier».
+// Купон — пунктирна рамка (звична ознака промокоду; червоний у нас — дія) і теж копіює код
+// (src/scripts/copy.ts): на телефоні це найзручніше місце, куди тицьнути. «Copier» — Link без кола-стрілки.
+// Mobile (< 768): «Code» лише для читалки, умова коротша; усе в один рядок.
 import Button from '../ui/Button.astro';
 import { t, type Locale } from '../../i18n/utils';
+import type { HomeData } from '../../content.config';
+
 interface Props {
   lang: Locale;
-  data: { text: string; code: string };
+  data: HomeData['promo'];
 }
 const { lang, data } = Astro.props;
 ---
 
 <aside class="promo">
-  <p class="text-s">{data.text}</p>
+  <p class="promo__offer text-s text-2">
+    <span class="promo__label">{data.label}</span>
+    <button
+      class="promo__code"
+      type="button"
+      title={t('ui.copyCode', lang)}
+      data-copy={data.code}
+      data-copied={t('ui.copied', lang)}
+    >
+      <span class="btn__label">{data.code}</span>
+    </button>
+    <span class="promo__long">{data.offer}</span>
+    <span class="promo__short" aria-hidden="true">
+      {data.offerShort}
+    </span>
+  </p>
   <Button variant="link" data-copy={data.code} data-copied={t('ui.copied', lang)}>
     {t('ui.copy', lang)}
   </Button>
@@ -23,14 +43,73 @@ const { lang, data } = Astro.props;
     justify-content: center;
     gap: var(--space-3);
     min-height: var(--promo-h);
-    padding: 0.625rem var(--gutter);
+    padding: 0.125rem var(--gutter); /* «Copier» — зона дотику 44 px; смуга 48 px */
     background: var(--color-bg-alt);
-    text-align: center;
+    white-space: nowrap;
+  }
+  .promo__offer {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem; /* 10 */
+    min-width: 0;
+  }
+  /* Купон: Label/Button, пунктирна рамка --color-text. */
+  .promo__code {
+    padding: 0.3125rem 0.625rem; /* 5 / 10 */
+    border: 1px dashed var(--color-text);
+    border-radius: var(--radius-btn);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    line-height: 1.23;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    white-space: nowrap;
+    transition: background-color var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .promo__code:hover {
+      background: var(--color-hover-tint);
+    }
+  }
+  .promo__code:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+    background: var(--color-hover-tint);
+  }
+  /* Mobile: «Code» лише для читалки, коротка умова. */
+  .promo__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .promo__long {
+    display: none;
+  }
+  .promo__short {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   @media (min-width: 768px) {
     .promo {
       gap: var(--space-4);
-      padding-block: var(--space-3);
+      padding-block: var(--space-1); /* 44 + 4 + 4 = 52, як у Figma */
+    }
+    .promo__label {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
+    }
+    .promo__long {
+      display: inline;
+    }
+    .promo__short {
+      display: none;
     }
   }
 </style>

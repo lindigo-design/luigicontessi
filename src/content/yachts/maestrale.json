@@ -1,0 +1,17 @@
+{
+  "slug": "maestrale",
+  "name": "Maestrale",
+  "length": 24,
+  "year": null,
+  "cabins": null,
+  "price": null,
+  "featured": false,
+  "image": "../../assets/img/yachts/yacht-1.jpg",
+  "imageAlt": {
+    "fr": "Yacht en mer (illustration)",
+    "en": "Yacht at sea (illustration)",
+    "it": "Yacht in mare (illustrazione)"
+  },
+  "demo": true,
+  "order": 2
+}

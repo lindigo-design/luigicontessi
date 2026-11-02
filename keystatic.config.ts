@@ -22,7 +22,12 @@ const homeSchema = {
   seoTitle: txt('SEO: заголовок для Google (≤ 70)', { max: 70 }),
   seoDescription: txt('SEO: опис для Google (≤ 170)', { multiline: true, max: 170 }),
   promo: fields.object(
-    { text: txt('Текст смуги'), code: txt('Код, який копіюється') },
+    {
+      label: txt('Слово перед кодом («Code»)'),
+      code: txt('Код, який копіюється'),
+      offer: txt('Умова'),
+      offerShort: txt('Умова коротко (mobile)'),
+    },
     { label: '0 · Промо-смуга' },
   ),
   hero: fields.object(
@@ -67,6 +72,12 @@ const homeSchema = {
       items: list(
         fields.object({
           meta: txt('Тип · дата'),
+          image: fields.image({
+            label: 'Фото (необовʼязково; з публікації або кадр з репортажу)',
+            directory: 'src/assets/img/press',
+            publicPath: '../../../assets/img/press/',
+          }),
+          imagePosition: optional('Кадр фото, напр. «50% 87%» (порожньо — центр)'),
           title: txt('Назва'),
           excerpt: txt('Цитата', { multiline: true }),
           action: txt('Напис посилання'),
@@ -621,14 +632,15 @@ const partenariatsSchema = {
       cases: list(
         fields.object({
           brand: txt('Марка'),
-          type: txt('Тип співпраці'),
-          title: txt('Назва кампанії'),
+          type: optional('Тип співпраці (порожньо — лише марка)'),
+          title: optional('Назва кампанії (порожньо — заголовок = марка)'),
           image: fields.image({
             label: 'Фото 628 × 380',
             directory: 'src/assets/img/partenariats',
             publicPath: '../../../assets/img/partenariats/',
             validation: { isRequired: true },
           }),
+          position: optional('Кадр фото, напр. «50% 22%» (порожньо — центр)'),
           alt: optional('Опис фото для незрячих'),
           results: list(
             fields.object({ value: txt('Число (120 k)'), label: txt('Підпис (vues)') }),
@@ -656,6 +668,73 @@ const partenariatsSchema = {
     },
     { label: '06 · Media kit' },
   ),
+  proposal: fields.object(
+    {
+      eyebrow: txt('Підпис'),
+      title: txt('Заголовок'),
+      body: txt('Текст', { multiline: true }),
+      form: fields.object(
+        {
+          brand: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Marque' },
+          ),
+          site: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Site web' },
+          ),
+          name: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Votre nom' },
+          ),
+          email: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'E-mail' },
+          ),
+          type: fields.object(
+            {
+              legend: txt('Підпис'),
+              options: fields.object(
+                {
+                  contenus: txt('Contenus Instagram'),
+                  ambassadeur: txt('Ambassadeur'),
+                  evenement: txt('Événement'),
+                  'sur-mesure': txt('Sur mesure'),
+                },
+                { label: 'Чипи' },
+              ),
+            },
+            { label: 'Type de collaboration' },
+          ),
+          budget: fields.object(
+            {
+              label: txt('Підпис'),
+              placeholder: txt('Перший пункт («Choisir»)'),
+              options: list(txt('Діапазон'), 'Діапазони (узгодити з Luigi)', (p) => p.value),
+            },
+            { label: 'Budget' },
+          ),
+          dates: fields.object({ label: txt('Підпис') }, { label: 'Dates souhaitées' }),
+          message: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Message' },
+          ),
+          consent: txt('Текст згоди', { multiline: true }),
+          submit: txt('Кнопка'),
+          thanks: fields.object(
+            {
+              title: txt('Заголовок'),
+              text: txt('Текст', { multiline: true }),
+              link: link('Посилання'),
+            },
+            { label: '«Merci» після надсилання' },
+          ),
+        },
+        { label: 'Форма' },
+      ),
+    },
+    { label: '07 · Proposer un projet' },
+  ),
   mediaKitPreview: fields.image({
     label: 'Прев’ю media kit 360 × 240 (необовʼязково)',
     directory: 'src/assets/img/partenariats',
@@ -669,6 +748,172 @@ const partenariatsPage = (lang: 'fr' | 'en' | 'it') =>
     path: `src/content/pages/${lang}/partenariats`,
     format: { data: 'json' },
     schema: partenariatsSchema,
+  });
+
+// Сторінка «Yachts» (секції додаються по кроках). {partner} — назва продавця з «Сайт → Продавець яхт».
+const yachtsPageSchema = {
+  seoTitle: txt('SEO: заголовок для Google (≤ 70)', { max: 70 }),
+  seoDescription: txt('SEO: опис для Google (≤ 170)', { multiline: true, max: 170 }),
+  hero: fields.object(
+    {
+      eyebrow: txt('Підпис'),
+      title: txt('Заголовок H1'),
+      body: txt('Текст (desktop; {partner} — продавець)', { multiline: true }),
+      bodyMobile: txt('Текст на телефоні (коротше)', { multiline: true }),
+      primary: link('Кнопка «Voir les yachts»'),
+      secondary: link('Кнопка «Demander des informations»'),
+      partner: txt('Підпис над логотипом («En partenariat avec»)'),
+      imageAlt: optional('Опис фото для незрячих'),
+    },
+    { label: '01 · Hero' },
+  ),
+  available: fields.object(
+    {
+      eyebrow: txt('Підпис'),
+      title: txt('Заголовок'),
+      filters: fields.object(
+        {
+          legend: txt('Підпис для читалки («Filtrer par taille»)'),
+          all: txt('Усі'),
+          lt30: txt('Менше 30 м'),
+          '30-50': txt('30 – 50 м'),
+          gt50: txt('Більше 50 м'),
+        },
+        { label: 'Фільтри' },
+      ),
+      featured: txt('Підпис «À la une»'),
+      empty: txt('Фільтр нічого не знайшов'),
+      emptyLink: txt('Посилання на Off-market (після тексту)'),
+      offMarket: fields.object(
+        {
+          eyebrow: txt('Підпис'),
+          title: txt('Заголовок'),
+          text: txt('Текст', { multiline: true }),
+          textShort: optional('Текст на телефоні (коротше)', true),
+          cta: link('Кнопка'),
+        },
+        { label: 'Off-market' },
+      ),
+    },
+    { label: '03 · Yachts disponibles (самі яхти — у «Яхти»)' },
+  ),
+  request: fields.object(
+    {
+      eyebrow: txt('Підпис'),
+      title: txt('Заголовок'),
+      body: txt('Текст', { multiline: true }),
+      form: fields.object(
+        {
+          name: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Nom' },
+          ),
+          email: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'E-mail' },
+          ),
+          phone: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Téléphone' },
+          ),
+          country: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Pays' },
+          ),
+          size: fields.object(
+            {
+              label: txt('Підпис'),
+              placeholder: txt('Перший пункт («Choisir»)'),
+              options: fields.object(
+                {
+                  lt30: txt('Менше 30 м'),
+                  '30-50': txt('30 – 50 м'),
+                  gt50: txt('Більше 50 м'),
+                  unknown: txt('Ще не знаю'),
+                },
+                { label: 'Варіанти' },
+              ),
+            },
+            { label: 'Taille recherchée' },
+          ),
+          budget: fields.object(
+            {
+              label: txt('Підпис'),
+              placeholder: txt('Перший пункт («Choisir»)'),
+              options: list(txt('Діапазон'), 'Діапазони (узгодити з Luigi)', (p) => p.value),
+            },
+            { label: 'Budget' },
+          ),
+          message: fields.object(
+            { label: txt('Підпис'), placeholder: txt('Підказка в полі') },
+            { label: 'Message' },
+          ),
+          consent: txt('Текст згоди ({partner} — продавець)', { multiline: true }),
+          submit: txt('Кнопка'),
+          yacht: txt('Підпис вибраної яхти («Yacht»)'),
+          offMarket: txt('Тема off-market («Accès off-market»)'),
+          change: txt('Кнопка «Changer»'),
+          thanks: fields.object(
+            {
+              title: txt('Заголовок'),
+              text: txt('Текст ({partner} — продавець)', { multiline: true }),
+              link: link('Посилання («Voir les autres yachts»)'),
+            },
+            { label: '«Merci» після надсилання' },
+          ),
+        },
+        { label: 'Форма' },
+      ),
+    },
+    { label: '06 · Demande' },
+  ),
+  seller: fields.object(
+    {
+      eyebrow: txt('Підпис («Le vendeur»)'),
+      link: txt('Посилання на сайт ({name} — назва продавця)'),
+    },
+    { label: '05 · Le vendeur (дані — «Сайт → Продавець яхт»)' },
+  ),
+  process: fields.object(
+    {
+      eyebrow: txt('Підпис'),
+      title: txt('Заголовок'),
+      steps: list(
+        fields.object({
+          title: txt('Назва'),
+          text: txt('Текст ({partner} — продавець)', { multiline: true }),
+          textShort: optional('Коротший текст на телефоні', true),
+        }),
+        'Кроки (4)',
+        (p) => p.fields.title.value,
+      ),
+    },
+    { label: '02 · Comment ça se passe' },
+  ),
+  why: fields.object(
+    {
+      eyebrow: txt('Підпис'),
+      title: txt('Заголовок'),
+      items: list(
+        fields.object({
+          title: txt('Назва'),
+          text: txt('Текст ({partner} — продавець)', { multiline: true }),
+          textShort: optional('Коротший текст на телефоні', true),
+        }),
+        'Пункти (3)',
+        (p) => p.fields.title.value,
+      ),
+    },
+    { label: '04 · Pourquoi passer par moi' },
+  ),
+};
+
+const yachtsPageSingleton = (lang: 'fr' | 'en' | 'it') =>
+  singleton({
+    label: `Yachts · ${lang.toUpperCase()}`,
+    path: `src/content/pages/${lang}/yachts`,
+    format: { data: 'json' },
+    schema: yachtsPageSchema,
   });
 
 const privilegesPage = (lang: 'fr' | 'en' | 'it') =>
@@ -694,6 +939,7 @@ export default config({
     navigation: {
       Головна: ['homeFr', 'homeEn', 'homeIt'],
       Магазин: ['products'],
+      Яхти: ['yachtsFr', 'yachtsEn', 'yachtsIt', 'yachts'],
       Privilèges: ['privilegesFr', 'privilegesEn', 'privilegesIt', 'codes'],
       Contact: ['contactFr', 'contactEn', 'contactIt'],
       Partenariats: ['partenariatsFr', 'partenariatsEn', 'partenariatsIt'],
@@ -707,6 +953,167 @@ export default config({
       slugField: 'id',
       format: { data: 'json' },
       schema: codeSchema,
+    }),
+    yachts: collection({
+      label: 'Яхти',
+      path: 'src/content/yachts/*',
+      slugField: 'slug',
+      format: { data: 'json' },
+      schema: {
+        slug: fields.text({ label: 'slug (латиницею, як назва файлу)' }),
+        name: txt('Назва яхти (не перекладається)'),
+        length: fields.number({ label: 'Довжина, м', validation: { isRequired: true } }),
+        year: fields.integer({ label: 'Рік (порожньо — «—»)' }),
+        cabins: fields.integer({ label: 'Каюти (порожньо — «—»)' }),
+        price: fields.number({ label: 'Ціна, € (порожньо — «Sur demande»)' }),
+        featured: fields.checkbox({ label: '«À la une» (лише одна яхта)' }),
+        image: fields.image({
+          label: 'Фото',
+          directory: 'src/assets/img/yachts',
+          publicPath: '../../assets/img/yachts/',
+          validation: { isRequired: true },
+        }),
+        imageAlt: fields.object(
+          { fr: optional('FR'), en: optional('EN'), it: optional('IT') },
+          { label: 'Опис фото для незрячих' },
+        ),
+        demo: fields.checkbox({ label: 'Демо (ілюстрація для презентації, не справжня яхта)' }),
+        order: fields.integer({ label: 'Порядок (1, 2, 3…)' }),
+        // ---- Fiche yacht. Порожнє поле — рядок / секція на сторінці схована.
+        builder: optional('Верф (chantier)'),
+        architect: optional('Архітектор'),
+        refit: fields.integer({ label: 'Рік переобладнання (refit)' }),
+        beam: fields.number({ label: 'Ширина, м' }),
+        draft: fields.number({ label: 'Осадка, м' }),
+        guests: fields.integer({ label: 'Гостей' }),
+        crew: fields.integer({ label: 'Екіпаж' }),
+        cruiseSpeed: fields.number({ label: 'Крейсерська швидкість, вузлів' }),
+        engines: optional('Двигуни'),
+        flag: fields.object(
+          { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+          { label: 'Прапор (pavillon)' },
+        ),
+        port: fields.object(
+          { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+          { label: 'Порт базування' },
+        ),
+        headline: fields.object(
+          { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+          { label: 'Заголовок «Le yacht»' },
+        ),
+        intro: fields.object(
+          { fr: optional('FR', true), en: optional('EN', true), it: optional('IT', true) },
+          { label: 'Вступ (≤ 220 символів)' },
+        ),
+        summaryTitle: fields.object(
+          { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+          { label: 'Заголовок «Résumé»' },
+        ),
+        gallery: fields.array(
+          fields.object({
+            image: fields.image({
+              label: 'Фото',
+              directory: 'src/assets/img/yachts',
+              publicPath: '../../assets/img/yachts/',
+            }),
+            label: fields.object(
+              { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+              { label: 'Підпис (для заглушки в демо)' },
+            ),
+          }),
+          {
+            label: '3 фото біля головного',
+            itemLabel: (p) => p.fields.label.fields.fr.value || 'Фото',
+          },
+        ),
+        interiors: fields.array(
+          fields.object({
+            image: fields.image({
+              label: 'Фото',
+              directory: 'src/assets/img/yachts',
+              publicPath: '../../assets/img/yachts/',
+            }),
+            title: fields.object(
+              { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+              { label: 'Назва кімнати' },
+            ),
+            deck: fields.object(
+              { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+              { label: 'Палуба' },
+            ),
+          }),
+          {
+            label: 'Інтерʼєри «À bord»',
+            itemLabel: (p) => p.fields.title.fields.fr.value || 'Фото',
+          },
+        ),
+        decks: fields.array(
+          fields.object({
+            id: fields.text({ label: 'id (main, lower, flybridge…)' }),
+            label: fields.object(
+              { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+              { label: 'Назва палуби' },
+            ),
+            plan: fields.image({
+              label: 'План палуби (SVG, світлі лінії)',
+              directory: 'src/assets/img/yachts/plans',
+              publicPath: '../../assets/img/yachts/plans/',
+            }),
+          }),
+          {
+            label: 'Плани палуб',
+            itemLabel: (p) => p.fields.label.fields.fr.value || p.fields.id.value,
+          },
+        ),
+        video: fields.object(
+          {
+            src: optional('Повне відео (video/yachts/<slug>/visite.mp4)'),
+            poster: optional('Постер (video/yachts/<slug>/poster.jpg)'),
+            teaser: optional('Тизер без звуку (video/yachts/<slug>/teaser.mp4)'),
+            duration: fields.number({ label: 'Тривалість, хв' }),
+            chapters: fields.array(
+              fields.object({
+                t: fields.number({ label: 'Початок, секунд' }),
+                label: fields.object(
+                  {
+                    fr: optional('FR', false),
+                    en: optional('EN', false),
+                    it: optional('IT', false),
+                  },
+                  { label: 'Назва розділу' },
+                ),
+              }),
+              {
+                label: 'Розділи',
+                itemLabel: (p) => p.fields.label.fields.fr.value || String(p.fields.t.value),
+              },
+            ),
+            captions: fields.object(
+              { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+              { label: 'Субтитри .vtt (шлях для кожної мови)' },
+            ),
+          },
+          { label: 'Відеовізит' },
+        ),
+        luigiWord: fields.object(
+          { fr: optional('FR', true), en: optional('EN', true), it: optional('IT', true) },
+          { label: 'Слово Luigi (цитата)' },
+        ),
+        sheetPdf: optional('Fiche technique PDF (yachts/<slug>.pdf у public/)'),
+        seo: fields.object(
+          {
+            title: fields.object(
+              { fr: optional('FR', false), en: optional('EN', false), it: optional('IT', false) },
+              { label: 'SEO: заголовок' },
+            ),
+            description: fields.object(
+              { fr: optional('FR', true), en: optional('EN', true), it: optional('IT', true) },
+              { label: 'SEO: опис' },
+            ),
+          },
+          { label: 'SEO' },
+        ),
+      },
     }),
     products: collection({
       label: 'Товари',
@@ -723,6 +1130,9 @@ export default config({
     privilegesFr: privilegesPage('fr'),
     privilegesEn: privilegesPage('en'),
     privilegesIt: privilegesPage('it'),
+    yachtsFr: yachtsPageSingleton('fr'),
+    yachtsEn: yachtsPageSingleton('en'),
+    yachtsIt: yachtsPageSingleton('it'),
     contactFr: contactPage('fr'),
     contactEn: contactPage('en'),
     contactIt: contactPage('it'),
@@ -753,6 +1163,9 @@ export default config({
           {
             shop: fields.checkbox({ label: 'Магазин увімкнено (Boutique, Panier, CGV)' }),
             currencySwitch: fields.checkbox({ label: 'Перемикач валют EUR / USD' }),
+            yachtDemo: fields.checkbox({
+              label: 'Демо-яхти (ілюстрації для презентації). На живому сайті — вимкнути!',
+            }),
           },
           { label: 'Функції' },
         ),
@@ -816,8 +1229,30 @@ export default config({
             contact: fields.text({ label: 'Contact (загальні питання)' }),
             press: fields.text({ label: 'Presse' }),
             partnerships: fields.text({ label: 'Partenariats (бренди)' }),
+            yachts: fields.text({ label: 'Yachts (заявки на яхти)' }),
           },
           { label: 'Пошта (порожньо — «[e-mail]» на сайті)' },
+        ),
+        yachtPartner: fields.object(
+          {
+            name: fields.text({
+              label: 'Назва компанії-продавця (порожньо — «mon partenaire», секція схована)',
+            }),
+            logo: fields.text({ label: 'Логотип: файл у src/assets/img/yachts/partner/' }),
+            url: fields.url({ label: 'Сайт продавця' }),
+            about: fields.object(
+              {
+                fr: fields.text({ label: 'FR', multiline: true }),
+                en: fields.text({ label: 'EN', multiline: true }),
+                it: fields.text({ label: 'IT', multiline: true }),
+              },
+              { label: 'Про продавця' },
+            ),
+            legal: fields.text({
+              label: 'Юридичні дані: raison sociale · adresse · immatriculation',
+            }),
+          },
+          { label: 'Продавець яхт' },
         ),
       },
     }),

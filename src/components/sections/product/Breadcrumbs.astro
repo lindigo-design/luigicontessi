@@ -1,15 +1,17 @@
 ---
-// Хлібні крихти сторінки товару. Магазин вимкнено — без «Boutique».
+// Хлібні крихти: сторінка товару (магазин вимкнено — без «Boutique») або власні пункти (сторінка яхти).
 import { localizePath, t, type Locale } from '../../../i18n/utils';
 
 interface Props {
   lang: Locale;
-  shop: boolean;
+  shop?: boolean;
   name: string;
+  /** Пункти перед поточною сторінкою; без них — «Boutique / Collection» (товар). */
+  items?: { label: string; href: string }[];
 }
-const { lang, shop, name } = Astro.props;
+const { lang, shop = false, name, items: custom } = Astro.props;
 const to = (p: string) => localizePath(p, lang);
-const items = [
+const items = custom ?? [
   ...(shop ? [{ label: t('nav.shop', lang), href: to('boutique') }] : []),
   { label: t('nav.collection', lang), href: to('collection') },
 ];

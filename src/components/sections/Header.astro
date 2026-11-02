@@ -28,11 +28,15 @@ const to = (p: string) => localizePath(p, lang);
 const primary = menuPrimary(shop);
 // Фото праворуч за замовчуванням: пункт поточної сторінки, інакше Yachts.
 const currentIndex = primary.findIndex((i) => i.path === current);
-const defaultPreview = currentIndex >= 0 ? currentIndex : 1;
+const defaultPreview =
+  currentIndex >= 0
+    ? currentIndex
+    : Math.max(
+        0,
+        primary.findIndex((i) => i.path === 'yachts'),
+      );
 // Купон унизу меню — той самий код, що в промо-смузі: «Code» · LUIGI10 · умова.
 const promo = (await getHome(lang)).promo;
-const [promoLabel = '', promoRest = ''] = promo.text.split(promo.code);
-const promoOffer = promoRest.replace(/^\s*[—–-]\s*/, '');
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
@@ -181,7 +185,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
         </a>
         <p class="menu__code text-s text-2">
-          <span>{promoLabel.trim()}</span>
+          <span>{promo.label}</span>
           <button
             class="menu__chip"
             type="button"
@@ -190,7 +194,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           >
             <span class="btn__label">{promo.code}</span>
           </button>
-          <span>{promoOffer}</span>
+          <span>{promo.offer}</span>
         </p>
         <!-- Mobile: замість рядка «Instagram» і купона — кнопка «Suivre @contessiluigi». -->
         <Button href={settings.instagramUrl} variant="accent" external class="menu__follow">
@@ -457,7 +461,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       background-color var(--dur) var(--ease);
   }
   .menu__primary:has(.mitem:hover, .mitem:focus-visible) .mitem:not(:hover):not(:focus-visible) {
-    color: var(--color-text-2); /* #d4d1cb на #161616 ≈ 12 : 1 — читається */
+    color: var(--color-text-2); /* #bbb8b4 на #161616 ≈ 9.5 : 1 — читається */
   }
   .mitem:hover :global(.arrow),
   .mitem:focus-visible :global(.arrow) {

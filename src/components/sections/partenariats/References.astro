@@ -2,23 +2,67 @@
 // Figma: Partenariats → 05 Références (desktop 47:524). Логотипи марок (сітка 6 × 2, mobile 3 × 2,
 // світлі монохромні, hover — яскравіші) і до 2 кейсів. Порожньо — блок схований;
 // і логотипів, і кейсів немає — вся секція схована (рішення — на сторінці).
+// Кейс: фото 628 × 464 → «GAC · Ambassadeur» → назва кампанії → результати. Немає назви — заголовок =
+// марка, мета-рядок не показуємо. Кадр фото (position з даних) — CSS-змінна зі скрипта (CSP).
+// Не посилання (сторінок кейсів поки немає) — без зуму.
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import type { PartenariatsData } from '../../../content.config';
+import type { Locale } from '../../../i18n/utils';
 
 interface Props {
   data: PartenariatsData['references'];
   logos: { name: string; image: ImageMetadata }[];
   cases: {
     brand: string;
-    type: string;
-    title: string;
+    type?: string;
+    title?: string;
     image: ImageMetadata;
-    alt: string;
+    position?: string;
+    alt?: string;
     results: { value: string; label: string }[];
   }[];
+  lang: Locale;
+  /** Попередній перегляд (dev / збірка з PUBLIC_NOINDEX): порожні тип і результати показуємо
+   *  заглушками з Figma («[Type de collaboration]», «[X] k vues»), щоб кейс виглядав завершеним
+   *  на презентації. На живому сайті — сховані, як і раніше. */
+  preview?: boolean;
 }
-const { data, logos, cases } = Astro.props;
+const { data, logos, cases, lang, preview = false } = Astro.props;
+// Лише для перегляду (не реальні тексти сайту) — тому тут, а не в content.
+const demo = {
+  fr: {
+    brand: '[Marque]',
+    type: '[Type de collaboration]',
+    results: ['vues', 'engagement', 'codes utilisés'],
+  },
+  en: {
+    brand: '[Brand]',
+    type: '[Type of collaboration]',
+    results: ['views', 'engagement', 'codes used'],
+  },
+  it: {
+    brand: '[Marchio]',
+    type: '[Tipo di collaborazione]',
+    results: ['visualizzazioni', 'engagement', 'codici usati'],
+  },
+}[lang];
+const items = cases.map((c) => {
+  const title = c.title?.trim() || c.brand;
+  const type = c.type?.trim() || (preview ? demo.type : '');
+  // Мета-рядок: марка · тип. Заголовок = марка → у мета-рядку марку не дублюємо (у перегляді — «[Marque]», як у Figma).
+  const brand = c.title?.trim() ? c.brand : preview ? demo.brand : '';
+  const meta = [brand, type].filter(Boolean).join(' · ');
+  const results =
+    c.results.length || !preview
+      ? c.results
+      : [
+          { value: '[X] k', label: demo.results[0] },
+          { value: '[X] %', label: demo.results[1] },
+          { value: '[X]', label: demo.results[2] },
+        ];
+  return { ...c, title, meta, results };
+});
 ---
 
 <section class="refs section" aria-labelledby="refs-title">
@@ -38,22 +82,20 @@ const { data, logos, cases } = Astro.props;
       </ul>
     )}
 
-    {cases.length > 0 && (
+    {items.length > 0 && (
       <div class="refs__cases">
-        {cases.map((c) => (
+        {items.map((c) => (
           <article class="rcase">
-            <div class="rcase__img media">
+            <div class="rcase__img media" data-position={c.position || undefined}>
               <Image
                 src={c.image}
-                alt={c.alt}
-                widths={[400, 628, 1256]}
-                sizes="(min-width: 1024px) 628px, 100vw"
+                alt={c.alt ?? ''}
+                widths={[400, 720, 1256]}
+                sizes="(min-width: 1024px) 44vw, 100vw"
                 loading="lazy"
               />
             </div>
-            <p class="eyebrow eyebrow--muted">
-              {c.brand} · {c.type}
-            </p>
+            {c.meta && <p class="eyebrow eyebrow--muted">{c.meta}</p>}
             <h3 class="rcase__title">{c.title}</h3>
             {c.results.length > 0 && (
               <dl class="rcase__results">
@@ -71,6 +113,13 @@ const { data, logos, cases } = Astro.props;
     )}
   </div>
 </section>
+
+<script>
+  // Кадр фото кейса з даних (напр. «50% 22%») — через CSS-змінну (inline-стилі заборонені CSP).
+  document.querySelectorAll<HTMLElement>('.rcase__img[data-position]').forEach((el) => {
+    el.style.setProperty('--position', el.dataset.position ?? '');
+  });
+</script>
 
 <style>
   .refs__inner {
@@ -104,16 +153,19 @@ const { data, logos, cases } = Astro.props;
   }
   .refs__cases {
     display: grid;
-    gap: var(--space-10);
+    gap: var(--space-8);
   }
   .rcase {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-5);
   }
   .rcase__img {
-    aspect-ratio: 628 / 380;
+    aspect-ratio: 628 / 464; /* mobile 358 × 264 — та сама пропорція */
     border-radius: var(--radius-card);
+  }
+  .rcase__img :global(img) {
+    object-position: var(--position, 50% 50%);
   }
   .rcase__title {
     font-size: var(--fs-h3);

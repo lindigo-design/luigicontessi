@@ -1,0 +1,162 @@
+---
+// Figma: Partenariats → 07 Proposer un projet (desktop 47:636). id="proposer" — туди ведуть кнопки Intro,
+// картки Collaborations (?type=ambassadeur#proposer вибирає чип) і media kit без PDF.
+// Ліворуч текст + пошта партнерств, праворуч форма (спільні компоненти, src/scripts/form.ts).
+// Поля по 2 в рядку на desktop; на mobile — ті самі поля стовпчиком.
+import Form from '../../forms/Form.astro';
+import Field from '../../forms/Field.astro';
+import ChipGroup from '../../forms/ChipGroup.astro';
+import Consent from '../../forms/Consent.astro';
+import type { Locale } from '../../../i18n/utils';
+import type { PartenariatsData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: PartenariatsData['proposal'];
+  /** settings.emails.partnerships; порожньо — без рядка з поштою. */
+  email: string;
+}
+const { lang, data, email } = Astro.props;
+const f = data.form;
+const types = (['contenus', 'ambassadeur', 'evenement', 'sur-mesure'] as const).map((value) => ({
+  value,
+  label: f.type.options[value],
+}));
+const budget = [
+  { value: '', label: f.budget.placeholder },
+  ...f.budget.options.map((o) => ({ value: o, label: o })),
+];
+---
+
+<section class="proposal section" id="proposer" aria-labelledby="proposal-title">
+  <div class="container proposal__row">
+    <div class="proposal__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="proposal-title">{data.title}</h2>
+      <p class="text-2">{data.body}</p>
+      {email && (
+        <a class="proposal__mail title" href={`mailto:${email}`}>
+          {email}
+        </a>
+      )}
+    </div>
+
+    <Form
+      lang={lang}
+      name="partenariats"
+      email={email}
+      submit={f.submit}
+      class="proposal__form"
+      thanks={{
+        title: f.thanks.title,
+        text: f.thanks.text,
+        link: { label: f.thanks.link.label, href: '#main' },
+      }}
+    >
+      <div class="proposal__pair">
+        <Field
+          lang={lang}
+          label={f.brand.label}
+          name="brand"
+          placeholder={f.brand.placeholder}
+          autocomplete="organization"
+          required
+        />
+        <Field
+          lang={lang}
+          label={f.site.label}
+          name="site"
+          type="url"
+          placeholder={f.site.placeholder}
+        />
+      </div>
+      <div class="proposal__pair">
+        <Field
+          lang={lang}
+          label={f.name.label}
+          name="name"
+          placeholder={f.name.placeholder}
+          autocomplete="name"
+          required
+        />
+        <Field
+          lang={lang}
+          label={f.email.label}
+          name="email"
+          type="email"
+          placeholder={f.email.placeholder}
+          autocomplete="email"
+          required
+        />
+      </div>
+      <ChipGroup legend={f.type.legend} name="type" options={types} selected="contenus" required />
+      <div class="proposal__pair">
+        <Field lang={lang} label={f.budget.label} name="budget" options={budget} />
+        <Field lang={lang} label={f.dates.label} name="dates" type="month" />
+      </div>
+      <Field
+        lang={lang}
+        label={f.message.label}
+        name="message"
+        placeholder={f.message.placeholder}
+        textarea
+        minlength={30}
+        required
+      />
+      <Consent lang={lang} label={f.consent} />
+    </Form>
+  </div>
+</section>
+
+<style>
+  .proposal__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .proposal__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .proposal__mail {
+    align-self: flex-start;
+    margin-top: var(--space-1);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--color-text-2);
+    transition: text-decoration-color var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .proposal__mail:hover {
+      text-decoration-color: var(--color-text);
+    }
+  }
+  .proposal__pair {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  /* Місяць у темній темі: значок календаря світлий. */
+  .proposal :global(input[type='month']) {
+    color-scheme: dark;
+  }
+  @media (min-width: 768px) {
+    .proposal__pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+  @media (min-width: 1024px) {
+    .proposal__row {
+      display: grid;
+      grid-template-columns: minmax(0, 440fr) minmax(0, 744fr);
+      align-items: start;
+      gap: var(--space-24);
+    }
+    .proposal__text {
+      gap: var(--space-5);
+    }
+  }
+</style>

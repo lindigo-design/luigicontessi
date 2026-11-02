@@ -1,0 +1,37 @@
+---
+// Figma: Yachts → 02 Comment ça se passe (desktop 36:410, mobile 37:500). Фон --color-bg.
+// 4 кроки — спільний ui/Steps (як Méthode на Partenariats). {partner} — назва продавця.
+import Steps from '../../ui/Steps.astro';
+import type { YachtsPageData } from '../../../content.config';
+
+interface Props {
+  data: YachtsPageData['process'];
+  partner: string;
+}
+const { data, partner } = Astro.props;
+const fill = (s?: string) => s?.replaceAll('{partner}', partner);
+const steps = data.steps.map((s) => ({ ...s, text: fill(s.text)!, textShort: fill(s.textShort) }));
+---
+
+<section class="yprocess section" aria-labelledby="yprocess-title">
+  <div class="container yprocess__inner">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="yprocess-title">{data.title}</h2>
+    </div>
+    <Steps steps={steps} />
+  </div>
+</section>
+
+<style>
+  .yprocess__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  @media (min-width: 1024px) {
+    .yprocess__inner {
+      gap: var(--space-14);
+    }
+  }
+</style>

@@ -1,11 +1,15 @@
 ---
 // Figma: Home → 03b Presse (desktop 59:396, mobile 59:456).
 // Логотипи медіа нерухомі (не стрічка) — так домовились.
+// Картка: мета → фото (якщо є; пропорція 355 / 139, кадр — imagePosition через CSS-змінну, CSP) →
+// заголовок → цитата → кнопка. Hover картки (світло за курсором) + легкий зум фото.
+// Фото — тимчасові ілюстрації; для справжніх статей — фото з публікації або кадр з репортажу.
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
 import Button from '../../ui/Button.astro';
-import type { HomeData } from '../../../content.config';
 
 interface Props {
-  data: HomeData['press'];
+  data: CollectionEntry<'home'>['data']['press'];
   href: string;
 }
 const { data, href } = Astro.props;
@@ -24,10 +28,21 @@ const { data, href } = Astro.props;
     </div>
     <ul class="press__cards rail" role="list">
       {data.items.map((item) => (
-        <li class="pcard hover-card">
+        <li class="pcard hover-card zoom-card">
           <p class="eyebrow eyebrow--muted">{item.meta}</p>
+          {item.image && (
+            <div class="pcard__img media" data-position={item.imagePosition || undefined}>
+              <Image
+                src={item.image}
+                alt=""
+                widths={[360, 720, 1080]}
+                sizes="(min-width: 1024px) 26vw, 300px"
+                loading="lazy"
+              />
+            </div>
+          )}
           <h3>{item.title}</h3>
-          <p class="text-s text-2">{item.excerpt}</p>
+          <p class="pcard__excerpt text-s text-2">{item.excerpt}</p>
           <Button href={href} variant="accent" class="hover-card__link">
             {item.action}
           </Button>
@@ -36,6 +51,13 @@ const { data, href } = Astro.props;
     </ul>
   </div>
 </section>
+
+<script>
+  // Кадр фото з даних (напр. «50% 87%») — через CSS-змінну (inline-стилі заборонені CSP).
+  document.querySelectorAll<HTMLElement>('.pcard__img[data-position]').forEach((el) => {
+    el.style.setProperty('--position', el.dataset.position ?? '');
+  });
+</script>
 
 <style>
   .press__inner {
@@ -53,7 +75,16 @@ const { data, href } = Astro.props;
     border-radius: var(--radius-card);
     background: var(--color-card);
   }
-  .pcard p:nth-of-type(2) {
+  .pcard__img {
+    align-self: stretch;
+    aspect-ratio: 355 / 139;
+    border-radius: var(--radius-card);
+  }
+  .pcard__img :global(img) {
+    object-position: var(--position, 50% 50%);
+  }
+  /* Цитата займає вільне місце — кнопки в ряду на одній лінії, картки однакової висоти. */
+  .pcard__excerpt {
     flex: 1;
   }
   @media (min-width: 1024px) {

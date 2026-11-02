@@ -112,6 +112,11 @@ function initForm(form: HTMLFormElement) {
   form.addEventListener('focusout', (e) => {
     const c = e.target as Element;
     if (!isControl(c) || !c.dataset.errorId) return;
+    // Сайт: «www.marque.com» → «https://www.marque.com» (type=url без протоколу браузер не приймає).
+    if (c instanceof HTMLInputElement && c.type === 'url') {
+      const v = c.value.trim();
+      if (v && !/^[a-z][a-z\d+.-]*:\/\//i.test(v)) c.value = `https://${v}`;
+    }
     // E-mail: пробіли всередині і зайву крапку в кінці («.fr.») прибираємо самі, потім — перевірка і підказка.
     if (c instanceof HTMLInputElement && c.type === 'email') {
       c.value = c.value.replace(/\s+/g, '').replace(/\.+$/, '');

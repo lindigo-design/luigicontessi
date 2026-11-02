@@ -1,0 +1,97 @@
+---
+// Figma: Yachts → 04 Pourquoi passer par moi (desktop 36:521, mobile 37:585). Фон --color-bg.
+// 3 пункти в ряд: назва H3 28 → текст Body M. Mobile: назва 18, коротші тексти, стовпчиком.
+import type { YachtsPageData } from '../../../content.config';
+
+interface Props {
+  data: YachtsPageData['why'];
+  partner: string;
+}
+const { data, partner } = Astro.props;
+const fill = (s: string) => s.replaceAll('{partner}', partner);
+---
+
+<section class="ywhy section" aria-labelledby="ywhy-title">
+  <div class="container ywhy__inner">
+    <div class="section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="ywhy-title">{data.title}</h2>
+    </div>
+    <ul class="ywhy__list" role="list">
+      {data.items.map((i) => (
+        <li class="ywhy__item">
+          <h3 class="ywhy__title">{i.title}</h3>
+          {i.textShort ? (
+            <>
+              <p class="ywhy__text ywhy__text--short text-2">{fill(i.textShort)}</p>
+              <p class="ywhy__text ywhy__text--long text-2">{fill(i.text)}</p>
+            </>
+          ) : (
+            <p class="ywhy__text text-2">{fill(i.text)}</p>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ywhy__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .ywhy__list {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .ywhy__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  /* Mobile: Text/Title 18 (Manrope). */
+  .ywhy__title {
+    font-family: var(--font-body);
+    font-size: var(--fs-title);
+    font-weight: 500;
+    line-height: 1.444;
+    letter-spacing: normal;
+  }
+  .ywhy__text {
+    font-size: var(--fs-body-s);
+  }
+  .ywhy__text--long {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .ywhy__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-10);
+    }
+    .ywhy__item {
+      gap: var(--space-3);
+    }
+    .ywhy__title {
+      font-family: var(--font-display);
+      font-size: var(--fs-h3);
+      font-weight: 400;
+      line-height: var(--lh-h3);
+      letter-spacing: -0.01em;
+    }
+    .ywhy__text {
+      font-size: var(--fs-body);
+    }
+    .ywhy__text--long {
+      display: block;
+    }
+    .ywhy__text--short {
+      display: none;
+    }
+  }
+  @media (min-width: 1024px) {
+    .ywhy__inner {
+      gap: var(--space-14);
+    }
+  }
+</style>

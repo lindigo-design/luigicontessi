@@ -10,7 +10,8 @@ const img = z.object({ alt: z.string() });
 const homeSchema = z.object({
   seoTitle: text.max(70),
   seoDescription: text.max(170),
-  promo: z.object({ text, code: text }),
+  // Промо-смуга: «Code» · купон LUIGI10 · умова (offerShort — коротко на mobile)
+  promo: z.object({ label: text, code: text, offer: text, offerShort: text }),
   hero: z.object({
     eyebrow: text,
     title: text,
@@ -118,7 +119,19 @@ const homeSchema = z.object({
 
 const home = defineCollection({
   loader: glob({ pattern: '*/home.json', base: './src/content/pages' }),
-  schema: homeSchema,
+  // «Presse»: необовʼязкове фото картки (шлях відносно JSON: ../../../assets/img/press/…) і кадр
+  // (imagePosition, напр. «50% 87%»). Без фото — картка як раніше.
+  schema: ({ image }) =>
+    homeSchema.extend({
+      press: homeSchema.shape.press.extend({
+        items: z.array(
+          homeSchema.shape.press.shape.items.element.extend({
+            image: image().optional(),
+            imagePosition: z.string().optional(),
+          }),
+        ),
+      }),
+    }),
 });
 
 const site = defineCollection({
@@ -132,7 +145,12 @@ const site = defineCollection({
     socials: z.array(
       z.object({ label: text, name: text, url: z.union([z.url(), z.literal('')]).nullish() }),
     ),
-    features: z.object({ shop: z.boolean(), currencySwitch: z.boolean() }),
+    features: z.object({
+      shop: z.boolean(),
+      currencySwitch: z.boolean(),
+      // Демо-яхти (ілюстрації для презентації) на сторінці Yachts. На живому сайті — false.
+      yachtDemo: z.boolean().default(false),
+    }),
     // Чи підключені сервіси, яким потрібна згода (CNIL). Хоч одне true → банер cookies і «Paramètres cookies».
     consent: z
       .object({ analytics: z.boolean(), affiliates: z.boolean() })
@@ -162,8 +180,24 @@ const site = defineCollection({
       .object({ file: z.string(), year: z.string(), pages: z.number().int().positive().nullable() })
       .default({ file: '', year: '', pages: null }),
     emails: z
-      .object({ contact: z.string(), press: z.string(), partnerships: z.string() })
-      .default({ contact: '', press: '', partnerships: '' }),
+      .object({
+        contact: z.string(),
+        press: z.string(),
+        partnerships: z.string(),
+        yachts: z.string().default(''),
+      })
+      .default({ contact: '', press: '', partnerships: '', yachts: '' }),
+    // Продавець яхт, якого представляє Luigi. name порожній — «mon partenaire» у текстах,
+    // секція «Le vendeur» і логотипи сховані. logo — файл у src/assets/img/yachts/partner/.
+    yachtPartner: z
+      .object({
+        name: z.string(),
+        logo: z.string(),
+        url: z.string(),
+        about: z.object({ fr: z.string(), en: z.string(), it: z.string() }),
+        legal: z.string(), // raison sociale · adresse · numéro d’immatriculation
+      })
+      .default({ name: '', logo: '', url: '', about: { fr: '', en: '', it: '' }, legal: '' }),
   }),
 });
 
@@ -230,6 +264,76 @@ const codeSchema = z.object({
   featured: z.boolean().default(false), // «À la une» — не більше одного
   image: z.string().nullish(), // фото для «À la une»
   order: z.number().int().optional(), // порядок, коли дат немає або вони однакові
+});
+
+// Яхти: один файл на яхту (src/content/yachts/<slug>.json). Назва не перекладається.
+// demo: true — ілюстрація для презентації (згенероване фото), показується лише з features.yachtDemo.
+// price / year / cabins: null — «Sur demande» / «—» (нічого не вигадуємо).
+// Текст трьома мовами, який може бути порожнім (тоді блок схований).
+const empty3 = { fr: '', en: '', it: '' };
+const trEmpty = z.object({ fr: z.string(), en: z.string(), it: z.string() }).default(empty3);
+
+const yachts = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/yachts' }),
+  schema: ({ image }) =>
+    z.object({
+      slug: text,
+      name: text,
+      length: z.number().positive(), // метри; фільтр: < 30 / 30–50 / > 50
+      year: z.number().int().nullable(),
+      cabins: z.number().int().nonnegative().nullable(),
+      price: z.number().positive().nullable(), // EUR
+      featured: z.boolean().default(false), // одна яхта «À la une»
+      image: image(),
+      imageAlt: z.object({ fr: z.string(), en: z.string(), it: z.string() }),
+      demo: z.boolean().default(false),
+      order: z.number().default(0),
+
+      // ---- Fiche yacht (завдання 27). Порожньо (null / "") — рядок / картка / секція схована.
+      builder: z.string().nullish(), // chantier
+      architect: z.string().nullish(),
+      refit: z.number().int().nullish(), // рік переобладнання
+      beam: z.number().positive().nullish(), // largeur, м
+      draft: z.number().positive().nullish(), // tirant d’eau, м
+      guests: z.number().int().nonnegative().nullish(),
+      crew: z.number().int().nonnegative().nullish(),
+      cruiseSpeed: z.number().positive().nullish(), // вузли
+      engines: z.string().nullish(),
+      flag: trEmpty, // pavillon
+      port: trEmpty, // порт базування
+      headline: trEmpty, // «Pensé pour vivre en mer, pas seulement pour naviguer»
+      intro: z
+        .object({ fr: z.string().max(220), en: z.string().max(220), it: z.string().max(220) })
+        .default(empty3),
+      summaryTitle: trEmpty, // заголовок «Résumé»
+      // 3 фото біля головного. Без image — у демо сіра заглушка з підписом, без демо — схована.
+      gallery: z
+        .array(z.object({ image: image().optional(), label: trEmpty }))
+        .max(3)
+        .default([]),
+      // Карусель «À bord»: назва кімнати + палуба
+      interiors: z
+        .array(z.object({ image: image().optional(), title: trEmpty, deck: trEmpty }))
+        .default([]),
+      // Плани палуб (SVG, світлі лінії у файлі)
+      decks: z.array(z.object({ id: text, label: trEmpty, plan: image().optional() })).default([]),
+      // Відеовізит: файли в public/video/yachts/<slug>/ (шляхи від кореня сайту, без base)
+      video: z
+        .object({
+          src: z.string().default(''),
+          poster: z.string().default(''),
+          teaser: z.string().default(''),
+          duration: z.number().positive().nullish(), // хвилини
+          chapters: z.array(z.object({ t: z.number().nonnegative(), label: trEmpty })).default([]),
+          captions: trEmpty, // .vtt для кожної мови
+        })
+        .default({ src: '', poster: '', teaser: '', chapters: [], captions: empty3 }),
+      luigiWord: trEmpty, // цитата Luigi; порожньо — секції немає
+      sheetPdf: z.string().default(''), // fiche technique у public/yachts/
+      seo: z
+        .object({ title: trEmpty, description: trEmpty })
+        .default({ title: empty3, description: empty3 }),
+    }),
 });
 
 const codes = defineCollection({
@@ -381,6 +485,34 @@ const partenariatsSchema = z.object({
     download: link, // «Télécharger le PDF»
     previewAlt: z.string(),
   }),
+  // 07 Proposer un projet (id="proposer"). Теми чипів (value) — у коді: contenus, ambassadeur,
+  // evenement, sur-mesure (?type=ambassadeur#proposer з карток Collaborations).
+  proposal: z.object({
+    eyebrow: text,
+    title: text,
+    body: text,
+    form: z.object({
+      brand: z.object({ label: text, placeholder: text }),
+      site: z.object({ label: text, placeholder: text }),
+      name: z.object({ label: text, placeholder: text }),
+      email: z.object({ label: text, placeholder: text }),
+      type: z.object({
+        legend: text,
+        options: z.object({
+          contenus: text,
+          ambassadeur: text,
+          evenement: text,
+          'sur-mesure': text,
+        }),
+      }),
+      budget: z.object({ label: text, placeholder: text, options: z.array(text).min(1) }),
+      dates: z.object({ label: text }),
+      message: z.object({ label: text, placeholder: text }),
+      consent: text,
+      submit: text,
+      thanks: z.object({ title: text, text, link }),
+    }),
+  }),
 });
 
 const partenariats = defineCollection({
@@ -397,11 +529,15 @@ const partenariats = defineCollection({
           .array(
             z.object({
               brand: text,
-              type: text,
-              title: text,
+              type: z.string().optional(), // «Ambassadeur»; порожньо — у мета-рядку лише марка
+              title: z.string().optional(), // назва кампанії; порожньо — заголовок = марка
               image: image(),
-              alt: z.string(),
-              results: z.array(z.object({ value: text, label: text })).max(3),
+              position: z.string().optional(), // кадр фото, напр. «50% 22%»
+              alt: z.string().optional(),
+              results: z
+                .array(z.object({ value: text, label: text }))
+                .max(3)
+                .default([]),
             }),
           )
           .max(2)
@@ -411,11 +547,105 @@ const partenariats = defineCollection({
     }),
 });
 
-export const collections = { home, site, products, codes, privileges, contact, partenariats };
+// Сторінка «Yachts»: src/content/pages/<мова>/yachts.json. Секції додаються по кроках.
+// {partner} у текстах — назва продавця з settings.json → yachtPartner (порожньо — «mon partenaire»).
+const yachtsPageSchema = z.object({
+  seoTitle: text.max(70),
+  seoDescription: text.max(170),
+  hero: z.object({
+    eyebrow: text,
+    title: text,
+    body: text, // desktop
+    bodyMobile: text, // mobile — коротше
+    primary: link, // «Voir les yachts» → #disponibles
+    secondary: link, // «Demander des informations» → #demande
+    partner: text, // «En partenariat avec»
+    imageAlt: z.string(),
+  }),
+  // 02 Comment ça se passe — 4 кроки (textShort — коротший текст на mobile)
+  process: z.object({
+    eyebrow: text,
+    title: text,
+    steps: z.array(z.object({ title: text, text, textShort: z.string().optional() })).length(4),
+  }),
+  // 03 Yachts disponibles (id="disponibles"): фільтри за довжиною, «À la une», картки, Off-market
+  available: z.object({
+    eyebrow: text,
+    title: text,
+    filters: z.object({
+      legend: text, // для читалки: «Filtrer par taille»
+      all: text,
+      lt30: text,
+      '30-50': text,
+      gt50: text,
+    }),
+    featured: text, // «À la une»
+    empty: text, // фільтр нічого не знайшов
+    emptyLink: text, // «Demandez l’off-market»
+    offMarket: z.object({
+      eyebrow: text,
+      title: text,
+      text,
+      textShort: z.string().optional(),
+      cta: link,
+    }),
+  }),
+  // 05 Le vendeur — дані продавця в settings.json → yachtPartner; тут лише підписи
+  seller: z.object({ eyebrow: text, link: text }), // link: «Site de {name}»
+  // 06 Demande (id="demande"). Розміри (value) — як у фільтрі: lt30, 30-50, gt50, unknown.
+  request: z.object({
+    eyebrow: text,
+    title: text,
+    body: text,
+    form: z.object({
+      name: z.object({ label: text, placeholder: text }),
+      email: z.object({ label: text, placeholder: text }),
+      phone: z.object({ label: text, placeholder: text }),
+      country: z.object({ label: text, placeholder: text }),
+      size: z.object({
+        label: text,
+        placeholder: text,
+        options: z.object({ lt30: text, '30-50': text, gt50: text, unknown: text }),
+      }),
+      budget: z.object({ label: text, placeholder: text, options: z.array(text).min(1) }),
+      message: z.object({ label: text, placeholder: text }),
+      consent: text, // {partner}
+      submit: text,
+      yacht: text, // «Yacht»
+      offMarket: text, // «Accès off-market»
+      change: text, // «Changer»
+      thanks: z.object({ title: text, text, link }), // text: {partner}
+    }),
+  }),
+  // 04 Pourquoi passer par moi — 3 пункти
+  why: z.object({
+    eyebrow: text,
+    title: text,
+    items: z.array(z.object({ title: text, text, textShort: z.string().optional() })).length(3),
+  }),
+});
+
+const yachtsPage = defineCollection({
+  loader: glob({ pattern: '*/yachts.json', base: './src/content/pages' }),
+  schema: yachtsPageSchema,
+});
+
+export const collections = {
+  home,
+  site,
+  products,
+  codes,
+  privileges,
+  contact,
+  partenariats,
+  yachts,
+  yachtsPage,
+};
 export type HomeData = z.infer<typeof homeSchema>;
 export type ProductData = z.infer<typeof productSchema>;
 export type CodeData = z.infer<typeof codeSchema>;
 export type PrivilegesData = z.infer<typeof privilegesSchema>;
 export type ContactData = z.infer<typeof contactSchema>;
+export type YachtsPageData = z.infer<typeof yachtsPageSchema>;
 export type PartenariatsData = z.infer<typeof partenariatsSchema>;
 export type CodeCategory = (typeof codeCategories)[number];

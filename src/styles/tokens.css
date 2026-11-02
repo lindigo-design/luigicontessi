@@ -9,7 +9,7 @@
   --color-image: #262626; /* surface/image */
   --color-border: #2a2a2a; /* border/subtle */
   --color-text: #efefef; /* text/primary */
-  --color-text-2: #d4d1cb; /* text/secondary */
+  --color-text-2: #bbb8b4; /* text/secondary */
   --color-on-light: #0e0e0e; /* text/on-light */
   --color-red-text: #e5484d; /* accent/red-text — текст і посилання */
   --color-red: #c41e2a; /* accent/red — плашки, знак ♥ */
@@ -20,6 +20,7 @@
 
   /* Затемнення фото (як у hero / yachts у Figma) */
   --shade: 14 14 14; /* rgb кольору bg/base */
+  --shade-alt: 22 22 22; /* rgb кольору bg/alt (#161616) */
 
   /* Шрифти */
   --font-display: 'Cal Sans', 'Helvetica Neue', Arial, sans-serif;
@@ -74,7 +75,7 @@
   --header-pad: var(--space-5); /* шапка поверх фото (overlay): відступ зверху 20 → 32 */
   --header-solid-pad: var(--space-3); /* звичайна шапка (solid): відступ зверху і знизу 12 → 20 */
   --header-total-h: calc(var(--header-h) + 2 * var(--header-solid-pad)); /* висота смуги solid */
-  --promo-h: 4rem; /* 64 — висота промо-смуги */
+  --promo-h: 3rem; /* 48 — висота промо-смуги (купон 28 + відступи 10 / 10) */
   --spot-r: 40vw; /* радіус «прожектора» над CONTESSI у футері */
 
   /* Рух */
@@ -90,7 +91,7 @@
 }
 @media (min-width: 768px) {
   :root {
-    --promo-h: 4.25rem; /* 68 */
+    --promo-h: 3.25rem; /* 52 — як у Figma (купон 28 + відступи 12 / 12) */
     --header-solid-pad: var(--space-5);
   }
 }

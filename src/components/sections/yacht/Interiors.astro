@@ -1,0 +1,164 @@
+---
+// Figma: Fiche yacht → 05 Intérieurs (desktop 38:565, mobile 39:622). «À bord»: стрічка від лівого
+// відступу сторінки до правого краю екрана (обрізається праворуч). Перша картка велика 620 × 440,
+// інші 380 × 300, притиснуті до верху; під фото — кімната ліворуч і палуба праворуч.
+// Свайп, перетягування мишкою, стрілки (desktop), ←/→ на стрічці (src/scripts/yacht-interiors.ts).
+// Без автопрокрутки. Демо без фото — сірі заглушки з назвою кімнати.
+import type { ImageMetadata } from 'astro';
+import ArrowCircle from '../../ui/ArrowCircle.astro';
+import YachtPhoto from './YachtPhoto.astro';
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  name: string;
+  items: { image?: ImageMetadata; title: string; deck: string }[];
+  demoLabel?: string;
+}
+const { lang, name, items, demoLabel } = Astro.props;
+---
+
+<section class="yint" aria-labelledby="yint-title" data-yacht-interiors>
+  <div class="container yint__head">
+    <div class="section-head__text">
+      <p class="eyebrow">{t('yachts.interiorsEyebrow', lang)}</p>
+      <h2 id="yint-title">{t('yachts.interiorsTitle', lang)}</h2>
+    </div>
+    {items.length > 1 && (
+      <div class="yint__arrows">
+        <button class="yint__arrow" type="button" aria-label={t('ui.prev', lang)} data-int-prev>
+          <ArrowCircle size="l" dir="prev" />
+        </button>
+        <button class="yint__arrow" type="button" aria-label={t('ui.next', lang)} data-int-next>
+          <ArrowCircle size="l" />
+        </button>
+      </div>
+    )}
+  </div>
+  <ul
+    class="yint__track"
+    role="list"
+    tabindex="0"
+    aria-label={t('yachts.interiorsTitle', lang)}
+    data-int-track
+  >
+    {items.map((it, i) => (
+      <li class:list={['yint__card', { 'yint__card--big': i === 0 }]} data-int-slide>
+        <YachtPhoto
+          image={it.image}
+          alt={`${name} — ${it.title}`}
+          label={it.title}
+          demoLabel={demoLabel}
+          widths={i === 0 ? [560, 840, 1240] : [280, 380, 560, 760]}
+          sizes={i === 0 ? '(min-width: 1024px) 620px, 280px' : '(min-width: 1024px) 380px, 280px'}
+          class="yint__photo"
+        />
+        <p class="yint__caption text-s">
+          <span>{it.title}</span>
+          {it.deck && <span class="text-2">{it.deck}</span>}
+        </p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  import { initYachtInteriors } from '../../../scripts/yacht-interiors';
+  initYachtInteriors();
+</script>
+
+<style>
+  .yint {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-14);
+  }
+  .yint__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+  .yint__arrows {
+    display: none;
+  }
+  /* Стрічка: лівий край — як у контейнера, праворуч — до краю екрана. */
+  .yint__track {
+    --start: calc(max(0px, (100% - (var(--content-max) + 2 * var(--gutter))) / 2) + var(--gutter));
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-inline: var(--start) var(--gutter);
+    scroll-padding-inline: var(--start);
+  }
+  .yint__track::-webkit-scrollbar {
+    display: none;
+  }
+  .yint__track:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 4px;
+  }
+  .yint__card {
+    flex: 0 0 17.5rem; /* 280 */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    scroll-snap-align: start;
+  }
+  .yint :global(.yint__photo) {
+    aspect-ratio: 280 / 220;
+  }
+  .yint__caption {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  @media (min-width: 1024px) {
+    .yint {
+      gap: var(--space-12);
+      padding-block: 7.5rem; /* 120 */
+    }
+    .yint__arrows {
+      display: flex;
+      gap: var(--space-4);
+    }
+    .yint__arrow {
+      color: var(--color-text);
+      border-radius: 50%;
+    }
+    .yint__arrow:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    @media (hover: hover) {
+      .yint__arrow:not(:disabled):hover :global(.arrow) {
+        background: var(--color-text);
+        color: var(--color-bg);
+      }
+    }
+    .yint__arrow:focus-visible {
+      outline: 2px solid var(--color-text);
+      outline-offset: 3px;
+    }
+    .yint__track {
+      gap: var(--space-6);
+    }
+    .yint__card {
+      flex-basis: 23.75rem; /* 380 */
+      gap: var(--space-3);
+    }
+    .yint :global(.yint__photo) {
+      aspect-ratio: 380 / 300;
+    }
+    .yint__card--big {
+      flex-basis: 38.75rem; /* 620 */
+    }
+    .yint__card--big :global(.yint__photo) {
+      aspect-ratio: 620 / 440;
+    }
+  }
+</style>

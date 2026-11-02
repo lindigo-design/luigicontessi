@@ -1,0 +1,69 @@
+---
+// Figma: Fiche yacht → 10 Autres yachts (desktop 38:656, mobile 39:680). «À voir aussi» + «Autres yachts»,
+// праворуч «Tous les yachts» (mobile — під заголовком). 3 картки Card / Yacht (найближчі за довжиною);
+// mobile — свайп-стрічка.
+import Button from '../../ui/Button.astro';
+import YachtCard from '../yachts/YachtCard.astro';
+import { localizePath, t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  yachts: Parameters<typeof YachtCard>[0]['yacht'][];
+  demoLabel?: string;
+}
+const { lang, yachts, demoLabel } = Astro.props;
+---
+
+<section class="yothers section" aria-labelledby="yothers-title">
+  <div class="container yothers__inner">
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow">{t('yachts.othersEyebrow', lang)}</p>
+        <h2 id="yothers-title">{t('yachts.othersTitle', lang)}</h2>
+      </div>
+      <Button href={localizePath('yachts', lang)} variant="accent">
+        {t('yachts.all', lang)}
+      </Button>
+    </div>
+    <ul class="yothers__cards rail" role="list">
+      {yachts.map((y) => (
+        <YachtCard lang={lang} yacht={y} demoLabel={demoLabel} class="yothers__card" />
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .yothers__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .yothers__cards {
+    gap: var(--space-3);
+  }
+  .yothers__cards :global(.yothers__card) {
+    width: 18.75rem; /* 300 */
+  }
+  @media (min-width: 768px) {
+    .yothers__cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-10);
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .yothers__cards :global(.yothers__card) {
+      width: auto;
+    }
+  }
+  @media (min-width: 1024px) {
+    .yothers__inner {
+      gap: var(--space-14);
+    }
+    .yothers__cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

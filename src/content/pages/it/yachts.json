@@ -1,0 +1,151 @@
+{
+  "seoTitle": "Yacht in vendita — Luigi Contessi",
+  "seoDescription": "Yacht in vendita con Luigi Contessi: visita, prova in mare, off-market. Un solo interlocutore dal primo contatto alla firma.",
+  "hero": {
+    "eyebrow": "Yacht in vendita",
+    "title": "Dal primo contatto alla firma",
+    "body": "Rappresento {partner} per la vendita di yacht. Ti accompagno in ogni fase: visita, prova in mare, trattativa, firma.",
+    "bodyMobile": "Rappresento {partner} per la vendita di yacht. Ti accompagno in ogni fase.",
+    "primary": {
+      "label": "Vedi gli yacht"
+    },
+    "secondary": {
+      "label": "Chiedi informazioni"
+    },
+    "partner": "In collaborazione con",
+    "imageAlt": "Grande yacht all’ancora in una caletta al tramonto (illustrazione)"
+  },
+  "process": {
+    "eyebrow": "Come funziona",
+    "title": "Quattro fasi, un solo interlocutore",
+    "steps": [
+      {
+        "title": "La tua richiesta",
+        "text": "Mi dici cosa cerchi: dimensioni, uso, budget, zona di navigazione.",
+        "textShort": "Dimensioni, uso, budget, zona di navigazione."
+      },
+      {
+        "title": "Una chiamata",
+        "text": "Ti richiamo e ti propongo gli yacht adatti, anche fuori catalogo.",
+        "textShort": "Ti propongo gli yacht adatti."
+      },
+      {
+        "title": "Visita e prova",
+        "text": "Visitiamo in banchina, poi usciamo in mare. Vedi la barca vivere.",
+        "textShort": "In banchina, poi in mare."
+      },
+      {
+        "title": "Firma",
+        "text": "La vendita si conclude con {partner}. Resto il tuo contatto fino alla consegna delle chiavi.",
+        "textShort": "Con {partner}. Resto il tuo contatto."
+      }
+    ]
+  },
+  "why": {
+    "eyebrow": "Perché passare da me",
+    "title": "Qualcuno che conosce le barche, e te",
+    "items": [
+      {
+        "title": "Salgo a bordo",
+        "text": "Visito gli yacht che propongo. Ti dico cosa ho visto, non solo la scheda tecnica.",
+        "textShort": "Visito gli yacht che propongo."
+      },
+      {
+        "title": "Un solo contatto",
+        "text": "Una persona dall’inizio alla fine. Nessun passaggio da un ufficio all’altro.",
+        "textShort": "Una persona dall’inizio alla fine."
+      },
+      {
+        "title": "Discrezione",
+        "text": "Le tue conversazioni restano tra te, {partner} e me."
+      }
+    ]
+  },
+  "available": {
+    "eyebrow": "Disponibili",
+    "title": "Yacht in vendita",
+    "filters": {
+      "legend": "Filtra per dimensione",
+      "all": "Tutti",
+      "lt30": "Meno di 30 m",
+      "30-50": "30 – 50 m",
+      "gt50": "Più di 50 m"
+    },
+    "featured": "In evidenza",
+    "empty": "Nessuno yacht di questa dimensione per ora.",
+    "emptyLink": "Chiedi l’off-market.",
+    "offMarket": {
+      "eyebrow": "Off-market",
+      "title": "Alcuni yacht non sono pubblicati",
+      "text": "I proprietari spesso preferiscono la discrezione. Dimmi cosa cerchi, ti presento ciò che non è online.",
+      "textShort": "Dimmi cosa cerchi, ti presento ciò che non è online.",
+      "cta": {
+        "label": "Chiedi l’accesso"
+      }
+    }
+  },
+  "seller": {
+    "eyebrow": "Il venditore",
+    "link": "Sito di {name}"
+  },
+  "request": {
+    "eyebrow": "Richiesta",
+    "title": "Parliamo del tuo progetto",
+    "body": "Ti rispondo personalmente. Tutte le informazioni restano riservate.",
+    "form": {
+      "name": {
+        "label": "Nome",
+        "placeholder": "Il tuo nome"
+      },
+      "email": {
+        "label": "E-mail",
+        "placeholder": "tu@esempio.com"
+      },
+      "phone": {
+        "label": "Telefono",
+        "placeholder": "+39 …"
+      },
+      "country": {
+        "label": "Paese",
+        "placeholder": "Italia"
+      },
+      "size": {
+        "label": "Dimensione cercata",
+        "placeholder": "Scegli",
+        "options": {
+          "lt30": "Meno di 30 m",
+          "30-50": "30 – 50 m",
+          "gt50": "Più di 50 m",
+          "unknown": "Non lo so ancora"
+        }
+      },
+      "budget": {
+        "label": "Budget",
+        "placeholder": "Scegli",
+        "options": [
+          "Meno di 5 M€",
+          "5 – 15 M€",
+          "15 – 40 M€",
+          "Più di 40 M€",
+          "Preferisco parlarne"
+        ]
+      },
+      "message": {
+        "label": "Messaggio",
+        "placeholder": "Cosa cerchi, le tue date, le tue domande…"
+      },
+      "consent": "Accetto che le mie informazioni siano trasmesse a {partner} per gestire la mia richiesta.",
+      "submit": "Invia la richiesta",
+      "yacht": "Yacht",
+      "offMarket": "Accesso off-market",
+      "change": "Cambia",
+      "thanks": {
+        "title": "Grazie, è inviato.",
+        "text": "Ti richiamo personalmente per parlare del tuo progetto. Le tue informazioni sono state trasmesse a {partner}.",
+        "link": {
+          "label": "Vedi gli altri yacht"
+        }
+      }
+    }
+  }
+}

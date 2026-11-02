@@ -26,7 +26,8 @@
   ],
   "features": {
     "shop": false,
-    "currencySwitch": false
+    "currencySwitch": false,
+    "yachtDemo": true
   },
   "consent": {
     "analytics": false,
@@ -38,7 +39,8 @@
   "emails": {
     "contact": "",
     "press": "",
-    "partnerships": ""
+    "partnerships": "",
+    "yachts": ""
   },
   "shopCodes": [
     {
@@ -127,5 +129,16 @@
         "it": "paesi"
       }
     }
-  ]
+  ],
+  "yachtPartner": {
+    "name": "",
+    "logo": "",
+    "url": "",
+    "about": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "legal": ""
+  }
 }

@@ -1,0 +1,68 @@
+---
+// Сторінка «Yachts» (продаж яхт): /<мова>/yachts/. Шапка поверх фото (overlay). Тут лише порядок секцій:
+// Hero → Comment ça se passe → Yachts disponibles → Pourquoi passer par moi → Le vendeur → Demande (по кроках).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/sections/yachts/Hero.astro';
+import Process from '../../components/sections/yachts/Process.astro';
+import Available from '../../components/sections/yachts/Available.astro';
+import Why from '../../components/sections/yachts/Why.astro';
+import Seller from '../../components/sections/yachts/Seller.astro';
+import Request from '../../components/sections/yachts/Request.astro';
+import {
+  getEmail,
+  getSettings,
+  getYachtPartner,
+  getYachtPartnerLogo,
+  getYachts,
+  getYachtsPage,
+  isPreview,
+} from '../../content/helpers';
+import { locales, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getYachtsPage(lang);
+const settings = await getSettings();
+const { features } = settings;
+const partner = await getYachtPartner(lang);
+const yachts = await getYachts(); // демо — лише з features.yachtDemo; попередження на живому сайті
+// Плашку «Illustration» на фото прибрано (рішення дизайнера): демо-яхти відрізняє лише features.yachtDemo.
+const demoLabel: string | undefined = undefined;
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.seoTitle}
+  description={page.seoDescription}
+  current="yachts"
+  header="overlay"
+>
+  <Hero
+    data={page.hero}
+    partner={partner.label}
+    logo={partner.name ? getYachtPartnerLogo(partner.logo) : null}
+    demoLabel={demoLabel}
+  />
+  <Process data={page.process} partner={partner.label} />
+  <Available lang={lang} data={page.available} yachts={yachts} demoLabel={demoLabel} />
+  <Why data={page.why} partner={partner.label} />
+  {(partner.name || isPreview()) && (
+    <Seller
+      preview={isPreview()}
+      lang={lang}
+      data={page.seller}
+      partner={partner}
+      logo={getYachtPartnerLogo(partner.logo)}
+    />
+  )}
+  <Request
+    lang={lang}
+    data={page.request}
+    partner={partner.label}
+    email={getEmail(settings, 'yachts')}
+    yachts={yachts}
+  />
+</BaseLayout>

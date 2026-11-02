@@ -1,7 +1,7 @@
 // Функції, які дістають тексти потрібною мовою.
 import { getCollection, getEntry } from 'astro:content';
 import type { ImageMetadata } from 'astro';
-import { localizePath, type Locale } from '../i18n/utils';
+import { localizePath, t, type Locale } from '../i18n/utils';
 
 export async function getHome(lang: Locale) {
   const entry = await getEntry('home', `${lang}/home`);
@@ -55,6 +55,104 @@ export async function getStats(ids: string[], lang: Locale) {
       decimals: s.decimals ?? undefined,
     };
   });
+}
+
+/**
+ * Яхти для сторінки Yachts: демо (ілюстрації) — лише з features.yachtDemo; за order, «À la une» — не більше однієї.
+ * Демо на живому сайті (без PUBLIC_NOINDEX=true) — попередження; LC_STRICT=true / 1 — збірка зупиняється.
+ */
+export async function getYachts() {
+  const entries = await getCollection('yachts');
+  for (const e of entries) {
+    if (e.data.slug !== e.id) {
+      throw new Error(`Яхта ${e.id}.json: slug «${e.data.slug}» має збігатися з назвою файлу`);
+    }
+  }
+  const { features } = await getSettings();
+  const list = entries
+    .map((e) => e.data)
+    .filter((y) => !y.demo || features.yachtDemo)
+    .sort((a, b) => a.order - b.order);
+  const featured = list.filter((y) => y.featured);
+  if (featured.length > 1) {
+    throw new Error(
+      `«À la une» може бути лише одна яхта, а зараз: ${featured.map((y) => y.slug).join(', ')}`,
+    );
+  }
+  if (features.yachtDemo && list.some((y) => y.demo) && import.meta.env.PUBLIC_NOINDEX !== 'true') {
+    const message =
+      'Yachts: демо-яхти на живому сайті! (settings.json → features.yachtDemo: false)';
+    if (process.env.LC_STRICT === 'true' || process.env.LC_STRICT === '1') throw new Error(message);
+    if (!warnedYachtDemo) console.warn(`⚠ ${message}`);
+    warnedYachtDemo = true;
+  }
+  return list;
+}
+let warnedYachtDemo = false;
+
+/** Сторінка яхти «Fiche yacht»: /fr/yachts/aurora/. Одне місце для всіх посилань на яхту. */
+export function yachtHref(slug: string, lang: Locale) {
+  return localizePath(`yachts/${slug}`, lang);
+}
+
+/** Longueur / Année / Cabines для карток яхт; невідоме — «—» (нічого не вигадуємо). */
+export function yachtSpecs(
+  y: { length: number; year: number | null; cabins: number | null },
+  lang: Locale,
+) {
+  const num = new Intl.NumberFormat(lang);
+  return [
+    { label: t('yachts.length', lang), value: `${num.format(y.length)} m` },
+    { label: t('yachts.year', lang), value: y.year ? String(y.year) : '—' },
+    { label: t('yachts.cabins', lang), value: y.cabins !== null ? String(y.cabins) : '—' },
+  ];
+}
+
+/** Ціна яхти («12 500 000 €») або текст на кшталт «Sur demande». */
+export function yachtPrice(y: { price: number | null }, lang: Locale, onRequest: string) {
+  return y.price
+    ? new Intl.NumberFormat(lang, {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0,
+      }).format(y.price)
+    : onRequest;
+}
+
+/** Назва продавця для текстів: «[Société]» → назва або «mon partenaire» (порожньо — попередження). */
+export async function getYachtPartner(lang: Locale) {
+  const { yachtPartner } = await getSettings();
+  const name = yachtPartner.name.trim();
+  if (!name)
+    warnMissing('Yachts', 'settings.json → yachtPartner (назва, логотип, юридичні дані продавця)');
+  const fallback = { fr: 'mon partenaire', en: 'my partner', it: 'il mio partner' }[lang];
+  return { ...yachtPartner, name, label: name || fallback, about: yachtPartner.about[lang] };
+}
+
+export async function getYachtsPage(lang: Locale) {
+  const entry = await getEntry('yachtsPage', `${lang}/yachts`);
+  if (!entry) throw new Error(`Немає текстів: src/content/pages/${lang}/yachts.json`);
+  return entry.data;
+}
+
+// Логотип продавця яхт: src/assets/img/yachts/partner/<файл із settings.json → yachtPartner.logo>.
+const partnerLogos = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/img/yachts/partner/*.{png,svg,jpg,jpeg,webp,avif}',
+  { eager: true },
+);
+export function getYachtPartnerLogo(file: string): ImageMetadata | null {
+  if (!file.trim()) return null;
+  const img = partnerLogos[`../assets/img/yachts/partner/${file.trim()}`];
+  if (!img) throw new Error(`Немає логотипа продавця: src/assets/img/yachts/partner/${file}`);
+  return img.default;
+}
+
+/**
+ * Перегляд (npm run dev або тестова збірка без індексації, PUBLIC_NOINDEX=true): там, де ще немає даних,
+ * показуємо заглушки з Figma, щоб на презентації було видно всю сторінку. На живому сайті — ховаємо.
+ */
+export function isPreview() {
+  return import.meta.env.DEV || import.meta.env.PUBLIC_NOINDEX === 'true';
 }
 
 export async function getSettings() {
@@ -171,8 +269,8 @@ export function consentCategories(settings: {
  */
 const warnedEmails = new Set<string>();
 export function getEmail(
-  settings: { emails: Record<'contact' | 'press' | 'partnerships', string> },
-  kind: 'contact' | 'press' | 'partnerships',
+  settings: { emails: Record<'contact' | 'press' | 'partnerships' | 'yachts', string> },
+  kind: 'contact' | 'press' | 'partnerships' | 'yachts',
 ) {
   const email = settings.emails[kind].trim();
   if (email) return email;

@@ -1,0 +1,145 @@
+{
+  "seoTitle": "Yachts for sale — Luigi Contessi",
+  "seoDescription": "Yachts for sale with Luigi Contessi: visits, sea trials, off-market. One contact from first call to signature.",
+  "hero": {
+    "eyebrow": "Yachts for sale",
+    "title": "From first contact to signature",
+    "body": "I represent {partner} for yacht sales. I’m with you at every step: visit, sea trial, negotiation, signature.",
+    "bodyMobile": "I represent {partner} for yacht sales. I’m with you at every step.",
+    "primary": {
+      "label": "See the yachts"
+    },
+    "secondary": {
+      "label": "Ask for information"
+    },
+    "partner": "In partnership with",
+    "imageAlt": "Large yacht anchored in a cove at sunset (illustration)"
+  },
+  "process": {
+    "eyebrow": "How it works",
+    "title": "Four steps, one contact",
+    "steps": [
+      {
+        "title": "Your request",
+        "text": "Tell me what you are looking for: size, use, budget, cruising area.",
+        "textShort": "Size, use, budget, cruising area."
+      },
+      {
+        "title": "A call",
+        "text": "I call you back and suggest the yachts that match, including off-catalogue ones.",
+        "textShort": "I suggest the yachts that match."
+      },
+      {
+        "title": "Visit and trial",
+        "text": "We visit at the dock, then go out to sea. You see the boat come alive.",
+        "textShort": "At the dock, then at sea."
+      },
+      {
+        "title": "Signature",
+        "text": "The sale is made with {partner}. I stay your contact until the keys are handed over.",
+        "textShort": "With {partner}. I stay your contact."
+      }
+    ]
+  },
+  "why": {
+    "eyebrow": "Why go through me",
+    "title": "Someone who knows boats, and you",
+    "items": [
+      {
+        "title": "I go on board",
+        "text": "I visit the yachts I suggest. I tell you what I saw, not just the spec sheet.",
+        "textShort": "I visit the yachts I suggest."
+      },
+      {
+        "title": "One contact",
+        "text": "One person from start to finish. No passing you from one department to another.",
+        "textShort": "One person from start to finish."
+      },
+      {
+        "title": "Discretion",
+        "text": "Your conversations stay between you, {partner} and me."
+      }
+    ]
+  },
+  "available": {
+    "eyebrow": "Available",
+    "title": "Yachts for sale",
+    "filters": {
+      "legend": "Filter by size",
+      "all": "All",
+      "lt30": "Under 30 m",
+      "30-50": "30 – 50 m",
+      "gt50": "Over 50 m"
+    },
+    "featured": "Featured",
+    "empty": "No yacht in this size for now.",
+    "emptyLink": "Ask about off-market.",
+    "offMarket": {
+      "eyebrow": "Off-market",
+      "title": "Some yachts are not published",
+      "text": "Owners often prefer discretion. Tell me what you are looking for, and I’ll show you what isn’t online.",
+      "textShort": "Tell me what you are looking for, and I’ll show you what isn’t online.",
+      "cta": {
+        "label": "Request access"
+      }
+    }
+  },
+  "seller": {
+    "eyebrow": "The seller",
+    "link": "{name} website"
+  },
+  "request": {
+    "eyebrow": "Request",
+    "title": "Let’s talk about your project",
+    "body": "I reply personally. All information stays confidential.",
+    "form": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Your name"
+      },
+      "email": {
+        "label": "E-mail",
+        "placeholder": "you@example.com"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "+44 …"
+      },
+      "country": {
+        "label": "Country",
+        "placeholder": "France"
+      },
+      "size": {
+        "label": "Size you are looking for",
+        "placeholder": "Choose",
+        "options": {
+          "lt30": "Under 30 m",
+          "30-50": "30 – 50 m",
+          "gt50": "Over 50 m",
+          "unknown": "I don’t know yet"
+        }
+      },
+      "budget": {
+        "label": "Budget",
+        "placeholder": "Choose",
+        "options": ["Under €5M", "€5 – 15M", "€15 – 40M", "Over €40M", "I’d rather talk about it"]
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "What you are looking for, your dates, your questions…"
+      },
+      "consent": "I agree that my information is passed on to {partner} to handle my request.",
+      "submit": "Send the request",
+      "yacht": "Yacht",
+      "offMarket": "Off-market access",
+      "change": "Change",
+      "thanks": {
+        "title": "Thank you, it’s sent.",
+        "text": "I’ll call you back personally to talk about your project. Your information has been passed on to {partner}.",
+        "link": {
+          "label": "See the other yachts"
+        }
+      }
+    }
+  }
+}

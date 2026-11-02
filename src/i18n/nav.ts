@@ -1,6 +1,7 @@
 // Пункти меню і футера. Тексти — ключі з i18n/ui/<мова>.json.
 import type { ImageMetadata } from 'astro';
 import type { UiKey } from './utils';
+import hero from '../assets/img/home/hero.jpg';
 import univers1 from '../assets/img/home/univers-1.jpg';
 import yachts from '../assets/img/home/yachts.jpg';
 import news2 from '../assets/img/home/news-2.jpg';
@@ -22,6 +23,8 @@ export interface MenuItem extends NavItem {
 
 /** Великі пункти меню. Collection — поки магазин вимкнено; з магазином на її місці Boutique. */
 export const menuPrimary = (shop: boolean): MenuItem[] => [
+  // Головна — першим пунктом, щоб не шукати шлях назад (path '' = /{мова}/).
+  { key: 'nav.homeMenu', path: '', preview: hero, caption: 'menu.caption.home' },
   { key: 'nav.journal', path: 'journal', preview: univers1, caption: 'menu.caption.journal' },
   { key: 'nav.yachts', path: 'yachts', preview: yachts, caption: 'menu.caption.yachts' },
   {
@@ -102,5 +105,5 @@ export const legalNav: NavItem[] = [
  * Сторінки, які вже зроблені. Посилання на ще не готову сторінку (напр. Journal на 404)
  * перевіряють цей список і ведуть на запасну. Зробили сторінку — додай сюди її path.
  */
-export const builtPages = new Set<string>(['', 'privileges', 'contact', 'partenariats']);
+export const builtPages = new Set<string>(['', 'privileges', 'contact', 'partenariats', 'yachts']);
 export const isBuilt = (path: string) => builtPages.has(path.split('#')[0]);

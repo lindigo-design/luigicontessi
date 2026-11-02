@@ -1,0 +1,77 @@
+---
+// Figma: Fiche yacht → 02 Nom (desktop 38:495, mobile 39:557). «Yacht à vendre» → назва великими
+// літерами (h1, шрифт заголовків, як у Figma; 88 → 200 px, в один рядок) → «45 m · 2019 · Benetti»
+// праворуч під назвою (порожні частини пропускаємо). Довга назва — менший кегль (cqi), щоб не вилазила.
+import { t, type Locale } from '../../../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  name: string;
+  /** Частини підзаголовка, напр. ['45 m', '2019', 'Benetti']; порожні вже прибрані. */
+  meta: string[];
+}
+const { lang, name, meta } = Astro.props;
+// Кегль за довжиною назви (великі літери ≈ 0,7 em): щоб AURORA і довші назви вміщалися в рядок.
+const len = name.length;
+const size = len <= 6 ? 's' : len <= 9 ? 'm' : len <= 12 ? 'l' : 'xl';
+---
+
+<section class="yname container" aria-labelledby="yname-title">
+  <div class="yname__box">
+    <p class="eyebrow">{t('yachts.forSale', lang)}</p>
+    <h1 id="yname-title" class:list={['yname__title', `yname__title--${size}`]}>
+      {name}
+    </h1>
+    {meta.length > 0 && <p class="yname__meta eyebrow eyebrow--muted">{meta.join(' · ')}</p>}
+  </div>
+</section>
+
+<style>
+  .yname {
+    container-type: inline-size;
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-8);
+  }
+  .yname__box {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .yname__title {
+    font-size: min(clamp(5.5rem, 2.4rem + 13vw, 12.5rem), var(--fit));
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  /* Межа за шириною контейнера (cqi) — залежно від довжини назви. */
+  .yname__title--s {
+    --fit: 22cqi;
+  }
+  .yname__title--m {
+    --fit: 15cqi;
+  }
+  .yname__title--l {
+    --fit: 11cqi;
+  }
+  .yname__title--xl {
+    --fit: 8cqi;
+  }
+  .yname__meta {
+    align-self: flex-end;
+  }
+  @media (min-width: 768px) {
+    .yname {
+      padding-top: var(--space-12);
+      padding-bottom: var(--space-24);
+    }
+    /* Desktop: блок по центру, підзаголовок — під правим краєм назви. */
+    .yname__box {
+      align-items: center;
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+      gap: var(--space-2);
+    }
+  }
+</style>

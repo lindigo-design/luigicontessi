@@ -1,0 +1,252 @@
+---
+// Сторінка однієї яхти «Fiche yacht»: /<мова>/yachts/<slug>/ (мови × яхти; демо — лише з yachtDemo).
+// Тут лише порядок секцій (= порядок desktop). На mobile «Nom» іде першим — order у .yfiche, без дублювання.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/sections/product/Breadcrumbs.astro';
+import Overview from '../../../components/sections/yacht/Overview.astro';
+import NameBlock from '../../../components/sections/yacht/NameBlock.astro';
+import Film from '../../../components/sections/yacht/Film.astro';
+import Resume from '../../../components/sections/yacht/Resume.astro';
+import Specs from '../../../components/sections/yacht/Specs.astro';
+import Interiors from '../../../components/sections/yacht/Interiors.astro';
+import DeckPlan from '../../../components/sections/yacht/DeckPlan.astro';
+import YachtWord from '../../../components/sections/yacht/YachtWord.astro';
+import OtherYachts from '../../../components/sections/yacht/OtherYachts.astro';
+import { getImage } from 'astro:assets';
+import Seller from '../../../components/sections/yachts/Seller.astro';
+import Request from '../../../components/sections/yachts/Request.astro';
+import { existsSync, statSync } from 'node:fs';
+import {
+  getEmail,
+  getSettings,
+  getYachtPartner,
+  getYachtPartnerLogo,
+  getYachts,
+  getYachtsPage,
+  isPreview,
+} from '../../../content/helpers';
+import { locales, localizePath, t, type Locale } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const yachts = await getYachts();
+  return locales.flatMap((lang) =>
+    yachts.map((yacht) => ({ params: { lang, slug: yacht.slug }, props: { yacht } })),
+  );
+}
+
+type Yacht = Awaited<ReturnType<typeof getYachts>>[number];
+interface Props {
+  yacht: Yacht;
+}
+const lang = Astro.params.lang as Locale;
+const { yacht } = Astro.props;
+const settings = await getSettings();
+const { features } = settings;
+const page = await getYachtsPage(lang); // тексти «Le vendeur» і форми — ті самі, що на сторінці Yachts
+const partner = await getYachtPartner(lang);
+// Плашку «Illustration» на фото прибрано (рішення дизайнера): демо-яхти відрізняє лише features.yachtDemo.
+const demoLabel: string | undefined = undefined;
+// Демо-режим: фото без файлу показуємо сірими заглушками з підписом (без плашки).
+const isDemo = yacht.demo && features.yachtDemo;
+const num = new Intl.NumberFormat(lang);
+const length = `${num.format(yacht.length)} m`;
+const meta = [length, yacht.year ? String(yacht.year) : '', yacht.builder ?? ''].filter(Boolean);
+// Фото без файлу показуємо лише в демо (сірі заглушки з підписом); без демо — ховаємо.
+const gallery = yacht.gallery
+  .filter((g) => g.image || isDemo)
+  .map((g) => ({ image: g.image, label: g.label[lang] }));
+
+const title =
+  yacht.seo.title[lang] ||
+  t('yachts.seoTitle', lang)
+    .replace('{name}', yacht.name)
+    .replace('{length}', num.format(yacht.length));
+const description =
+  yacht.seo.description[lang] || yacht.intro[lang] || yacht.headline[lang] || title;
+
+// Інтерʼєри й плани: без файлу — лише в демо (сірі заглушки), інакше — ховаємо.
+const interiors = yacht.interiors
+  .filter((i) => i.image || isDemo)
+  .map((i) => ({ image: i.image, title: i.title[lang], deck: i.deck[lang] }));
+const decks = yacht.decks
+  .filter((d) => d.plan || isDemo)
+  .map((d) => ({ id: d.id, label: d.label[lang], plan: d.plan }));
+
+// Résumé: ціна або «Sur demande».
+const price = yacht.price
+  ? new Intl.NumberFormat(lang, {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0,
+    }).format(yacht.price)
+  : t('yachts.onRequest', lang);
+
+// Fiche technique: лише заповнені значення, у порядку з Figma.
+const m = (v?: number | null) => (v ? `${num.format(v)} m` : '');
+const year = yacht.year
+  ? [
+      String(yacht.year),
+      yacht.refit && t('yachts.refit', lang).replace('{year}', String(yacht.refit)),
+    ]
+      .filter(Boolean)
+      .join(' · ')
+  : '';
+const specs = [
+  { label: t('yachts.length', lang), value: length },
+  { label: t('yachts.beam', lang), value: m(yacht.beam) },
+  { label: t('yachts.draft', lang), value: m(yacht.draft) },
+  { label: t('yachts.year', lang), value: year },
+  { label: t('yachts.builder', lang), value: yacht.builder ?? '' },
+  { label: t('yachts.architect', lang), value: yacht.architect ?? '' },
+  { label: t('yachts.cabins', lang), value: yacht.cabins != null ? String(yacht.cabins) : '' },
+  { label: t('yachts.guests', lang), value: yacht.guests != null ? String(yacht.guests) : '' },
+  { label: t('yachts.crew', lang), value: yacht.crew != null ? String(yacht.crew) : '' },
+  {
+    label: t('yachts.speed', lang),
+    value: yacht.cruiseSpeed
+      ? t('yachts.knots', lang).replace('{n}', num.format(yacht.cruiseSpeed))
+      : '',
+  },
+  { label: t('yachts.engines', lang), value: yacht.engines ?? '' },
+  { label: t('yachts.flag', lang), value: yacht.flag[lang] },
+].filter((s) => s.value);
+
+// PDF fiche technique (public/…): розмір файлу в підписі «PDF, 1,2 Mo».
+const pdf = yacht.sheetPdf.trim().replace(/^\//, '');
+const pdfPath = `public/${pdf}`;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const sheet =
+  pdf && existsSync(pdfPath)
+    ? {
+        href: `${base}${pdf}`,
+        size: t('yachts.fileSize', lang).replace(
+          '{size}',
+          `${new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(statSync(pdfPath).size / 1048576)} ${t('yachts.mb', lang)}`,
+        ),
+      }
+    : null;
+if (pdf && !sheet) throw new Error(`Немає файлу fiche technique: ${pdfPath}`);
+
+// Autres yachts: 3 інші яхти, найближчі за довжиною.
+const others = (await getYachts())
+  .filter((y) => y.slug !== yacht.slug)
+  .sort((a, b) => Math.abs(a.length - yacht.length) - Math.abs(b.length - yacht.length))
+  .slice(0, 3);
+
+// JSON-LD Product — лише для справжніх яхт (не демо); offers — лише з реальною ціною.
+const site = Astro.site ?? new URL('https://luigicontessi.com');
+const jsonLd = yacht.demo
+  ? null
+  : JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: yacht.name,
+      description,
+      image: new URL((await getImage({ src: yacht.image, width: 1200 })).src, site).href,
+      url: new URL(Astro.url.pathname, site).href,
+      ...(yacht.builder && { brand: { '@type': 'Brand', name: yacht.builder } }),
+      ...(yacht.price && {
+        offers: {
+          '@type': 'Offer',
+          price: yacht.price,
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+        },
+      }),
+    });
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={description}
+  current="yachts"
+  noindex={yacht.demo}
+>
+  {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+  <div class="yfiche">
+    <Breadcrumbs
+      lang={lang}
+      name={yacht.name}
+      items={[{ label: t('nav.yachts', lang), href: localizePath('yachts', lang) }]}
+    />
+    <Overview
+      lang={lang}
+      name={yacht.name}
+      image={yacht.image}
+      imageAlt={yacht.imageAlt[lang]}
+      headline={yacht.headline[lang]}
+      intro={yacht.intro[lang]}
+      gallery={gallery}
+      partner={partner.name}
+      demoLabel={demoLabel}
+    />
+    <NameBlock lang={lang} name={yacht.name} meta={meta} />
+    {yacht.video.src && (
+      <Film
+        lang={lang}
+        video={{
+          ...yacht.video,
+          chapters: yacht.video.chapters.map((c) => ({ t: c.t, label: c.label[lang] })),
+        }}
+        demoLabel={demoLabel}
+      />
+    )}
+    <Resume
+      lang={lang}
+      title={yacht.summaryTitle[lang]}
+      port={yacht.port[lang]}
+      price={price}
+      partner={partner.name}
+      image={yacht.image}
+      imageAlt={yacht.imageAlt[lang]}
+      demoLabel={demoLabel}
+    />
+    <Specs lang={lang} specs={specs} sheet={sheet} />
+    {interiors.length > 0 && (
+      <Interiors lang={lang} name={yacht.name} items={interiors} demoLabel={demoLabel} />
+    )}
+    {decks.length > 0 && (
+      <DeckPlan lang={lang} name={yacht.name} decks={decks} demoLabel={demoLabel} />
+    )}
+    {yacht.luigiWord[lang] && (
+      <YachtWord lang={lang} quote={yacht.luigiWord[lang]} author={settings.name} />
+    )}
+    {(partner.name || isPreview()) && (
+      <Seller
+        preview={isPreview()}
+        lang={lang}
+        data={page.seller}
+        partner={partner}
+        logo={getYachtPartnerLogo(partner.logo)}
+      />
+    )}
+    <Request
+      lang={lang}
+      data={page.request}
+      partner={partner.label}
+      email={getEmail(settings, 'yachts')}
+      yachts={[]}
+      fixed={{ slug: yacht.slug, name: yacht.name, length: yacht.length }}
+      thanksHref={`${localizePath('yachts', lang)}#disponibles`}
+    />
+    {others.length > 0 && <OtherYachts lang={lang} yachts={others} demoLabel={demoLabel} />}
+  </div>
+</BaseLayout>
+
+<style>
+  .yfiche {
+    display: flex;
+    flex-direction: column;
+  }
+  /* Mobile (Figma 39:551): назва яхти — першою, одразу після шапки. */
+  @media (max-width: 767px) {
+    .yfiche > :global(.yname),
+    .yfiche > :global(.yfilm) {
+      order: -1; /* назва → відео → решта (у порядку розмітки) */
+    }
+    .yfiche > :global(.crumbs) {
+      order: -2;
+    }
+  }
+</style>

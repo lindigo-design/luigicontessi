@@ -1,0 +1,52 @@
+---
+// Фото на сторінці яхти. Є файл — <Image>; немає — у демо-режимі сіра заглушка --color-image
+// з підписом із Figma («SALON»), без демо — нічого (рішення, показувати чи ні, — на компоненті вище).
+// Демо-яхта — плашка «Illustration» у лівому верхньому куті.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  image?: ImageMetadata;
+  alt: string;
+  /** Підпис заглушки (демо без фото). */
+  label?: string;
+  /** Текст плашки «Illustration» (демо-яхта) або нічого. */
+  demoLabel?: string;
+  widths: number[];
+  sizes: string;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+const { image, alt, label, demoLabel, widths, sizes, loading = 'lazy', class: extra } = Astro.props;
+---
+
+<div class:list={['yphoto', 'media', extra, { 'yphoto--empty': !image }]}>
+  {image ? (
+    <Image src={image} alt={alt} widths={widths} sizes={sizes} loading={loading} />
+  ) : (
+    <span class="yphoto__label eyebrow eyebrow--muted">{label}</span>
+  )}
+  {demoLabel && <span class="yphoto__demo text-s">{demoLabel}</span>}
+  <slot />
+</div>
+
+<style>
+  .yphoto {
+    position: relative;
+    border-radius: var(--radius-card);
+  }
+  .yphoto--empty {
+    display: grid;
+    place-items: center;
+    background: var(--color-image);
+  }
+  .yphoto__demo {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    z-index: 1;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-btn);
+    background: rgb(var(--shade) / 0.6);
+  }
+</style>

@@ -57,7 +57,7 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
             src={preview}
             alt={kit.previewAlt}
             widths={[360, 720]}
-            sizes="360px"
+            sizes="(min-width: 1024px) 360px, calc(100vw - 72px)"
             loading="lazy"
           />
         </div>
@@ -111,11 +111,13 @@ const { press, articles, articlesHref, kit, kitTitle, kitText, kitUrl, requestLa
     padding: var(--space-6);
     border-radius: var(--radius-card);
     background: var(--color-card);
-    scroll-margin-top: calc(var(--header-total-h) + var(--space-6));
   }
   .kit__preview {
-    aspect-ratio: 360 / 240;
+    aspect-ratio: 3 / 2; /* 360 × 240 */
     border-radius: var(--radius-card);
+  }
+  .kit__preview :global(img) {
+    object-position: 50% 44%; /* як у Figma */
   }
   .kit__title {
     font-size: var(--fs-h3);
