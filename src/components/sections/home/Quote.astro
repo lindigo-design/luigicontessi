@@ -1,0 +1,67 @@
+---
+// Figma: Home → 03 Citation (desktop 3:71, mobile 6:240). Цитата на фото.
+import { Image } from 'astro:assets';
+import bg from '../../../assets/img/home/quote.jpg';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  data: HomeData['quote'];
+}
+const { data } = Astro.props;
+---
+
+<section class="quote" aria-label={data.author}>
+  <Image class="quote__bg" src={bg} alt={data.image.alt} widths={[768, 1280, 1920]} sizes="100vw" />
+  <div class="container">
+    <figure class="quote__card">
+      <blockquote>
+        <p>{data.text}</p>
+      </blockquote>
+      <figcaption class="eyebrow eyebrow--muted">{data.author}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .quote {
+    position: relative;
+    isolation: isolate;
+    padding-block: clamp(6rem, 4.629rem + 5.714vw, 10rem); /* 96 → 160 */
+    background: var(--color-image);
+  }
+  .quote__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  .quote__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    max-width: 55rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 1.314rem + 2.857vw, 4.5rem);
+    border-radius: var(--radius-card);
+    background: var(--color-bg);
+    text-align: center;
+  }
+  blockquote p {
+    font-family: var(--font-display);
+    font-size: var(--fs-quote);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 1024px) {
+    /* Кадр як у Figma (desktop) */
+    .quote__bg {
+      object-position: 50% 58%;
+    }
+    .quote__card {
+      gap: var(--space-8);
+    }
+  }
+</style>

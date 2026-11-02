@@ -1,0 +1,15 @@
+{
+  "name": "Luigi Contessi",
+  "instagramHandle": "@contessiluigi",
+  "instagramUrl": "https://www.instagram.com/contessiluigi/",
+  "socials": [
+    { "label": "IG", "name": "Instagram", "url": "https://www.instagram.com/contessiluigi/" },
+    { "label": "YT", "name": "YouTube", "url": "" },
+    { "label": "TT", "name": "TikTok", "url": "" },
+    { "label": "in", "name": "LinkedIn", "url": "" }
+  ],
+  "features": {
+    "shop": false,
+    "currencySwitch": false
+  }
+}

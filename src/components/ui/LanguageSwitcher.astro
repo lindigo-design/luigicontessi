@@ -1,0 +1,50 @@
+---
+// Перемикач мов: веде на ту саму сторінку іншою мовою.
+import { locales, switchLocale, t, type Locale } from '../../i18n/utils';
+interface Props {
+  lang: Locale;
+  variant?: 'nav' | 'footer';
+}
+const { lang, variant = 'nav' } = Astro.props;
+const path = Astro.url.pathname;
+---
+
+<ul class:list={['langs', `langs--${variant}`]} role="list" aria-label={t('lang.label', lang)}>
+  {locales.map((code) => (
+    <li>
+      <a
+        href={switchLocale(path, code)}
+        hreflang={code}
+        lang={code}
+        aria-current={code === lang ? 'true' : undefined}
+        aria-label={t(`lang.${code}`, lang)}
+      >
+        {code.toUpperCase()}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .langs {
+    display: flex;
+    gap: var(--space-5);
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: 0.08em;
+  }
+  .langs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-text-2);
+    transition: color var(--dur) var(--ease);
+  }
+  .langs a:hover,
+  .langs a[aria-current] {
+    color: var(--color-text);
+  }
+  .langs--nav {
+    gap: var(--space-3);
+  }
+</style>

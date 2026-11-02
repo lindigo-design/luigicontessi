@@ -1,0 +1,34 @@
+---
+// Figma: Icon / Arrow circle (40 px, контур 1.5). Колір береться від батька (currentColor).
+import ArrowRight from '../../assets/icons/arrow-right.svg';
+import ArrowLeft from '../../assets/icons/arrow-left.svg';
+interface Props {
+  size?: 'm' | 'l';
+  dir?: 'next' | 'prev';
+}
+const { size = 'm', dir = 'next' } = Astro.props;
+const Icon = dir === 'prev' ? ArrowLeft : ArrowRight;
+---
+
+<span class:list={['arrow', `arrow--${size}`]} aria-hidden="true">
+  <Icon />
+</span>
+
+<style>
+  .arrow {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+  .arrow--l {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+</style>

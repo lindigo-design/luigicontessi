@@ -1,0 +1,19 @@
+---
+// Корінь «/» → французька версія (на хостингу те саме робить .htaccess).
+import { defaultLocale } from '../i18n/locales.js';
+const target = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${defaultLocale}/`;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={target} />
+    <title>Luigi Contessi</title>
+  </head>
+  <body>
+    <a href={target}>Luigi Contessi</a>
+  </body>
+</html>

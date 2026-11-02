@@ -1,0 +1,121 @@
+/* Спільні класи, які використовуються в багатьох секціях. */
+
+/* Label/Eyebrow — червоний підпис секції */
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--fs-eyebrow);
+  line-height: 1.333;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-red-text);
+}
+.eyebrow--muted {
+  color: var(--color-text-2);
+}
+
+/* Заголовок секції: eyebrow + h2 (+ текст) + посилання */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.section-head__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.section-head__body {
+  color: var(--color-text-2);
+  max-width: 52ch;
+}
+@media (min-width: 1024px) {
+  .section-head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+  }
+  .section-head__text {
+    gap: var(--space-5);
+  }
+}
+
+/* Text/Body S — підписи */
+.text-s {
+  font-size: var(--fs-body-s);
+  line-height: 1.43;
+}
+.text-2 {
+  color: var(--color-text-2);
+}
+.title {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  line-height: 1.444;
+}
+
+/* Фото-заглушка з однаковим фоном */
+.media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-image);
+}
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Клікабельна картка: фото всередині .media плавно росте при наведенні, коло-стрілка червоніє.
+   Лише для карток-посилань — не для декоративних фото і фонів. Лише з мишкою. */
+.zoom-card .media img {
+  transition: transform var(--zoom-dur) var(--zoom-ease);
+}
+.zoom-card .arrow {
+  transition:
+    background-color var(--zoom-dur) var(--zoom-ease),
+    color var(--zoom-dur) var(--zoom-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .zoom-card:hover .arrow,
+  .zoom-card:focus-visible .arrow,
+  .zoom-card:has(:focus-visible) .arrow {
+    background: var(--color-red-text);
+    color: var(--color-bg);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .zoom-card:hover .media img,
+  .zoom-card:focus-visible .media img,
+  .zoom-card:has(:focus-visible) .media img {
+    transform: scale(var(--zoom-scale));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zoom-card .media img {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Горизонтальна стрічка з прокруткою (mobile swipe) */
+.rail {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  scroll-padding-inline: var(--gutter);
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}

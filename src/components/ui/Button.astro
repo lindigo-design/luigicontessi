@@ -1,0 +1,97 @@
+---
+// Figma: Button (Primary / Outline / Link / Link Accent).
+// Правило сайту: червоний = дія. Link Accent — завжди з колом-стрілкою.
+import ArrowCircle from './ArrowCircle.astro';
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'link' | 'accent';
+  type?: 'button' | 'submit';
+  block?: boolean;
+  external?: boolean;
+  class?: string;
+  [key: `data-${string}`]: string | undefined;
+}
+const {
+  href,
+  variant = 'primary',
+  type = 'button',
+  block = false,
+  external = false,
+  class: extra,
+  ...rest
+} = Astro.props;
+const Tag = href ? 'a' : 'button';
+const cls = ['btn', `btn--${variant}`, block && 'btn--block', extra];
+const linkAttrs = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+  : { type };
+---
+
+<Tag class:list={cls} {...linkAttrs} {...rest}>
+  <span class="btn__label">
+    <slot />
+  </span>
+  {variant === 'accent' && <ArrowCircle />}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    min-height: 3.25rem;
+    padding: 1.125rem 1.75rem;
+    border-radius: var(--radius-btn);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    line-height: 1.23;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      opacity var(--dur) var(--ease);
+  }
+  .btn--primary {
+    background: var(--color-text);
+    color: var(--color-on-light);
+  }
+  .btn--primary:hover {
+    background: #fff;
+  }
+  .btn--outline {
+    border: 1px solid var(--color-text);
+    color: var(--color-text);
+    padding-block: 1.0625rem;
+  }
+  .btn--outline:hover {
+    background: var(--color-text);
+    color: var(--color-on-light);
+  }
+  .btn--link,
+  .btn--accent {
+    min-height: 2.75rem;
+    padding: 0.125rem 0;
+    gap: var(--space-4);
+  }
+  .btn--link {
+    color: var(--color-text);
+  }
+  .btn--link:hover {
+    opacity: 0.7;
+  }
+  .btn--accent {
+    color: var(--color-red-text);
+  }
+  .btn--accent:hover :global(.arrow) {
+    background: var(--color-red-text);
+    color: var(--color-bg);
+  }
+  .btn--block {
+    width: 100%;
+  }
+</style>

@@ -1,0 +1,334 @@
+---
+// Figma: Home → 11 Pour les marques (desktop 4:245 / Testimonial slider 4:247, mobile 6:468 / 6:470).
+// Фото зліва (на mobile — зверху), справа: підпис → один відгук з автоперемиканням → CTA.
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import ArrowCircle from '../../ui/ArrowCircle.astro';
+import photo from '../../../assets/img/home/brands.jpg';
+import { t, type Locale } from '../../../i18n/utils';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: HomeData['brands'];
+  ctaHref: string;
+  contactHref: string;
+}
+const { lang, data, ctaHref, contactHref } = Astro.props;
+const reviews = data.testimonials;
+const total = reviews.length;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="brands section section--alt" aria-labelledby="brands-title">
+  <div class="container brands__row">
+    <div class="brands__img media">
+      <Image
+        src={photo}
+        alt={data.image.alt}
+        widths={[400, 720, 1040]}
+        sizes="(min-width: 1024px) 520px, 100vw"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="brands__content">
+      <p class="eyebrow" id="brands-eyebrow">
+        {data.eyebrow}
+      </p>
+
+      <section
+        class="reviews"
+        aria-roledescription={t('ui.carousel', lang)}
+        aria-labelledby="brands-eyebrow"
+      >
+        <div class="slider" data-slider>
+          <div class="slider__card" data-slider-card>
+            <div class="slider__slides">
+              {reviews.map((r, i) => (
+                <figure
+                  class="review"
+                  role="group"
+                  aria-roledescription={t('ui.slideRole', lang)}
+                  aria-label={`${i + 1} / ${total}`}
+                  hidden={i !== 0}
+                  data-slide
+                >
+                  <blockquote class="review__quote">{r.quote}</blockquote>
+                  <figcaption class="review__author">
+                    <span class="title">{r.name}</span>
+                    <span class="text-s text-2">{r.role}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+
+            {total > 1 && (
+              <div class="slider__nav">
+                <p class="slider__count" aria-live="off" data-count>
+                  <span data-current>01</span> / {pad(total)}
+                </p>
+                <ol class="slider__bars" role="list" aria-hidden="true">
+                  {reviews.map((_, i) => (
+                    <li class:list={{ 'is-active': i === 0 }} data-bar>
+                      <span class="slider__fill" />
+                    </li>
+                  ))}
+                </ol>
+                <div class="slider__arrows">
+                  <button class="slider__arrow" type="button" data-prev>
+                    <span class="visually-hidden">{t('ui.prev', lang)}</span>
+                    <ArrowCircle dir="prev" />
+                  </button>
+                  <button class="slider__arrow" type="button" data-next>
+                    <span class="visually-hidden">{t('ui.next', lang)}</span>
+                    <ArrowCircle />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div class="brands__cta">
+        <h2 id="brands-title" class="brands__title">
+          <span>{data.titleLine1}</span>
+          <span class="brands__line2">
+            <span>{data.titleLine2}</span>
+            <Button href={ctaHref} class="brands__btn">
+              {data.cta.label}
+            </Button>
+          </span>
+        </h2>
+        <div class="brands__sub">
+          <p class="text-2">{data.sub}</p>
+          <Button href={contactHref} variant="accent">
+            {data.link.label}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initSliders } from '../../../scripts/slider';
+  initSliders();
+</script>
+
+<style>
+  .brands__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .brands__img {
+    aspect-ratio: 358 / 420;
+  }
+  .brands__img :global(img) {
+    position: absolute;
+    inset: 0;
+  }
+  .brands__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    min-width: 0;
+  }
+
+  /* Картка відгуку: усі відгуки в одній клітинці (висота = найдовший), навігація під автором.
+     subgrid — щоб на desktop навігація стала в рядок автора, праворуч. */
+  .slider__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+    touch-action: pan-y;
+  }
+  .slider__slides,
+  .review {
+    grid-column: 1 / -1;
+    grid-row: 1 / 3;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+  }
+  .review {
+    transition:
+      opacity 400ms var(--ease),
+      visibility 400ms;
+  }
+  .review[hidden] {
+    display: grid;
+    visibility: hidden;
+    opacity: 0;
+  }
+  .review__quote {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    font-size: var(--fs-body-l);
+    line-height: 1.55;
+  }
+  .review__author {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .slider__nav {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .slider__count {
+    font-weight: 500;
+    font-size: var(--fs-label);
+    line-height: 1.23;
+    letter-spacing: 0.08em;
+    color: var(--color-text-2);
+    white-space: nowrap;
+  }
+  .slider__bars {
+    display: flex;
+    gap: 6px;
+  }
+  .slider__bars li {
+    width: 2rem;
+    height: 2px;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+  .slider__fill {
+    display: block;
+    height: 100%;
+    background: var(--color-text);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .slider__bars .is-active .slider__fill {
+    animation: slider-progress var(--autoplay, 6s) linear forwards;
+  }
+  .slider.is-paused .slider__bars .is-active .slider__fill {
+    animation-play-state: paused;
+  }
+  @keyframes slider-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .slider__arrows {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .slider__arrow {
+    display: inline-flex;
+    color: var(--color-text);
+  }
+  .slider__arrow:hover :global(.arrow) {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  .brands__cta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+  .brands__title {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--fs-h1);
+    line-height: var(--lh-h1);
+  }
+  .brands__line2 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .brands__title :global(.brands__btn) {
+    width: 100%;
+  }
+  .brands__sub {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 1024px) {
+    .brands__row {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-24);
+    }
+    .brands__img {
+      flex: 0 0 min(36%, 32.5rem);
+      align-self: stretch;
+      min-height: 37.5rem;
+      aspect-ratio: auto;
+    }
+    .brands__content {
+      flex: 1;
+      gap: var(--space-12);
+    }
+    .slider__card {
+      gap: var(--space-7) var(--space-8);
+      padding: var(--space-10);
+    }
+    .brands__cta {
+      padding-top: var(--space-12);
+      gap: var(--space-6);
+    }
+    .brands__title {
+      font-size: var(--fs-stat);
+      line-height: 1.125;
+    }
+    .brands__line2 {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-8);
+    }
+    .brands__title :global(.brands__btn) {
+      width: auto;
+    }
+    .brands__sub {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-10);
+    }
+  }
+  /* Широка колонка: навігація в рядку автора, праворуч. Вужче — під автором, щоб ім'я не стискалось. */
+  @media (min-width: 1280px) {
+    .slider__card {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .slider__nav {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: end;
+      gap: var(--space-5);
+    }
+  }
+
+  /* Зменшений рух: без автоперемикання і без проявлення — смужка лише показує активний відгук. */
+  @media (prefers-reduced-motion: reduce) {
+    .review {
+      transition: none;
+    }
+    .slider__bars .is-active .slider__fill {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>

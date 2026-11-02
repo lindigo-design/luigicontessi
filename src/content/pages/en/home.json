@@ -1,0 +1,372 @@
+{
+  "seoTitle": "Luigi Contessi — cars, watches, yachts, travel",
+  "seoDescription": "Luigi Contessi shares what he chooses himself: cars, watches, yachts, hotels. Favourites, partner codes and the Contessi Collection.",
+  "promo": {
+    "text": "Code LUIGI10 — 10% off your first order",
+    "code": "LUIGI10"
+  },
+  "hero": {
+    "eyebrow": "Luxury lifestyle curator",
+    "title": "Cars, watches, yachts, travel.\nWhat I choose — and why.",
+    "primary": {
+      "label": "Read the Journal"
+    },
+    "secondary": {
+      "label": "See the collection"
+    },
+    "image": {
+      "alt": "Luigi Contessi at the wheel of a red sports car"
+    },
+    "cards": [
+      {
+        "tag": "Favourite · Tech",
+        "name": "Shokz OpenRun",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "tag": "Favourite · Watches",
+        "name": "Briston watch",
+        "image": {
+          "alt": ""
+        }
+      }
+    ]
+  },
+  "about": {
+    "eyebrow": "(01) About",
+    "title": "Luigi Contessi",
+    "body": "Entrepreneur and content creator. I share what I try myself: cars, watches, places. When I like a brand, I say so. When I don’t, I don’t talk about it.",
+    "stats": [
+      {
+        "value": "1.7M+",
+        "label": "Instagram followers"
+      },
+      {
+        "value": "500+",
+        "label": "collaborations"
+      },
+      {
+        "value": "30+",
+        "label": "countries"
+      }
+    ],
+    "link": {
+      "label": "My story"
+    },
+    "image": {
+      "alt": "Portrait of Luigi Contessi in a dark suit"
+    }
+  },
+  "quote": {
+    "text": "“Every piece of content should move, inspire and leave a mark.”",
+    "author": "— Luigi Contessi",
+    "image": {
+      "alt": ""
+    }
+  },
+  "press": {
+    "eyebrow": "Press",
+    "title": "In the press",
+    "link": {
+      "label": "All press"
+    },
+    "items": [
+      {
+        "meta": "Print · [date]",
+        "title": "[Article title]",
+        "excerpt": "“[Short quote from the article, one sentence.]”",
+        "action": "Read the article"
+      },
+      {
+        "meta": "TV · [date]",
+        "title": "[Report title]",
+        "excerpt": "“[Short quote from the report, one sentence.]”",
+        "action": "Watch"
+      },
+      {
+        "meta": "Podcast · [date]",
+        "title": "[Episode title]",
+        "excerpt": "“[Short quote from the episode, one sentence.]”",
+        "action": "Listen"
+      }
+    ]
+  },
+  "news": {
+    "index": "(02)",
+    "eyebrow": "New in",
+    "title": "Latest arrivals — my collection and the brands I recommend.",
+    "titleMobile": "Latest arrivals",
+    "items": [
+      {
+        "tag": "Collection",
+        "name": "Contessi shirt",
+        "description": "",
+        "action": "View",
+        "image": {
+          "alt": "Contessi shirt"
+        }
+      },
+      {
+        "tag": "Favourite · Affiliate link",
+        "name": "Shokz OpenRun",
+        "description": "",
+        "action": "View",
+        "image": {
+          "alt": "Shokz OpenRun headphones"
+        }
+      },
+      {
+        "tag": "Collection",
+        "name": "Contessi suit",
+        "description": "Grey suit, tailored fit, worn with a white shirt and tie. [Available sizes]",
+        "action": "View",
+        "image": {
+          "alt": "Luigi Contessi in a grey Contessi suit"
+        }
+      },
+      {
+        "tag": "Favourite · Affiliate link",
+        "name": "Golden Concept watch",
+        "description": "",
+        "action": "View",
+        "image": {
+          "alt": "Golden Concept watch"
+        }
+      },
+      {
+        "tag": "Favourite · Affiliate link",
+        "name": "Briston watch",
+        "description": "",
+        "action": "View",
+        "image": {
+          "alt": "Briston watch"
+        }
+      }
+    ]
+  },
+  "universes": {
+    "eyebrow": "(03) Worlds",
+    "title": "Six worlds,\none point of view",
+    "items": [
+      {
+        "name": "Cars",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Watches",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Travel & Hotels",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Yachts",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Private jets",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Art de vivre",
+        "image": {
+          "alt": ""
+        }
+      }
+    ]
+  },
+  "collection": {
+    "eyebrow": "(04) The collection",
+    "title": "Contessi Collection",
+    "body": "Suits, shirts and shoes signed Contessi. Tailored cuts, carefully chosen fabrics.",
+    "cta": {
+      "label": "Visit the shop"
+    },
+    "items": [
+      {
+        "name": "Contessi suit",
+        "price": "[Price]",
+        "image": {
+          "alt": "Contessi suit"
+        }
+      },
+      {
+        "name": "White shirt",
+        "price": "[Price]",
+        "image": {
+          "alt": "Contessi white shirt"
+        }
+      },
+      {
+        "name": "Contessi shoes",
+        "price": "[Price]",
+        "image": {
+          "alt": "Contessi shoes"
+        }
+      }
+    ]
+  },
+  "privileges": {
+    "eyebrow": "(05) Privileges",
+    "title": "My codes with partner brands",
+    "body": "Brands I really use. Copy the code — it works on their website.",
+    "link": {
+      "label": "All privileges"
+    },
+    "codes": [
+      {
+        "disclosure": "Partnership",
+        "offer": "15% off the whole shop",
+        "code": "LUIGI15",
+        "brandLink": "See the brand",
+        "brandUrl": ""
+      },
+      {
+        "disclosure": "Partnership",
+        "offer": "Free delivery",
+        "code": "CONTESSI",
+        "brandLink": "See the brand",
+        "brandUrl": ""
+      },
+      {
+        "disclosure": "Partnership",
+        "offer": "10% off your first order",
+        "code": "LUIGI10",
+        "brandLink": "See the brand",
+        "brandUrl": ""
+      }
+    ]
+  },
+  "yachts": {
+    "eyebrow": "(06) Yachts for sale",
+    "title": "From first contact to signature",
+    "body": "I represent [Company] and guide you through every step of the purchase.",
+    "specs": [
+      {
+        "label": "Length",
+        "value": "[XX] m"
+      },
+      {
+        "label": "Year",
+        "value": "[XXXX]"
+      },
+      {
+        "label": "Price",
+        "value": "On request"
+      }
+    ],
+    "primary": {
+      "label": "See the yachts"
+    },
+    "secondary": {
+      "label": "Ask for information"
+    },
+    "disclosure": "Sale handled by [Company]",
+    "image": {
+      "alt": "Motor yacht at sunset near the coast"
+    }
+  },
+  "instagram": {
+    "followers": "1.7M+ followers",
+    "cta": {
+      "label": "Follow on Instagram"
+    },
+    "images": [
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "(07) Questions",
+    "title": "Frequently asked questions",
+    "link": {
+      "label": "All questions"
+    },
+    "items": [
+      {
+        "question": "Do you ship internationally?",
+        "answer": "Yes. To Europe and the United States. Delivery times and costs are shown before payment."
+      },
+      {
+        "question": "How do I return an item?",
+        "answer": "[Return period and conditions — to be confirmed.]"
+      },
+      {
+        "question": "How do partner codes work?",
+        "answer": "Copy the code, then paste it on the brand’s website at checkout."
+      },
+      {
+        "question": "Who sells the partner products?",
+        "answer": "The brand itself. The link takes you to its website: the brand sells and ships."
+      },
+      {
+        "question": "How does buying a yacht work?",
+        "answer": "You contact me. I put you in touch with [Company] and guide you until the signature."
+      }
+    ],
+    "image": {
+      "alt": ""
+    }
+  },
+  "brands": {
+    "eyebrow": "(08) They work with me",
+    "testimonials": [
+      {
+        "quote": "“[Real review from a partner brand, with its consent.]”",
+        "name": "[First Last]",
+        "role": "[Role, Brand]"
+      },
+      {
+        "quote": "“[Real review from a partner brand, with its consent.]”",
+        "name": "[First Last]",
+        "role": "[Role, Brand]"
+      },
+      {
+        "quote": "“[Real review from a partner brand, with its consent.]”",
+        "name": "[First Last]",
+        "role": "[Role, Brand]"
+      }
+    ],
+    "titleLine1": "Are you a brand?",
+    "titleLine2": "Let’s talk.",
+    "cta": {
+      "label": "Collaborate →"
+    },
+    "sub": "Content, events, ambassadorship. Media kit on request.",
+    "link": {
+      "label": "Contact"
+    },
+    "image": {
+      "alt": "Luigi Contessi in a tuxedo in front of a red sports car"
+    }
+  }
+}

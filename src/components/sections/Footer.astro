@@ -1,0 +1,330 @@
+---
+// Figma: 12 Footer (desktop: колонки; mobile: акордеон). На всю ширину екрана.
+// Внизу — великий CONTESSI від лівого до правого відступу, обрізаний знизу.
+// Два шари: базовий (як у Figma) і світлий із зерном — видно лише під «прожектором» біля курсора.
+import Button from '../ui/Button.astro';
+import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
+import PlusIcon from '../../assets/icons/plus.svg';
+import { footerNav, legalNav } from '../../i18n/nav';
+import { localizePath, t, type Locale } from '../../i18n/utils';
+import { getSettings } from '../../content/helpers';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const settings = await getSettings();
+const shop = settings.features.shop;
+const to = (p: string) => localizePath(p, lang);
+const socials = settings.socials.filter((s) => s.url);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container container--bleed">
+    <div class="footer__news">
+      <div class="footer__news-text">
+        <h2 class="footer__news-title">{t('footer.newsletterTitle', lang)}</h2>
+        <p class="text-s text-2">
+          {t('footer.newsletterNote', lang)}
+          <a class="footer__inline" href={to('confidentialite')}>
+            {t('footer.newsletterPrivacy', lang)}
+          </a>
+          .
+        </p>
+      </div>
+      <form class="footer__form" data-newsletter novalidate>
+        <label class="visually-hidden" for="nl-email">
+          {t('footer.email', lang)}
+        </label>
+        <input
+          class="field footer__input"
+          id="nl-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder={t('footer.email', lang)}
+          required
+        />
+        <Button type="submit">{t('footer.subscribe', lang)}</Button>
+        <p class="footer__status text-s" role="status" data-soon={t('footer.soon', lang)}></p>
+      </form>
+    </div>
+
+    <nav class="footer__cols" aria-label="Footer">
+      {footerNav.map((col) => (
+        <details class="footer__col" open>
+          <summary class="footer__col-title eyebrow eyebrow--muted">
+            {t(col.title, lang)}
+            <PlusIcon />
+          </summary>
+          <ul role="list">
+            {col.items
+              .filter((i) => !i.shop || shop)
+              .map((i) => (
+                <li>
+                  <a href={to(i.path)}>{t(i.key, lang)}</a>
+                </li>
+              ))}
+          </ul>
+        </details>
+      ))}
+    </nav>
+
+    <div class="footer__legal">
+      <ul class="footer__legal-links text-s text-2" role="list">
+        <li>
+          © {year} {settings.name}
+        </li>
+        {legalNav
+          .filter((i) => !i.shop || shop)
+          .map((i) => (
+            <li>
+              <a href={to(i.path)}>{t(i.key, lang)}</a>
+            </li>
+          ))}
+      </ul>
+      <div class="footer__meta">
+        <LanguageSwitcher lang={lang} variant="footer" />
+        <ul class="footer__social" role="list" aria-label={t('footer.social', lang)}>
+          {socials.map((s) => (
+            <li>
+              <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}>
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="ghost" data-spotlight aria-hidden="true">
+      <p class="ghost__base">CONTESSI</p>
+      <p class="ghost__light">CONTESSI</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Розсилка ще не підключена: чесно кажемо «скоро», а не вдаємо, що все відправлено.
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const status = form.querySelector<HTMLElement>('[data-soon]');
+      if (status) status.textContent = status.dataset.soon ?? '';
+    });
+  });
+  // Desktop: колонки завжди відкриті. Mobile: акордеон закритий.
+  const mq = window.matchMedia('(min-width: 768px)');
+  const sync = () =>
+    document.querySelectorAll<HTMLDetailsElement>('.footer__col').forEach((d) => {
+      d.open = mq.matches;
+    });
+  sync();
+  mq.addEventListener('change', sync);
+
+  import { initSpotlight } from '../../scripts/spotlight';
+  initSpotlight();
+</script>
+
+<style>
+  .footer {
+    container-type: inline-size;
+    padding-top: clamp(3.5rem, 2.7rem + 3.2vw, 6rem);
+    overflow: hidden;
+  }
+  .footer__news {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-bottom: var(--space-8);
+  }
+  .footer__news-title {
+    font-size: var(--fs-h3);
+    line-height: 1.214;
+  }
+  .footer__news-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .footer__inline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .footer__form {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .footer__status:empty {
+    display: none;
+  }
+  .footer__cols {
+    display: grid;
+  }
+  .footer__col {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .footer__col-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 1.125rem;
+    list-style: none;
+    cursor: pointer;
+  }
+  .footer__col-title::-webkit-details-marker {
+    display: none;
+  }
+  .footer__col[open] .footer__col-title :global(svg) {
+    transform: rotate(45deg);
+  }
+  .footer__col ul {
+    display: grid;
+    gap: var(--space-3);
+    padding-bottom: var(--space-5);
+  }
+  .footer__col a,
+  .footer__legal a {
+    transition: color var(--dur) var(--ease);
+  }
+  .footer__col a:hover {
+    color: var(--color-text-2);
+  }
+  .footer__legal a:hover {
+    color: var(--color-text);
+  }
+  .footer__legal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-8);
+  }
+  .footer__legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+  }
+  .footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  .footer__social {
+    display: flex;
+    gap: var(--space-4);
+    font-weight: 500;
+    font-size: var(--fs-label);
+    letter-spacing: 0.08em;
+  }
+  .footer__social a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+  /* Кегль від ширини футера (cqi — без смуги прокрутки): Boldonse, слово ≈ 6.39 × кегль. */
+  .ghost {
+    --mx: 50%;
+    --my: -200%; /* пляма «за кадром» — світлого шару не видно */
+    position: relative;
+    display: grid;
+    margin-top: calc(var(--space-8) - 0.1em);
+    margin-bottom: -0.1em; /* видно ~95 % висоти літер (Boldonse: літери = 1.2em) */
+    font-family: var(--font-logo);
+    font-size: calc((100cqi - 2 * var(--gutter)) / 6.4);
+    line-height: 1.24;
+    letter-spacing: 0.02em;
+    text-align: left;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none; /* високі літери Boldonse не мають перекривати посилання над написом */
+  }
+  .ghost__base,
+  .ghost__light {
+    grid-area: 1 / 1;
+    /* Верх літер Boldonse (особливо круглих C, O, S) виходить вище рядка на ~0.03em.
+       Фон світлого шару (background-clip: text) малюється лише в межах блока,
+       тому без запасу зверху лишалась смужка базового кольору. */
+    padding-top: 0.1em;
+  }
+  .ghost__base {
+    color: var(--color-ghost);
+  }
+  /* Світлий шар: колір тексту + зерно всередині літер, видно лише в колі навколо курсора. */
+  .ghost__light {
+    color: transparent;
+    background-image:
+      url('/textures/noise.svg'), linear-gradient(var(--color-text), var(--color-text));
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: var(--ghost-light-opacity);
+    -webkit-mask-image: radial-gradient(
+      circle var(--spot-r) at var(--mx) var(--my),
+      #000 0%,
+      transparent 60%
+    );
+    mask-image: radial-gradient(
+      circle var(--spot-r) at var(--mx) var(--my),
+      #000 0%,
+      transparent 60%
+    );
+  }
+  /* Без курсора (телефони, планшети) — статична пляма в центрі. */
+  @media (hover: none) {
+    .ghost {
+      --mx: 50%;
+      --my: 60%;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .footer__news {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-10);
+      padding-bottom: var(--space-12);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .footer__form {
+      grid-template-columns: minmax(0, 22.5rem) auto;
+      gap: 0;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-btn);
+    }
+    .footer__input {
+      border: 0;
+      padding-left: var(--space-5);
+    }
+    .footer__status {
+      grid-column: 1 / -1;
+      padding: var(--space-3) var(--space-5);
+    }
+    .footer__cols {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-6);
+      padding-top: var(--space-12);
+    }
+    .footer__col {
+      border: 0;
+    }
+    .footer__col-title {
+      padding-block: 0 var(--space-4);
+      pointer-events: none;
+    }
+    .footer__col-title :global(svg) {
+      display: none;
+    }
+    .footer__col ul {
+      gap: var(--space-4);
+      padding-bottom: 0;
+    }
+    .footer__legal {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--space-12);
+    }
+  }
+</style>

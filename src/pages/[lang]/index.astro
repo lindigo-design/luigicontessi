@@ -1,0 +1,59 @@
+---
+// Головна сторінка. Тут лише порядок секцій (як у Figma) і куди ведуть кнопки.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PromoBar from '../../components/sections/PromoBar.astro';
+import Hero from '../../components/sections/home/Hero.astro';
+import About from '../../components/sections/home/About.astro';
+import Quote from '../../components/sections/home/Quote.astro';
+import Press from '../../components/sections/home/Press.astro';
+import News from '../../components/sections/home/News.astro';
+import Universes from '../../components/sections/home/Universes.astro';
+import Collection from '../../components/sections/home/Collection.astro';
+import Privileges from '../../components/sections/home/Privileges.astro';
+import Yachts from '../../components/sections/home/Yachts.astro';
+import Instagram from '../../components/sections/home/Instagram.astro';
+import Faq from '../../components/sections/home/Faq.astro';
+import ForBrands from '../../components/sections/home/ForBrands.astro';
+import { getHome, getSettings } from '../../content/helpers';
+import { locales, localizePath, type Locale } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const page = await getHome(lang);
+const settings = await getSettings();
+const to = (path: string) => localizePath(path, lang);
+---
+
+<BaseLayout lang={lang} title={page.seoTitle} description={page.seoDescription}>
+  <PromoBar slot="top" lang={lang} data={page.promo} />
+  <Hero
+    data={page.hero}
+    primaryHref={to('journal')}
+    secondaryHref={to('collection')}
+    cardHref={to('coups-de-coeur')}
+  />
+  <About data={page.about} href={to('a-propos')} />
+  <Quote data={page.quote} />
+  <Press data={page.press} href={to('presse')} />
+  <News lang={lang} data={page.news} href={to('coups-de-coeur')} />
+  <Universes data={page.universes} href={to('journal')} />
+  <Collection data={page.collection} href={to('collection')} />
+  <Privileges lang={lang} data={page.privileges} href={to('privileges')} />
+  <Yachts data={page.yachts} listHref={to('yachts')} contactHref={to('contact')} />
+  <Instagram
+    lang={lang}
+    data={page.instagram}
+    handle={settings.instagramHandle}
+    url={settings.instagramUrl}
+  />
+  <Faq data={page.faq} href={to('faq')} />
+  <ForBrands
+    lang={lang}
+    data={page.brands}
+    ctaHref={to('partenariats')}
+    contactHref={to('contact')}
+  />
+</BaseLayout>

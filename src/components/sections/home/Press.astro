@@ -1,0 +1,76 @@
+---
+// Figma: Home → 03b Presse (desktop 59:396, mobile 59:456).
+// Логотипи медіа нерухомі (не стрічка) — так домовились.
+import Button from '../../ui/Button.astro';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  data: HomeData['press'];
+  href: string;
+}
+const { data, href } = Astro.props;
+---
+
+<section class="press section" aria-labelledby="press-title">
+  <div class="container press__inner">
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow">{data.eyebrow}</p>
+        <h2 id="press-title">{data.title}</h2>
+      </div>
+      <Button href={href} variant="accent">
+        {data.link.label}
+      </Button>
+    </div>
+    <ul class="press__cards rail" role="list">
+      {data.items.map((item) => (
+        <li class="pcard">
+          <p class="eyebrow eyebrow--muted">{item.meta}</p>
+          <h3>{item.title}</h3>
+          <p class="text-s text-2">{item.excerpt}</p>
+          <Button href={href} variant="accent">
+            {item.action}
+          </Button>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .press__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    width: 18.75rem;
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: var(--color-card);
+  }
+  .pcard p:nth-of-type(2) {
+    flex: 1;
+  }
+  @media (min-width: 1024px) {
+    .press__inner {
+      gap: var(--space-12);
+    }
+    .press__cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .pcard {
+      width: auto;
+      padding: var(--space-7);
+    }
+  }
+</style>

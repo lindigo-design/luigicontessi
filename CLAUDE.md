@@ -1,0 +1,17 @@
+# Правила проєкту Luigi Contessi
+
+- Astro 7 (static), Keystatic лише в dev, мови: fr (основна), en, it.
+- Джерело дизайну: Figma «Luigi Contessi — Website» (Rgf6u75FfIOMd1lqv0dNAu) → сторінки Home, Components & Tokens…
+- Жодного тексту в компонентах: усе з src/content (великі тексти) або src/i18n/ui (дрібні написи).
+- Кольори/шрифти/відступи лише через токени src/styles/tokens.css (назви як змінні Figma).
+- Шрифти: Cal Sans (заголовки, цифри, цитати), Manrope (текст, кнопки), Boldonse (логотип, CONTESSI).
+- Темна тема — єдина. Червоний = дія: червоні посилання завжди з колом-стрілкою; eyebrow секцій червоні; max 2 червоних на секцію.
+- Фото на тлі — завжди з затемненням (градієнт до bg/base), не скляні плашки.
+- Сувора CSP: без inline style/script, без сторонніх скриптів.
+- Посилання лише через localizePath(); фото лише через <Image>/<Picture> з src/assets.
+- Mobile-first; перевірка 390/768/1024/1440; текст ≥ 14px (body 16px); WCAG AA.
+- Магазин поки вимкнено: site/settings.json → features.shop = false (ховає Boutique, Panier, CGV, Livraison).
+- Закон Франції про інфлюенсерів (2023): позначки «Partenariat» / «Lien affilié» біля партнерського контенту обовʼязкові.
+- Тексти: просто (як для дитини 10–12 років), без обіцянок регулярності («chaque semaine»), без вигаданих фактів, відгуків і цифр.
+- Після кожного етапу: npm run format, npm run build, звіт + список файлів, стоп.
+- Секрети ніколи не комітимо.

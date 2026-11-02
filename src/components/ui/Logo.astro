@@ -1,0 +1,25 @@
+---
+// Figma: Nav / Logo — «LUIGI CONTESSI», Boldonse 14.
+interface Props {
+  href: string;
+  label: string;
+}
+const { href, label } = Astro.props;
+---
+
+<a class="logo" href={href} aria-label={label}>
+  LUIGI CONTESSI
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--header-h);
+    font-family: var(--font-logo);
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+</style>

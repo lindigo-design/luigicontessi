@@ -1,0 +1,91 @@
+/* Дизайн-змінні з Figma «Luigi Contessi — Website» → Components & Tokens.
+   Назви повторюють змінні Figma. Змінили дизайн — міняємо тільки тут.
+   Розміри шрифтів: плавно від 390 px (mobile) до 1440 px (desktop). */
+:root {
+  /* Кольори (variables) */
+  --color-bg: #0e0e0e; /* bg/base */
+  --color-bg-alt: #161616; /* bg/alt */
+  --color-card: #1e1e1e; /* surface/card */
+  --color-image: #262626; /* surface/image */
+  --color-border: #2a2a2a; /* border/subtle */
+  --color-text: #edeae4; /* text/primary */
+  --color-text-2: #a09d99; /* text/secondary */
+  --color-on-light: #0e0e0e; /* text/on-light */
+  --color-red-text: #e5484d; /* accent/red-text — текст і посилання */
+  --color-red: #c41e2a; /* accent/red — плашки, знак ♥ */
+  --color-ghost: #1a1a1a; /* text/wordmark-ghost */
+  --ghost-light-opacity: 0.4; /* світлий шар CONTESSI під «прожектором» у футері */
+
+  /* Затемнення фото (як у hero / yachts у Figma) */
+  --shade: 14 14 14; /* rgb кольору bg/base */
+
+  /* Шрифти */
+  --font-display: 'Cal Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Manrope', 'Helvetica Neue', Arial, sans-serif;
+  --font-logo: 'Boldonse', 'Arial Black', sans-serif;
+
+  /* Текстові стилі: mobile → desktop */
+  --fs-wordmark: clamp(3.5rem, 0.1571rem + 13.7143vw, 12.5rem); /* 56 → 200 */
+  --fs-h1: clamp(2rem, 1.5357rem + 1.9048vw, 3.25rem); /* 32 → 52 */
+  --fs-h2: clamp(1.875rem, 1.4571rem + 1.7143vw, 3rem); /* 30 → 48 */
+  --fs-h3: 1.75rem; /* 28 */
+  --fs-stat: clamp(2.25rem, 1.6rem + 2.6667vw, 4rem); /* 36 → 64 */
+  --fs-quote: clamp(1.5rem, 1.2214rem + 1.1429vw, 2.25rem); /* 24 → 36 */
+  --fs-title: 1.125rem; /* 18 — Text/Title */
+  --fs-body-l: clamp(1rem, 0.9536rem + 0.1905vw, 1.125rem); /* 16 → 18 */
+  --fs-body: 1rem; /* 16 */
+  --fs-body-s: 0.875rem; /* 14 */
+  --fs-label: 0.8125rem; /* 13 — кнопки, меню */
+  --fs-eyebrow: 0.75rem; /* 12 */
+
+  --lh-h1: 1.154; /* 60/52 */
+  --lh-h2: 1.167; /* 56/48 */
+  --lh-tight: 1.2;
+
+  /* Відступи (крок 4 px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Ритм секцій */
+  --section-y: clamp(4.5rem, 3.3857rem + 4.5714vw, 7.5rem); /* 72 → 120 */
+  --section-gap: clamp(2.5rem, 1.9429rem + 2.2857vw, 4rem); /* 40 → 64 */
+  --gutter: clamp(1rem, -0.4857rem + 6.0952vw, 5rem); /* 16 → 80 */
+  --content-max: 110rem; /* 1760 — ширина контенту секцій; header, footer, hero — на всю ширину */
+
+  /* Форма */
+  --radius-btn: 2px;
+  --radius-card: 4px;
+  --header-h: 2.75rem; /* 44 */
+  --header-pad: var(--space-5); /* відступ над меню: 20 → 32 */
+  --promo-h: 4rem; /* 64 — висота промо-смуги */
+  --spot-r: 32vw; /* радіус «прожектора» над CONTESSI у футері */
+
+  /* Рух */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur: 240ms;
+  --zoom-scale: 1.05; /* зум фото в клікабельній картці при наведенні */
+  --zoom-dur: 300ms;
+  --zoom-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (min-width: 768px) {
+  :root {
+    --promo-h: 4.25rem; /* 68 */
+  }
+}
+@media (min-width: 1100px) {
+  :root {
+    --header-pad: var(--space-8);
+  }
+}

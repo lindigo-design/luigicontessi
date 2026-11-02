@@ -1,0 +1,141 @@
+---
+// Figma: Home → 06 La collection (desktop 3:172, mobile 6:299).
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import c1 from '../../../assets/img/home/collection-1.jpg';
+import c2 from '../../../assets/img/home/collection-2.jpg';
+import c3 from '../../../assets/img/home/collection-3.jpg';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  data: HomeData['collection'];
+  href: string;
+}
+const { data, href } = Astro.props;
+const [big, ...small] = data.items;
+---
+
+<section class="collection section section--alt" aria-labelledby="collection-title">
+  <div class="container collection__inner">
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow">{data.eyebrow}</p>
+        <h2 id="collection-title">{data.title}</h2>
+        <p class="section-head__body">{data.body}</p>
+      </div>
+      <Button href={href} variant="outline" class="collection__cta-d">
+        {data.cta.label}
+      </Button>
+    </div>
+
+    <ul class="collection__grid" role="list">
+      <li class="product product--large">
+        <a class="zoom-card" href={href}>
+          <span class="product__img media">
+            <Image
+              src={c1}
+              alt={big.image.alt}
+              widths={[400, 720, 1256]}
+              sizes="(min-width: 1024px) 628px, 100vw"
+            />
+          </span>
+          <span class="product__info">
+            <span class="title">{big.name}</span>
+            <span class="product__price">{big.price}</span>
+          </span>
+        </a>
+      </li>
+      {small.map((item, i) => (
+        <li class="product">
+          <a class="zoom-card" href={href}>
+            <span class="product__img media">
+              <Image
+                src={[c2, c3][i]}
+                alt={item.image.alt}
+                widths={[240, 400, 604]}
+                sizes="(min-width: 1024px) 302px, 50vw"
+              />
+            </span>
+            <span class="product__info">
+              <span class="title">{item.name}</span>
+              <span class="product__price">{item.price}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <Button href={href} variant="outline" block class="collection__cta-m">
+      {data.cta.label}
+    </Button>
+  </div>
+</section>
+
+<style>
+  .collection__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .collection__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-4);
+  }
+  .product--large {
+    grid-column: 1 / -1;
+  }
+  .product a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .product__img {
+    aspect-ratio: 171 / 220;
+  }
+  .product--large .product__img {
+    aspect-ratio: 358 / 400;
+  }
+  .product__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .product__price {
+    font-weight: 500;
+    color: var(--color-text-2);
+  }
+  .collection__cta-d {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .collection__inner {
+      gap: var(--space-16);
+    }
+    .collection__grid {
+      grid-template-columns: minmax(0, 1fr) repeat(2, minmax(0, 0.5fr));
+      align-items: start;
+      gap: var(--space-6);
+    }
+    .product--large {
+      grid-column: auto;
+      grid-row: span 2;
+    }
+    .product--large .product__img {
+      aspect-ratio: 628 / 642;
+    }
+    .product__img {
+      aspect-ratio: 1;
+    }
+    .product__info {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+    .collection__cta-d {
+      display: inline-flex;
+    }
+    .collection__cta-m {
+      display: none;
+    }
+  }
+</style>

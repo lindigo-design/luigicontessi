@@ -1,0 +1,219 @@
+---
+// Figma: Home → 04 Nouveautés (desktop 3:76, mobile 6:245).
+// Карусель: активна картка більша й з описом, завжди по центру екрана. Трек — на всю ширину.
+// Стрілки (desktop), свайп і крапки (mobile), клавіші ← → на фокусі.
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import ArrowCircle from '../../ui/ArrowCircle.astro';
+import n1 from '../../../assets/img/home/news-1.jpg';
+import n2 from '../../../assets/img/home/news-2.jpg';
+import n3 from '../../../assets/img/home/news-3.jpg';
+import n4 from '../../../assets/img/home/news-4.jpg';
+import n5 from '../../../assets/img/home/news-5.jpg';
+import { t, type Locale } from '../../../i18n/utils';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: HomeData['news'];
+  href: string;
+}
+const { lang, data, href } = Astro.props;
+const images = [n1, n2, n3, n4, n5];
+const start = Math.floor(data.items.length / 2);
+---
+
+<section class="news section section--alt" aria-labelledby="news-title" data-carousel>
+  <div class="container news__head">
+    <p class="eyebrow">
+      <span class="eyebrow--muted">{data.index}</span> {data.eyebrow}
+    </p>
+    <h2 id="news-title">
+      <span class="news__title-m">{data.titleMobile}</span>
+      <span class="news__title-d">{data.title}</span>
+    </h2>
+  </div>
+
+  <ul class="news__track" role="list" data-track>
+    {data.items.map((item, i) => (
+      <li
+        class:list={['ncard', 'zoom-card', { 'is-active': i === start }]}
+        data-slide
+        aria-label={`${t('ui.slide', lang)} ${i + 1} / ${data.items.length}`}
+      >
+        <a class="ncard__img media" href={href} tabindex="-1" aria-hidden="true">
+          <Image
+            src={images[i]}
+            alt=""
+            widths={[320, 560, 1120]}
+            sizes="(min-width: 1024px) min(39vw, 720px), 80vw"
+          />
+        </a>
+        <p class="eyebrow eyebrow--muted">{item.tag}</p>
+        <h3 class="title">{item.name}</h3>
+        {item.description && <p class="ncard__desc text-s text-2">{item.description}</p>}
+        <Button href={href} variant="accent">
+          {item.action}
+          <span class="visually-hidden"> — {item.name}</span>
+        </Button>
+      </li>
+    ))}
+  </ul>
+
+  <div class="container news__controls">
+    <button class="news__arrow" type="button" data-prev>
+      <span class="visually-hidden">{t('ui.prev', lang)}</span>
+      <ArrowCircle size="l" dir="prev" />
+    </button>
+    <ol class="news__dots" role="list" aria-hidden="true">
+      {data.items.map((_, i) => (
+        <li class:list={{ 'is-active': i === start }} data-dot />
+      ))}
+    </ol>
+    <button class="news__arrow" type="button" data-next>
+      <span class="visually-hidden">{t('ui.next', lang)}</span>
+      <ArrowCircle size="l" />
+    </button>
+  </div>
+</section>
+
+<script>
+  import { initCarousels } from '../../../scripts/carousel';
+  initCarousels();
+</script>
+
+<style>
+  .news {
+    /* Розміри карток ростуть разом з екраном: 240 → 280 (1440) → 360; активна 300 → 560 → 720. */
+    --ncard-w: clamp(15rem, 19.5vw, 22.5rem);
+    --ncard-w-active: clamp(18.75rem, 39vw, 45rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .news__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .news__title-d {
+    display: none;
+  }
+  /* Відступи треку = (ширина − активна картка) / 2: крайні картки теж стають по центру. */
+  .news__track {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: 0;
+    padding-inline: calc(50% - var(--ncard-w-active) / 2);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .news__track::-webkit-scrollbar {
+    display: none;
+  }
+  .ncard {
+    flex: 0 0 var(--ncard-w);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    scroll-snap-align: center;
+    transition: flex-basis 500ms var(--ease);
+  }
+  .ncard__img {
+    width: 100%;
+    aspect-ratio: 300 / 420;
+  }
+  .ncard__desc {
+    display: none;
+  }
+  .ncard.is-active {
+    flex-basis: var(--ncard-w-active);
+  }
+  .ncard.is-active .ncard__desc {
+    display: block;
+  }
+  .news__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  .news__arrow {
+    display: none;
+  }
+  .news__dots {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .news__dots li {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .news__dots li.is-active {
+    background: var(--color-text);
+  }
+
+  @media (min-width: 1024px) {
+    .news {
+      gap: var(--space-12);
+    }
+    .news__head {
+      flex-direction: row;
+      gap: var(--space-10);
+    }
+    .news__head .eyebrow {
+      flex: 0 0 25rem;
+    }
+    .news__title-m {
+      display: none;
+    }
+    .news__title-d {
+      display: inline;
+    }
+    .news__track {
+      gap: var(--space-6);
+    }
+    .ncard__img {
+      aspect-ratio: 1;
+      transition: aspect-ratio 500ms var(--ease);
+    }
+    .ncard.is-active .ncard__img {
+      aspect-ratio: 560 / 680;
+    }
+    .news__arrow {
+      display: inline-flex;
+      color: var(--color-text);
+      pointer-events: auto;
+    }
+    .news__arrow:hover :global(.arrow) {
+      background: var(--color-text);
+      color: var(--color-bg);
+    }
+    .news__dots {
+      display: none;
+    }
+    /* Стрілки — по боках від активної картки, на рівні її нижнього краю. */
+    .news__controls {
+      position: relative;
+      z-index: 1;
+      justify-content: space-between;
+      max-width: calc(var(--ncard-w-active) + 2 * (5.5rem + var(--space-6)));
+      margin-top: calc(-1 * (var(--space-12) + 5.5rem)); /* gap секції + висота стрілки */
+      padding-inline: 0;
+      pointer-events: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ncard,
+    .ncard__img {
+      transition: none;
+    }
+  }
+</style>

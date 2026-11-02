@@ -1,0 +1,217 @@
+---
+// Figma: Home → 01 Hero (desktop 3:8, mobile 6:191).
+// Фото на весь екран + затемнення зверху і знизу (як градієнти у Figma).
+// Висота: hero + промо-смуга = рівно один екран (svh), але не менше 640 px.
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import ArrowCircle from '../../ui/ArrowCircle.astro';
+import heroImg from '../../../assets/img/home/hero.jpg';
+import card1 from '../../../assets/img/home/hero-card-1.jpg';
+import card2 from '../../../assets/img/home/hero-card-2.jpg';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  data: HomeData['hero'];
+  primaryHref: string;
+  secondaryHref: string;
+  cardHref: string;
+}
+const { data, primaryHref, secondaryHref, cardHref } = Astro.props;
+const cardImages = [card1, card2];
+const [line1, line2] = data.title.split('\n');
+---
+
+<section class="hero" aria-labelledby="hero-title" data-hero>
+  <Image
+    class="hero__bg"
+    src={heroImg}
+    alt={data.image.alt}
+    widths={[768, 1280, 1920]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="container container--bleed hero__inner">
+    <div class="hero__intro">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h1 id="hero-title">
+        {line1}
+        {line2 && <br class="hero__br" />} {line2}
+      </h1>
+      <div class="hero__ctas">
+        <Button href={primaryHref}>{data.primary.label}</Button>
+        <Button href={secondaryHref} variant="outline">
+          {data.secondary.label}
+        </Button>
+      </div>
+    </div>
+    <ul class="hero__cards rail" role="list">
+      {data.cards.map((card, i) => (
+        <li>
+          <a class="hcard zoom-card" href={cardHref}>
+            <span class="hcard__img media">
+              <Image src={cardImages[i]} alt={card.image.alt} widths={[176, 352]} sizes="88px" />
+            </span>
+            <span class="hcard__text">
+              <span class="eyebrow eyebrow--muted">{card.tag}</span>
+              <span class="title">{card.name}</span>
+              <ArrowCircle />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    min-height: max(40rem, calc(100svh - var(--promo-h)));
+    isolation: isolate;
+    background: var(--color-image);
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  /* Затемнення: зверху під меню, знизу під текстом. */
+  .hero::before,
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .hero::before {
+    background: linear-gradient(rgb(var(--shade) / 0.75) 0%, rgb(var(--shade) / 0) 14%);
+  }
+  .hero::after {
+    background: linear-gradient(
+      rgb(var(--shade) / 0) 22%,
+      rgb(var(--shade) / 0.72) 40%,
+      rgb(var(--shade) / 0.9) 60%,
+      rgb(var(--shade) / 0.96) 100%
+    );
+  }
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: 8rem;
+    padding-bottom: var(--space-6);
+  }
+  .hero__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .hero__ctas {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .hero__cards {
+    padding-top: var(--space-2);
+  }
+  .hcard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 18.5rem;
+    padding: 0.625rem;
+    border-radius: var(--radius-card);
+    background: var(--color-bg-alt);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .hcard:hover {
+    background: var(--color-card);
+  }
+  .hcard__img {
+    flex: none;
+    width: 4rem;
+    height: 5rem;
+  }
+  .hcard__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .hcard :global(.arrow) {
+    display: none;
+  }
+  .hero__br {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero__ctas {
+      display: flex;
+      gap: var(--space-4);
+    }
+  }
+  @media (min-width: 1024px) {
+    /* Кадр як у Figma (desktop). Фото вертикальне: що ширший екран, то вужча видима смуга,
+       тож на дуже широких екранах піднімаємо кадр, щоб голова не обрізалась зверху. */
+    .hero__bg {
+      object-position: 50% 55%;
+    }
+    @media (min-aspect-ratio: 11/5) {
+      .hero__bg {
+        object-position: 50% 50%;
+      }
+    }
+    @media (min-aspect-ratio: 14/5) {
+      .hero__bg {
+        object-position: 50% 47%;
+      }
+    }
+    .hero::before {
+      background: linear-gradient(rgb(var(--shade) / 0.75) 0%, rgb(var(--shade) / 0) 28%);
+    }
+    .hero::after {
+      background: linear-gradient(rgb(var(--shade) / 0) 45%, rgb(var(--shade) / 0.88) 100%);
+    }
+    .hero__inner {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-10);
+      padding-bottom: var(--space-14);
+    }
+    .hero__br {
+      display: inline;
+    }
+    .hero__intro {
+      gap: var(--space-6);
+      max-width: 55.75rem;
+    }
+    .hero__cards {
+      flex-direction: column;
+      gap: var(--space-4);
+      overflow: visible;
+      margin: 0;
+      padding: 0;
+    }
+    .hcard {
+      width: 20.5rem;
+      gap: var(--space-4);
+      padding: var(--space-3);
+    }
+    .hcard__img {
+      width: 5.5rem;
+      height: 7rem;
+    }
+    .hcard :global(.arrow) {
+      display: inline-grid;
+    }
+  }
+</style>

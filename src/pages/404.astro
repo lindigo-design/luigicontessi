@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import { localizePath, t } from '../i18n/utils';
+const lang = 'fr';
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t('404.title', lang)} — Luigi Contessi`}
+  description="404"
+  noindex
+>
+  <section class="nf container">
+    <p class="eyebrow">404</p>
+    <h1>{t('404.title', lang)}</h1>
+    <Button href={localizePath('', lang)}>{t('404.back', lang)}</Button>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-6);
+    padding-block: var(--section-y);
+    min-height: 70vh;
+    align-content: center;
+  }
+</style>

@@ -1,0 +1,54 @@
+/* Базові теги. */
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  overflow-x: clip;
+}
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+h1 {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+}
+h2 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+}
+h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.214;
+  letter-spacing: 0;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+:focus-visible {
+  outline: 2px solid var(--color-red-text);
+  outline-offset: 3px;
+}
+::selection {
+  background: var(--color-red);
+  color: var(--color-text);
+}
+/* Меню лежить поверх першого екрана. Сторінкам без hero — відступ під меню. */
+main:not(:has(> [data-hero]:first-child)) {
+  padding-top: calc(var(--header-pad) + var(--header-h) + 1px);
+}

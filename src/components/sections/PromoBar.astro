@@ -1,0 +1,36 @@
+---
+// Figma: 00 Promo bar — код Luigi з кнопкою «Copier».
+import Button from '../ui/Button.astro';
+import { t, type Locale } from '../../i18n/utils';
+interface Props {
+  lang: Locale;
+  data: { text: string; code: string };
+}
+const { lang, data } = Astro.props;
+---
+
+<aside class="promo">
+  <p class="text-s">{data.text}</p>
+  <Button variant="link" data-copy={data.code} data-copied={t('ui.copied', lang)}>
+    {t('ui.copy', lang)}
+  </Button>
+</aside>
+
+<style>
+  .promo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    min-height: var(--promo-h);
+    padding: 0.625rem var(--gutter);
+    background: var(--color-bg-alt);
+    text-align: center;
+  }
+  @media (min-width: 768px) {
+    .promo {
+      gap: var(--space-4);
+      padding-block: var(--space-3);
+    }
+  }
+</style>

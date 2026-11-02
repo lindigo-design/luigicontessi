@@ -1,0 +1,17 @@
+/* Content: відступ --gutter, контент не ширший за --content-max (на 2560 поля ростуть).
+   Bleed: header, footer, hero — на всю ширину екрана, лише бічний відступ. */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container--bleed {
+  max-width: none;
+}
+.section {
+  padding-block: var(--section-y);
+}
+.section--alt {
+  background: var(--color-bg-alt);
+}

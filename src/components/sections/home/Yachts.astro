@@ -1,0 +1,134 @@
+---
+// Figma: Home → 08 Yachts (desktop 4:160, mobile 6:385).
+// Затемнення: desktop — зліва направо + знизу; mobile — знизу вгору.
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import bg from '../../../assets/img/home/yachts.jpg';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  data: HomeData['yachts'];
+  listHref: string;
+  contactHref: string;
+}
+const { data, listHref, contactHref } = Astro.props;
+---
+
+<section class="yachts" aria-labelledby="yachts-title">
+  <Image
+    class="yachts__bg"
+    src={bg}
+    alt={data.image.alt}
+    widths={[768, 1280, 1920]}
+    sizes="100vw"
+  />
+  <div class="container yachts__content">
+    <p class="eyebrow">{data.eyebrow}</p>
+    <h2 id="yachts-title">{data.title}</h2>
+    <p class="yachts__body text-2">{data.body}</p>
+    <dl class="yachts__specs">
+      {data.specs.map((s) => (
+        <div>
+          <dt class="eyebrow eyebrow--muted">{s.label}</dt>
+          <dd class="title">{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+    <div class="yachts__ctas">
+      <Button href={listHref}>{data.primary.label}</Button>
+      <Button href={contactHref} variant="outline">
+        {data.secondary.label}
+      </Button>
+    </div>
+    <p class="text-s text-2">{data.disclosure}</p>
+  </div>
+</section>
+
+<style>
+  .yachts {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(47.5rem, 45.643rem + 7.619vw, 50rem); /* 760 → 800 */
+    padding-block: clamp(3.5rem, 2.8rem + 2.9vw, 6rem);
+    background: var(--color-image);
+  }
+  .yachts__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .yachts::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      rgb(var(--shade) / 0.35) 0%,
+      rgb(var(--shade) / 0) 12%,
+      rgb(var(--shade) / 0) 22%,
+      rgb(var(--shade) / 0.8) 36%,
+      rgb(var(--shade) / 0.92) 50%,
+      rgb(var(--shade) / 0.96) 100%
+    );
+  }
+  .yachts__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  .yachts__specs {
+    display: flex;
+    gap: var(--space-6);
+  }
+  .yachts__specs div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .yachts__ctas {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .yachts__ctas {
+      display: flex;
+      width: auto;
+      gap: var(--space-4);
+    }
+  }
+  @media (min-width: 1024px) {
+    /* Кадр як у Figma (desktop) */
+    .yachts__bg {
+      object-position: 0% 0%;
+    }
+    .yachts::after {
+      background:
+        linear-gradient(
+          90deg,
+          rgb(var(--shade) / 0.9) 0%,
+          rgb(var(--shade) / 0.72) 42%,
+          rgb(var(--shade) / 0) 70%
+        ),
+        linear-gradient(rgb(var(--shade) / 0) 55%, rgb(var(--shade) / 0.85) 100%);
+    }
+    .yachts__content {
+      gap: var(--space-7);
+    }
+    .yachts__content > * {
+      max-width: 45rem;
+    }
+    .yachts__body {
+      font-size: var(--fs-body-l);
+    }
+    .yachts__specs {
+      gap: var(--space-10);
+    }
+  }
+</style>

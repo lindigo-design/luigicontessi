@@ -1,0 +1,154 @@
+---
+// Figma: Home → 05 Univers (desktop 3:135, mobile 6:270), компонент Univers/Row.
+// Перший рядок білий, інші сірі; під час прокрутки білим стає рядок у центрі екрана.
+import { Image } from 'astro:assets';
+import u1 from '../../../assets/img/home/univers-1.jpg';
+import u2 from '../../../assets/img/home/univers-2.jpg';
+import u3 from '../../../assets/img/home/univers-3.jpg';
+import u4 from '../../../assets/img/home/univers-4.jpg';
+import u5 from '../../../assets/img/home/univers-5.jpg';
+import u6 from '../../../assets/img/home/univers-6.jpg';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  data: HomeData['universes'];
+  href: string;
+}
+const { data, href } = Astro.props;
+const images = [u1, u2, u3, u4, u5, u6];
+// Вертикальні фото в горизонтальній рамці: яку частину кадру показати (як у Figma).
+// top — обличчя вгорі кадру, low — головне внизу кадру.
+const focus = new Map([
+  [u1, 'top'],
+  [u5, 'low'],
+]);
+const [l1, l2] = data.title.split('\n');
+---
+
+<section class="univers section" id="univers" aria-labelledby="univers-title">
+  <div class="container univers__row">
+    <div class="univers__head section-head__text">
+      <p class="eyebrow">{data.eyebrow}</p>
+      <h2 id="univers-title">
+        {l1}
+        {l2 && <br class="univers__br" />} {l2}
+      </h2>
+    </div>
+    <ul class="univers__list" role="list" data-highlight>
+      {data.items.map((item, i) => (
+        <li>
+          <a class:list={['urow', 'zoom-card', { 'is-active': i === 0 }]} href={href} data-row>
+            <span class="urow__name">{item.name}</span>
+            <span
+              class:list={[
+                'urow__img',
+                'media',
+                focus.has(images[i]) && `urow__img--${focus.get(images[i])}`,
+              ]}
+            >
+              <Image src={images[i]} alt={item.image.alt} widths={[176, 320]} sizes="160px" />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  // Підсвічування рядка в центрі екрана. Без JS усі рядки білі.
+  document.querySelectorAll<HTMLElement>('[data-highlight]').forEach((list) => {
+    const rows = [...list.querySelectorAll<HTMLElement>('[data-row]')];
+    list.classList.add('is-enhanced');
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          rows.forEach((r) => r.classList.toggle('is-active', r === e.target));
+        });
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    );
+    rows.forEach((r) => io.observe(r));
+  });
+</script>
+
+<style>
+  .univers__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .univers__br {
+    display: none;
+  }
+  .urow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .urow__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: 1.214;
+    transition: color 400ms var(--ease);
+  }
+  .urow__img {
+    flex: none;
+    width: 5.5rem;
+    height: 3.75rem;
+    transition: opacity 400ms var(--ease);
+  }
+  .urow__img--top :global(img) {
+    object-position: 50% 22%;
+  }
+  .urow__img--low :global(img) {
+    object-position: 50% 62%;
+  }
+  .is-enhanced .urow:not(.is-active) .urow__name {
+    color: var(--color-text-2);
+  }
+  .is-enhanced .urow:not(.is-active) .urow__img {
+    opacity: 0.45;
+  }
+  .urow:hover .urow__name {
+    color: var(--color-text) !important;
+  }
+  .urow:hover .urow__img {
+    opacity: 1 !important;
+  }
+  @media (min-width: 1024px) {
+    .univers__row {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-20);
+    }
+    .univers__head {
+      flex: 0 0 23.75rem;
+      position: sticky;
+      top: var(--space-16);
+    }
+    .univers__br {
+      display: inline;
+    }
+    .univers__list {
+      flex: 1;
+    }
+    .urow {
+      gap: var(--space-8);
+      padding-block: var(--space-6);
+    }
+    .urow__name {
+      font-size: var(--fs-h2);
+      line-height: var(--lh-h2);
+      letter-spacing: -0.01em;
+    }
+    .urow__img {
+      width: 10rem;
+      height: 6.25rem;
+    }
+  }
+</style>

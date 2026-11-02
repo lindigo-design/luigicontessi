@@ -1,0 +1,102 @@
+---
+// Figma: Home → 09 Instagram (desktop 4:183, mobile 6:408).
+// Поки що статичні фото. Живу стрічку підключимо окремим етапом (Instagram API).
+import { Image } from 'astro:assets';
+import Button from '../../ui/Button.astro';
+import i1 from '../../../assets/img/home/instagram-1.jpg';
+import i2 from '../../../assets/img/home/instagram-2.jpg';
+import i3 from '../../../assets/img/home/instagram-3.jpg';
+import i4 from '../../../assets/img/home/instagram-4.jpg';
+import i5 from '../../../assets/img/home/instagram-5.jpg';
+import i6 from '../../../assets/img/home/instagram-6.jpg';
+import { t, type Locale } from '../../../i18n/utils';
+import type { HomeData } from '../../../content.config';
+
+interface Props {
+  lang: Locale;
+  data: HomeData['instagram'];
+  handle: string;
+  url: string;
+}
+const { lang, data, handle, url } = Astro.props;
+const images = [i1, i2, i3, i4, i5, i6];
+---
+
+<section class="insta section section--alt" aria-labelledby="insta-title">
+  <div class="container insta__inner">
+    <div class="section-head">
+      <div class="insta__head">
+        <h2 id="insta-title">{handle}</h2>
+        <p class="text-2">{data.followers}</p>
+      </div>
+      <Button href={url} variant="outline" external class="insta__cta-d">
+        {data.cta.label}
+        <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
+      </Button>
+    </div>
+    <ul class="insta__feed rail" role="list">
+      {data.images.map((img, i) => (
+        <li class="insta__item zoom-card">
+          <a class="media" href={url} target="_blank" rel="noopener noreferrer" tabindex="-1">
+            <Image
+              src={images[i]}
+              alt={img.alt}
+              widths={[200, 400, 600]}
+              sizes="(min-width: 1024px) 203px, 45vw"
+            />
+          </a>
+        </li>
+      ))}
+    </ul>
+    <Button href={url} variant="outline" block external class="insta__cta-m">
+      {data.cta.label}
+      <span class="visually-hidden"> {t('ui.newWindow', lang)}</span>
+    </Button>
+  </div>
+</section>
+
+<style>
+  .insta__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .insta__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .insta__item {
+    width: calc((100vw - 2 * var(--gutter) - var(--space-3)) / 2);
+    aspect-ratio: 165 / 206;
+  }
+  .insta__item a {
+    display: block;
+    height: 100%;
+  }
+  .insta__cta-d {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .insta__inner {
+      gap: var(--space-16);
+    }
+    .insta__feed {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+    }
+    .insta__item {
+      width: auto;
+      aspect-ratio: 203 / 200;
+    }
+    .insta__cta-d {
+      display: inline-flex;
+    }
+    .insta__cta-m {
+      display: none;
+    }
+  }
+</style>

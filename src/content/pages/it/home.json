@@ -1,0 +1,372 @@
+{
+  "seoTitle": "Luigi Contessi — auto, orologi, yacht, viaggi",
+  "seoDescription": "Luigi Contessi condivide ciò che sceglie in prima persona: auto, orologi, yacht, hotel. Preferiti, codici partner e la Contessi Collection.",
+  "promo": {
+    "text": "Codice LUIGI10 — −10% sul primo ordine",
+    "code": "LUIGI10"
+  },
+  "hero": {
+    "eyebrow": "Luxury lifestyle curator",
+    "title": "Auto, orologi, yacht, viaggi.\nCiò che scelgo — e perché.",
+    "primary": {
+      "label": "Scopri il Journal"
+    },
+    "secondary": {
+      "label": "Vedi la collezione"
+    },
+    "image": {
+      "alt": "Luigi Contessi al volante di un’auto sportiva rossa"
+    },
+    "cards": [
+      {
+        "tag": "Preferito · Tech",
+        "name": "Shokz OpenRun",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "tag": "Preferito · Orologeria",
+        "name": "Orologio Briston",
+        "image": {
+          "alt": ""
+        }
+      }
+    ]
+  },
+  "about": {
+    "eyebrow": "(01) Chi sono",
+    "title": "Luigi Contessi",
+    "body": "Imprenditore e creatore di contenuti. Condivido ciò che provo io stesso: auto, orologi, luoghi. Quando un marchio mi piace, lo dico. Quando no, non ne parlo.",
+    "stats": [
+      {
+        "value": "1,7 M+",
+        "label": "follower su Instagram"
+      },
+      {
+        "value": "500+",
+        "label": "collaborazioni"
+      },
+      {
+        "value": "30+",
+        "label": "paesi"
+      }
+    ],
+    "link": {
+      "label": "La mia storia"
+    },
+    "image": {
+      "alt": "Ritratto di Luigi Contessi in abito scuro"
+    }
+  },
+  "quote": {
+    "text": "« Ogni contenuto deve emozionare, ispirare, lasciare un segno. »",
+    "author": "— Luigi Contessi",
+    "image": {
+      "alt": ""
+    }
+  },
+  "press": {
+    "eyebrow": "Stampa",
+    "title": "Parlano di me",
+    "link": {
+      "label": "Tutta la stampa"
+    },
+    "items": [
+      {
+        "meta": "Stampa · [data]",
+        "title": "[Titolo dell’articolo]",
+        "excerpt": "« [Breve citazione dall’articolo, una frase.] »",
+        "action": "Leggi l’articolo"
+      },
+      {
+        "meta": "TV · [data]",
+        "title": "[Titolo del servizio]",
+        "excerpt": "« [Breve citazione dal servizio, una frase.] »",
+        "action": "Guarda"
+      },
+      {
+        "meta": "Podcast · [data]",
+        "title": "[Titolo dell’episodio]",
+        "excerpt": "« [Breve citazione dall’episodio, una frase.] »",
+        "action": "Ascolta"
+      }
+    ]
+  },
+  "news": {
+    "index": "(02)",
+    "eyebrow": "Novità",
+    "title": "Gli ultimi arrivi — la mia collezione e i marchi che consiglio.",
+    "titleMobile": "Gli ultimi arrivi",
+    "items": [
+      {
+        "tag": "Collezione",
+        "name": "Camicia Contessi",
+        "description": "",
+        "action": "Vedi",
+        "image": {
+          "alt": "Camicia Contessi"
+        }
+      },
+      {
+        "tag": "Preferito · Link affiliato",
+        "name": "Shokz OpenRun",
+        "description": "",
+        "action": "Vedi",
+        "image": {
+          "alt": "Cuffie Shokz OpenRun"
+        }
+      },
+      {
+        "tag": "Collezione",
+        "name": "Abito Contessi",
+        "description": "Abito grigio, taglio aderente, con camicia bianca e cravatta. [Taglie disponibili]",
+        "action": "Vedi",
+        "image": {
+          "alt": "Luigi Contessi in abito grigio Contessi"
+        }
+      },
+      {
+        "tag": "Preferito · Link affiliato",
+        "name": "Orologio Golden Concept",
+        "description": "",
+        "action": "Vedi",
+        "image": {
+          "alt": "Orologio Golden Concept"
+        }
+      },
+      {
+        "tag": "Preferito · Link affiliato",
+        "name": "Orologio Briston",
+        "description": "",
+        "action": "Vedi",
+        "image": {
+          "alt": "Orologio Briston"
+        }
+      }
+    ]
+  },
+  "universes": {
+    "eyebrow": "(03) Mondi",
+    "title": "Sei mondi,\nuno stesso sguardo",
+    "items": [
+      {
+        "name": "Automobili",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Orologeria",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Viaggi & Hotel",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Yacht",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Jet privati",
+        "image": {
+          "alt": ""
+        }
+      },
+      {
+        "name": "Art de vivre",
+        "image": {
+          "alt": ""
+        }
+      }
+    ]
+  },
+  "collection": {
+    "eyebrow": "(04) La collezione",
+    "title": "Contessi Collection",
+    "body": "Abiti, camicie e scarpe firmati Contessi. Tagli aderenti, tessuti scelti.",
+    "cta": {
+      "label": "Vai alla boutique"
+    },
+    "items": [
+      {
+        "name": "Abito Contessi",
+        "price": "[Prezzo]",
+        "image": {
+          "alt": "Abito Contessi"
+        }
+      },
+      {
+        "name": "Camicia bianca",
+        "price": "[Prezzo]",
+        "image": {
+          "alt": "Camicia bianca Contessi"
+        }
+      },
+      {
+        "name": "Scarpe Contessi",
+        "price": "[Prezzo]",
+        "image": {
+          "alt": "Scarpe Contessi"
+        }
+      }
+    ]
+  },
+  "privileges": {
+    "eyebrow": "(05) Privilegi",
+    "title": "I miei codici presso i marchi partner",
+    "body": "Marchi che uso davvero. Copia il codice — vale sul loro sito.",
+    "link": {
+      "label": "Tutti i privilegi"
+    },
+    "codes": [
+      {
+        "disclosure": "Partnership",
+        "offer": "−15% su tutto lo shop",
+        "code": "LUIGI15",
+        "brandLink": "Vedi il marchio",
+        "brandUrl": ""
+      },
+      {
+        "disclosure": "Partnership",
+        "offer": "Spedizione gratuita",
+        "code": "CONTESSI",
+        "brandLink": "Vedi il marchio",
+        "brandUrl": ""
+      },
+      {
+        "disclosure": "Partnership",
+        "offer": "−10% sul primo ordine",
+        "code": "LUIGI10",
+        "brandLink": "Vedi il marchio",
+        "brandUrl": ""
+      }
+    ]
+  },
+  "yachts": {
+    "eyebrow": "(06) Yacht in vendita",
+    "title": "Dal primo contatto alla firma",
+    "body": "Rappresento [Società] e ti accompagno in ogni fase dell’acquisto.",
+    "specs": [
+      {
+        "label": "Lunghezza",
+        "value": "[XX] m"
+      },
+      {
+        "label": "Anno",
+        "value": "[XXXX]"
+      },
+      {
+        "label": "Prezzo",
+        "value": "Su richiesta"
+      }
+    ],
+    "primary": {
+      "label": "Vedi gli yacht"
+    },
+    "secondary": {
+      "label": "Chiedi informazioni"
+    },
+    "disclosure": "Vendita effettuata da [Società]",
+    "image": {
+      "alt": "Yacht a motore al tramonto vicino alla costa"
+    }
+  },
+  "instagram": {
+    "followers": "1,7 M+ follower",
+    "cta": {
+      "label": "Segui su Instagram"
+    },
+    "images": [
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      },
+      {
+        "alt": ""
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "(07) Domande",
+    "title": "Domande frequenti",
+    "link": {
+      "label": "Tutte le domande"
+    },
+    "items": [
+      {
+        "question": "Spedite all’estero?",
+        "answer": "Sì. In Europa e negli Stati Uniti. Tempi e costi sono indicati prima del pagamento."
+      },
+      {
+        "question": "Come si restituisce un articolo?",
+        "answer": "[Termini e condizioni di reso — da confermare.]"
+      },
+      {
+        "question": "Come funzionano i codici partner?",
+        "answer": "Copia il codice e incollalo sul sito del marchio al momento del pagamento."
+      },
+      {
+        "question": "Chi vende i prodotti partner?",
+        "answer": "Il marchio stesso. Il link ti porta sul suo sito: è il marchio che vende e spedisce."
+      },
+      {
+        "question": "Come si acquista uno yacht?",
+        "answer": "Mi contatti. Ti metto in contatto con [Società] e ti accompagno fino alla firma."
+      }
+    ],
+    "image": {
+      "alt": ""
+    }
+  },
+  "brands": {
+    "eyebrow": "(08) Lavorano con me",
+    "testimonials": [
+      {
+        "quote": "« [Recensione reale di un marchio partner, con il suo consenso.] »",
+        "name": "[Nome Cognome]",
+        "role": "[Ruolo, Marchio]"
+      },
+      {
+        "quote": "« [Recensione reale di un marchio partner, con il suo consenso.] »",
+        "name": "[Nome Cognome]",
+        "role": "[Ruolo, Marchio]"
+      },
+      {
+        "quote": "« [Recensione reale di un marchio partner, con il suo consenso.] »",
+        "name": "[Nome Cognome]",
+        "role": "[Ruolo, Marchio]"
+      }
+    ],
+    "titleLine1": "Sei un marchio?",
+    "titleLine2": "Parliamone.",
+    "cta": {
+      "label": "Collabora →"
+    },
+    "sub": "Contenuti, eventi, ambassador. Media kit su richiesta.",
+    "link": {
+      "label": "Contatti"
+    },
+    "image": {
+      "alt": "Luigi Contessi in smoking davanti a un'auto sportiva rossa"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+/* Порядок важливий: шрифти → reset → токени → база → контейнер → компоненти → форми → утиліти. */
+@import './fonts.css';
+@import './reset.css';
+@import './tokens.css';
+@import './base.css';
+@import './container.css';
+@import './components.css';
+@import './forms.css';
+@import './utilities.css';
