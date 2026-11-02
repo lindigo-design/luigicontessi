@@ -10,9 +10,12 @@ import { locales, defaultLocale } from './src/i18n/locales.js';
 const isDev = process.argv.includes('dev');
 // ⚙️ Адреса сайту: на хостингу передається змінною LC_SITE_URL.
 const site = process.env.LC_SITE_URL || 'https://luigicontessi.com';
+// Підпапка сайту: на GitHub Pages це /luigicontessi, на власному домені — '/'.
+const base = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   site,
+  base,
   output: 'static',
   // У dev — 'ignore', бо адмінка Keystatic відкриває адреси без «/» у кінці.
   trailingSlash: isDev ? 'ignore' : 'always',

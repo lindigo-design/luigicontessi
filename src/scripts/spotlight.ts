@@ -9,9 +9,16 @@ export function initSpotlight() {
   if (!el || !footer || !window.matchMedia('(hover: hover)').matches) return;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // Пляма над написом, за кадром (як --my: -200% у CSS).
-  const away = () => -2 * el.offsetHeight;
-  const current = { x: el.offsetWidth / 2, y: away() };
+  // Стартова точка плями — з CSS (--mx / --my на .ghost), до того як скрипт перепише їх у px.
+  // Відсотки — від розміру шару з маскою.
+  const layer = el.querySelector<HTMLElement>('.ghost__light') ?? el;
+  const css = getComputedStyle(el);
+  const restX = css.getPropertyValue('--mx').trim();
+  const restY = css.getPropertyValue('--my').trim();
+  const toPx = (value: string, size: number) =>
+    value.endsWith('%') ? (parseFloat(value) / 100) * size : parseFloat(value) || 0;
+  const rest = () => ({ x: toPx(restX, layer.offsetWidth), y: toPx(restY, layer.offsetHeight) });
+  const current = rest();
   const target = { ...current };
   let raf = 0;
 
@@ -41,10 +48,14 @@ export function initSpotlight() {
   };
 
   const onMove = (e: PointerEvent) => {
-    const r = el.getBoundingClientRect();
+    const r = layer.getBoundingClientRect();
     moveTo(e.clientX - r.left, e.clientY - r.top);
   };
-  const onLeave = () => moveTo(current.x, away());
+  // Мишка пішла — пляма плавно повертається у стартову точку.
+  const onLeave = () => {
+    const { x, y } = rest();
+    moveTo(x, y);
+  };
 
   // Слухаємо мишку лише коли футер у вікні.
   new IntersectionObserver(([entry]) => {

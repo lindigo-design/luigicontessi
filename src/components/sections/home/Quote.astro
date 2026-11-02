@@ -23,9 +23,13 @@ const { data } = Astro.props;
 </section>
 
 <style>
+  /* Висота як у Figma (388 → 738), картка по центру. Відступи — на випадок довшої цитати (EN/IT). */
   .quote {
     position: relative;
     isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: clamp(24.25rem, 16.125rem + 33.333vw, 46.125rem); /* 388 → 738 */
     padding-block: clamp(6rem, 4.629rem + 5.714vw, 10rem); /* 96 → 160 */
     background: var(--color-image);
   }
@@ -52,16 +56,26 @@ const { data } = Astro.props;
   blockquote p {
     font-family: var(--font-display);
     font-size: var(--fs-quote);
-    line-height: 1.3;
+    line-height: 1.333; /* Mobile/Quote 24/32 */
     letter-spacing: -0.01em;
   }
   @media (min-width: 1024px) {
     /* Кадр як у Figma (desktop) */
     .quote__bg {
-      object-position: 50% 58%;
+      object-position: 50% 59%;
+    }
+    blockquote p {
+      line-height: 1.278; /* Desktop/Quote 36/46 */
     }
     .quote__card {
       gap: var(--space-8);
+    }
+  }
+  /* Висота секції вже не росте, а фото (вертикальне) збільшується з шириною — видима смуга вужчає.
+     Трохи піднімаємо кадр, щоб лишались двигун літака і передня частина авто, як на 1440. */
+  @media (min-width: 1600px) {
+    .quote__bg {
+      object-position: 50% 52%;
     }
   }
 </style>

@@ -17,7 +17,10 @@ const { lang, title, description, current, noindex = false } = Astro.props;
 const settings = await getSettings();
 const site = Astro.site ?? new URL('https://luigicontessi.com');
 const canonical = new URL(Astro.url.pathname, site).href;
-const ogImage = new URL('og-image.png', site).href;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const ogImage = new URL(`${base}og-image.png`, site).href;
+// Тестова копія (GitHub Pages) не має потрапляти в Google: PUBLIC_NOINDEX=true під час збірки.
+const hideFromSearch = noindex || import.meta.env.PUBLIC_NOINDEX === 'true';
 const ogLocale = { fr: 'fr_FR', en: 'en_GB', it: 'it_IT' }[lang];
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -48,10 +51,10 @@ const jsonLd = JSON.stringify({
       hreflang="x-default"
       href={new URL(switchLocale(Astro.url.pathname, 'fr'), site).href}
     />
-    {noindex && <meta name="robots" content="noindex" />}
+    {hideFromSearch && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#0E0E0E" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

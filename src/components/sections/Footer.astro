@@ -1,7 +1,7 @@
 ---
 // Figma: 12 Footer (desktop: колонки; mobile: акордеон). На всю ширину екрана.
 // Внизу — великий CONTESSI від лівого до правого відступу, обрізаний знизу.
-// Два шари: базовий (як у Figma) і світлий із зерном — видно лише під «прожектором» біля курсора.
+// Один шар із зерном під маскою-«прожектором»: під курсором літери видно, далі вони розчиняються у фон.
 import Button from '../ui/Button.astro';
 import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
 import PlusIcon from '../../assets/icons/plus.svg';
@@ -99,7 +99,6 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="ghost" data-spotlight aria-hidden="true">
-      <p class="ghost__base">CONTESSI</p>
       <p class="ghost__light">CONTESSI</p>
     </div>
   </div>
@@ -225,8 +224,10 @@ const year = new Date().getFullYear();
   }
   /* Кегль від ширини футера (cqi — без смуги прокрутки): Boldonse, слово ≈ 6.39 × кегль. */
   .ghost {
-    --mx: 50%;
-    --my: -200%; /* пляма «за кадром» — світлого шару не видно */
+    /* Стан без мишки: пляма зліва вгорі — видно «CON…», праворуч слово розчиняється.
+       Скрипт повертає пляму саме сюди (бере значення з CSS). */
+    --mx: 20%;
+    --my: 0%;
     position: relative;
     display: grid;
     margin-top: calc(var(--space-8) - 0.1em);
@@ -240,22 +241,15 @@ const year = new Date().getFullYear();
     user-select: none;
     pointer-events: none; /* високі літери Boldonse не мають перекривати посилання над написом */
   }
-  .ghost__base,
+  /* Колір тексту + зерно всередині літер; маска лишає видимим лише коло навколо плями. */
   .ghost__light {
     grid-area: 1 / 1;
     /* Верх літер Boldonse (особливо круглих C, O, S) виходить вище рядка на ~0.03em.
-       Фон світлого шару (background-clip: text) малюється лише в межах блока,
-       тому без запасу зверху лишалась смужка базового кольору. */
+       Фон (background-clip: text) малюється лише в межах блока — без запасу зверху верх літер зрізався б. */
     padding-top: 0.1em;
-  }
-  .ghost__base {
-    color: var(--color-ghost);
-  }
-  /* Світлий шар: колір тексту + зерно всередині літер, видно лише в колі навколо курсора. */
-  .ghost__light {
     color: transparent;
     background-image:
-      url('/textures/noise.svg'), linear-gradient(var(--color-text), var(--color-text));
+      url('../../assets/textures/noise.svg'), linear-gradient(var(--color-text), var(--color-text));
     -webkit-background-clip: text;
     background-clip: text;
     opacity: var(--ghost-light-opacity);
@@ -270,11 +264,12 @@ const year = new Date().getFullYear();
       transparent 60%
     );
   }
-  /* Без курсора (телефони, планшети) — статична пляма в центрі. */
+  /* Без курсора (телефони, планшети) — статична пляма в центрі, ширша, щоб видно було більшу частину слова. */
   @media (hover: none) {
     .ghost {
       --mx: 50%;
-      --my: 60%;
+      --my: 40%;
+      --spot-r: 70vw;
     }
   }
 
