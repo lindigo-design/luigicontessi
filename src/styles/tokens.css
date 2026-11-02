@@ -14,6 +14,8 @@
   --color-red-text: #e5484d; /* accent/red-text — текст і посилання */
   --color-red: #c41e2a; /* accent/red — плашки, знак ♥ */
   --color-ghost: #1a1a1a; /* text/wordmark-ghost */
+  --color-primary-hover: #c9c5bd; /* surface/primary-hover — Primary при наведенні */
+  --color-hover-tint: rgb(237 234 228 / 0.08); /* surface/hover-tint — легка підсвітка Outline */
   --ghost-light-opacity: 0.4; /* світлий шар CONTESSI під «прожектором» у футері */
 
   /* Затемнення фото (як у hero / yachts у Figma) */
