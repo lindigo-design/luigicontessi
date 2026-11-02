@@ -6,3 +6,6 @@ dist/
 .DS_Store
 Thumbs.db
 public/api/_smtp_password.php
+
+# тимчасові архіви для перевірок
+.tmp-*
