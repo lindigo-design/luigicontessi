@@ -14,7 +14,11 @@ const { lang, code, short = false } = Astro.props;
 
 <div class:list={['coderow', { 'coderow--short': short }]}>
   <span class="coderow__value">{code}</span>
-  <Button data-copy={code} data-copied={t('codes.copied', lang)}>
+  <Button
+    data-copy={code}
+    data-copied={t('codes.copied', lang)}
+    data-copy-failed={t('ui.copyFailed', lang)}
+  >
     <span class="coderow__long">{t('ui.copyCode', lang)}</span>
     {short && (
       <span class="coderow__short" aria-hidden="true">

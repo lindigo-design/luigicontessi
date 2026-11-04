@@ -31,6 +31,7 @@
   "ui.copy": "Copier",
   "ui.copyCode": "Copier le code",
   "ui.copied": "Copié",
+  "ui.copyFailed": "Copie impossible",
   "ui.prev": "Précédent",
   "ui.next": "Suivant",
   "ui.slide": "Carte",
