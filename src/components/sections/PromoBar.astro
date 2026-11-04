@@ -23,6 +23,7 @@ const { lang, data } = Astro.props;
       title={t('ui.copyCode', lang)}
       data-copy={data.code}
       data-copied={t('ui.copied', lang)}
+      data-copy-failed={t('ui.copyFailed', lang)}
     >
       <span class="btn__label">{data.code}</span>
     </button>
@@ -31,7 +32,12 @@ const { lang, data } = Astro.props;
       {data.offerShort}
     </span>
   </p>
-  <Button variant="link" data-copy={data.code} data-copied={t('ui.copied', lang)}>
+  <Button
+    variant="link"
+    data-copy={data.code}
+    data-copied={t('ui.copied', lang)}
+    data-copy-failed={t('ui.copyFailed', lang)}
+  >
     {t('ui.copy', lang)}
   </Button>
 </aside>
